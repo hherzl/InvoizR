@@ -1,0 +1,47 @@
+﻿@page "/invoice-type"
+
+@using InvoizR.Clients.Contracts
+@using InvoizR.Clients.DataContracts
+@using InvoizR.Clients.DataContracts.Common
+
+@inject IInvoizRClient invoizRClient
+
+<h3>Invoice Types</h3>
+
+<MudTable Items="@Response?.Model">
+    <HeaderContent>
+        <MudTh>Name</MudTh>
+        <MudTh>Schema Type</MudTh>
+        <MudTh>Schema Version</MudTh>
+        <MudTh>Current</MudTh>
+        <MudTh></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Name">@context.Name</MudTd>
+        <MudTd DataLabel="Schema Type">@context.SchemaType</MudTd>
+        <MudTd DataLabel="Schema Version">@context.SchemaVersion</MudTd>
+        <MudTd DataLabel="Current">@(context.Current == true ? "Yes" : "No")</MudTd>
+        <MudTd DataLabel="Details">
+            <a href="@($"/invoice-type/{@context.Id}")">
+                <MudIcon Icon="@Icons.Material.Filled.Details" Title="Details" />
+            </a>
+        </MudTd>
+    </RowTemplate>
+</MudTable>
+
+@code {
+    GetInvoiceTypesQuery Request { get; set; }
+    ListResponse<InvoiceTypeItemModel> Response { get; set; }
+
+    protected async Task LoadAsync()
+    {
+        Request = new();
+
+        Response = await invoizRClient.GetInvoiceTypesAsync(Request);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAsync();
+    }
+}

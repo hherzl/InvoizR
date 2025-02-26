@@ -1,0 +1,14 @@
+@MH.Mock.FeSv_HostAddress = https://localhost:7220
+
+POST {{MH.Mock.FeSv_HostAddress}}/recepciondte
+Content-Type: application/json
+
+{
+    "ambiente": "01",
+    "idEnvio": "20250118192200",
+    "version": 2,
+    "tipoDte": "01",
+    "codigoGeneracion": "4E5084AF-7ACE-4A94-9E96-11F8292929E8",
+    "documento": "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+}
+###

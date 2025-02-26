@@ -1,0 +1,52 @@
+﻿@page "/company"
+
+@using InvoizR.Clients.Contracts
+@using InvoizR.Clients.DataContracts
+@using InvoizR.Clients.DataContracts.Common
+
+@inject IInvoizRClient invoizRClient
+
+<h3>Companies</h3>
+
+<MudTable Items="@Response?.Model">
+    <HeaderContent>
+        <MudTh>Environment</MudTh>
+        <MudTh>Name</MudTh>
+        <MudTh>Tax ID</MudTh>
+        <MudTh>Code</MudTh>
+        <MudTh></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Environment">@context.Environment</MudTd>
+        <MudTd DataLabel="Name">@context.Name</MudTd>
+        <MudTd DataLabel="Tax ID">@context.TaxIdNumber</MudTd>
+        <MudTd DataLabel="Code">@context.Code</MudTd>
+        <MudTd DataLabel="Details">
+            <a href="@($"/company/{@context.Id}")">
+                <MudIcon Icon="@Icons.Material.Filled.Details" Title="Details" />
+            </a>
+        </MudTd>
+    </RowTemplate>
+</MudTable>
+
+@code {
+    GetCompaniesQuery Request { get; set; }
+    ListResponse<CompanyItemModel> Response { get; set; }
+
+    protected async Task LoadAsync()
+    {
+        Request = new();
+
+        Response = await invoizRClient.GetCompaniesAsync(Request);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAsync();
+    }
+
+    private async Task Load_Click()
+    {
+        await LoadAsync();
+    }
+}

@@ -1,0 +1,7 @@
+@MH.Mock.Seguridad_HostAddress = https://localhost:7200
+
+POST {{MH.Mock.Seguridad_HostAddress}}/auth
+Content-Type: application/x-www-form-urlencoded
+
+user=06140101211234&pwd=Bar
+###

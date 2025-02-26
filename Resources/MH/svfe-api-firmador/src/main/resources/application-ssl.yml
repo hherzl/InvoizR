@@ -1,0 +1,11 @@
+server:
+  port: 8113
+  ssl:
+    key-store: ${SVFE_ARCHIVO}
+    key-store-password: ${SVFE_PASSWORD}
+    key-store-type: PKCS12
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  application:
+    name: Firma-Digital

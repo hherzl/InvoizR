@@ -1,0 +1,9 @@
+server:
+  port: 8113
+  servlet:
+    context-path: /firma
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  application:
+    name: Firma-Digital

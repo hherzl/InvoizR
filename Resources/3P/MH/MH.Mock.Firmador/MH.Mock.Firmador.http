@@ -1,0 +1,12 @@
+@MH.Mock.Firmador_HostAddress = https://localhost:7210
+
+POST {{MH.Mock.Firmador_HostAddress}}/firmardocumento/
+Content-Type: application/json
+
+{
+    "nit": "06140101211234",
+    "activo": true,
+    "passwordPri": "12345",
+    "dteJson": "{}"
+}
+###

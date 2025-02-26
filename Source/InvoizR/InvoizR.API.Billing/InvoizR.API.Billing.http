@@ -1,0 +1,8 @@
+@InvoizR.API.Billing_HostAddress = https://localhost:13880
+
+GET {{InvoizR.API.Billing_HostAddress}}/dte01
+Content-Type: application/json
+
+{
+}
+###

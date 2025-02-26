@@ -1,0 +1,196 @@
+﻿@page "/invoice/{Id:long}"
+
+@using System.Text
+@using InvoizR.Clients.Contracts
+@using InvoizR.Clients.DataContracts
+
+@inject IInvoizRClient invoizRClient
+
+<PageTitle>Invoice Details - @Id</PageTitle>
+
+<h3>Invoice Details</h3>
+<h4>@Id</h4>
+
+<br />
+
+@if (response == null)
+{
+    <MudText Typo="Typo.caption">There is no invoice with @Id ID.</MudText>
+}
+else
+{
+    <MudCard>
+        <MudCardHeader>
+            <CardHeaderContent>
+                <MudText Typo="Typo.h6">Customer</MudText>
+            </CardHeaderContent>
+            <CardHeaderActions>
+                <MudIconButton Icon="@Icons.Material.Filled.Person" Color="Color.Default" />
+            </CardHeaderActions>
+        </MudCardHeader>
+        <MudCardContent>
+            <MudText>Nombre: <strong>@response?.CustomerName</strong></MudText>
+            <MudText>País: <strong>@response?.CustomerCountryId</strong></MudText>
+            <MudText>Dirección: <strong>@response?.CustomerAddress</strong></MudText>
+            <MudText>Teléfono: <strong>@response?.CustomerPhone</strong></MudText>
+            <MudText>Correo electrónico: <strong>@response?.CustomerEmail</strong></MudText>
+        </MudCardContent>
+    </MudCard>
+
+    <br />
+
+    <Dte01 Json="@response.Serialization" />
+
+    <br />
+
+    <MudCard>
+        <MudCardHeader>
+            <CardHeaderContent>
+                <MudText Typo="Typo.h6">Invoice</MudText>
+            </CardHeaderContent>
+            <CardHeaderActions>
+                <MudIconButton Icon="@Icons.Material.Filled.Receipt" Color="Color.Default" />
+            </CardHeaderActions>
+        </MudCardHeader>
+        <MudCardContent>
+            <MudText>Tipo y número: <strong>@response?.InvoiceTypeId</strong> - <strong>@response?.InvoiceNumber</strong></MudText>
+            <MudText>Fecha: <strong>@response?.InvoiceDate</strong></MudText>
+            <MudText>Total: <strong>@response?.InvoiceTotal.ToCurrency()</strong></MudText>
+            <MudText>Esquema: <strong>@response?.SchemaType</strong> - <strong>@response?.SchemaVersion</strong></MudText>
+            <MudText>Fecha de procesamiento: <strong>@response?.ProcessingDateTime</strong></MudText>
+            <MudText>Sello de recepción: <strong>@response?.ReceiptStamp</strong></MudText>
+            @if (response?.Processed == true)
+            {
+                <a href="@response?.ExternalUrl" target="_blank">
+                    <MudButton Color="Color.Secondary" Variant="Variant.Filled">
+                        Visualizar en Portal del Ministerio de Hacienda
+                    </MudButton>
+                </a>
+            }
+        </MudCardContent>
+    </MudCard>
+
+    <br />
+
+    <h5>Processing Status Logs</h5>
+
+    <br />
+
+    <MudTable Items="response?.ProcessingStatusLogs">
+        <HeaderContent>
+            <MudTh>Created At</MudTh>
+            <MudTh>Processing status</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Created at">@context.CreatedAt</MudTd>
+            <MudTd DataLabel="Sync status">@context.ProcessingStatus</MudTd>
+        </RowTemplate>
+    </MudTable>
+
+    <br />
+
+    @if (response.ProcessingLogs?.Count > 0)
+    {
+        <h5>Processing Logs</h5>
+
+        <br />
+
+        <MudExpansionPanels>
+            @foreach (var processingLog in response.ProcessingLogs)
+            {
+                <MudExpansionPanel Text="@processingLog.LogType" Expanded="false">
+                    <MudText Typo="Typo.body2">Processing status: <strong>@processingLog.ProcessingStatus</strong></MudText>
+                    <MudText Typo="Typo.body2">Created at: <strong>@processingLog.CreatedAt</strong></MudText>
+                    <MudText Typo="Typo.body2">Content type: <strong>@processingLog.ContentType</strong></MudText>
+                    <div style="overflow-x: auto; white-space: pre-wrap; width: 100%;">
+                        <pre>@processingLog.Content</pre>
+                    </div>
+                </MudExpansionPanel>
+            }
+        </MudExpansionPanels>
+    }
+
+    <br />
+
+    @if (response.Files?.Count > 0)
+    {
+        <h5>Files</h5>
+
+        <br />
+
+        <MudExpansionPanels>
+
+            @foreach (var file in response.Files)
+            {
+                if (file.FileType == "JSON")
+                {
+                    <MudExpansionPanel Text="JSON" Expanded="false">
+                        <MudText Typo="Typo.subtitle2">
+                            <pre>@GetJson(file.File)</pre>
+                        </MudText>
+                    </MudExpansionPanel>
+                }
+                else if (file.FileType == "PDF")
+                {
+                    <MudExpansionPanel Text="PDF" Expanded="false">
+                        <embed style="width: 100%; height: 90vh;" type="application/pdf" src="data:application/pdf;base64,@GetPdf(file.File)" />
+                    </MudExpansionPanel>
+                }
+            }
+
+        </MudExpansionPanels>
+
+        <br />
+    }
+
+    @if (response.Notifications?.Count > 0)
+    {
+        <h5>Notifications</h5>
+
+        <br />
+
+        <MudExpansionPanels>
+
+            <MudTable Items="response.Notifications">
+                <HeaderContent>
+                    <MudTh>Email</MudTh>
+                    <MudTh>Bcc</MudTh>
+                    <MudTh>Files</MudTh>
+                    <MudTh>Successful</MudTh>
+                    <MudTh>Created At</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel="Created at">@context.Email</MudTd>
+                    <MudTd DataLabel="Created at">@context.Bcc</MudTd>
+                    <MudTd DataLabel="Created at">@context.Files</MudTd>
+                    <MudTd DataLabel="Created at">@context.Successful</MudTd>
+                    <MudTd DataLabel="Created at">@context.CreatedAt</MudTd>
+                </RowTemplate>
+            </MudTable>
+
+        </MudExpansionPanels>
+
+        <br />
+    }
+
+    <a href="@("/invoice")">
+        <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.ArrowBack" />
+    </a>
+}
+
+@code {
+    [Parameter] public long? Id { get; set; }
+
+    private InvoiceDetailsModel response { get; set; }
+
+    string GetJson(byte[] file)
+        => Encoding.Default.GetString(file);
+
+    string GetPdf(byte[] file)
+        => Convert.ToBase64String(file);
+
+    protected override async Task OnInitializedAsync()
+    {
+        response = await invoizRClient.GetInvoiceAsync(Id);
+    }
+}

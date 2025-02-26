@@ -1,0 +1,78 @@
+﻿@page "/company/{Id:int?}"
+
+@using InvoizR.Clients.Contracts
+@using InvoizR.Clients.DataContracts
+
+@inject IInvoizRClient invoizRClient
+
+<PageTitle>Company Details - @Id</PageTitle>
+
+<h3>Company Details</h3>
+<h4>@Id</h4>
+
+<br />
+
+@if (response == null)
+{
+}
+else
+{
+    <MudCard>
+        <MudCardHeader>
+            <CardHeaderContent>
+                <MudText Typo="Typo.h6">Company</MudText>
+            </CardHeaderContent>
+            <CardHeaderActions>
+                <MudIconButton Icon="@Icons.Material.Filled.Business" Color="Color.Default" />
+            </CardHeaderActions>
+        </MudCardHeader>
+        <MudCardContent>
+            <MudText>Name: @response?.Name</MudText>
+            <MudText>Code: @response?.Code</MudText>
+            <MudText>Business Name: @response?.BusinessName</MudText>
+            <MudText>Tax Id Number: @response?.TaxIdNumber</MudText>
+            <MudText>Tax Registration Number: @response?.TaxRegistrationNumber</MudText>
+            <MudText>Economic Activity Id: @response?.EconomicActivityId</MudText>
+            <MudText>Economic Activity: @response?.EconomicActivity</MudText>
+            <MudText>Address: @response?.Address</MudText>
+            <MudText>Phone: @response?.Phone</MudText>
+            <MudText>Email: @response?.Email</MudText>
+        </MudCardContent>
+    </MudCard>
+
+    <br />
+
+    <h5>Branches</h5>
+
+    <br />
+
+    <MudTable Items="response.Branches">
+        <HeaderContent>
+            <MudTh>Name</MudTh>
+            <MudTh>Establishment prefix</MudTh>
+            <MudTh>Tax Auth ID</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Name">@context.Name</MudTd>
+            <MudTd DataLabel="Establishment prefix">@context.EstablishmentPrefix</MudTd>
+            <MudTd DataLabel="Tax Auth ID">@context.TaxAuthId</MudTd>
+        </RowTemplate>
+    </MudTable>
+
+    <br />
+
+    <a href="@("/company")">
+        <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.ArrowBack" />
+    </a>
+}
+
+@code {
+    [Parameter] public int? Id { get; set; }
+
+    private CompanyDetailsModel response { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        response = await invoizRClient.GetCompanyAsync((short)Id);
+    }
+}

@@ -1,0 +1,65 @@
+﻿body {
+    font-family: Verdana;
+    font-size: 12px;
+}
+
+h1 {
+    color: navy;
+    text-align: center;
+}
+
+h2 {
+    color: navy;
+    text-align: center;
+}
+
+.header-table {
+    width: 100%;
+}
+
+.logo {
+    width: 125px;
+    height: 125px;
+}
+
+.qr {
+    width: 100px;
+    height: 120px;
+}
+
+table caption {
+    font-weight: bold;
+}
+
+.emitter-table {
+    background-color: #87cefa;
+    width: 100%;
+}
+
+.receiver-table {
+    width: 100%;
+}
+
+.lines-table {
+    border: 1px solid black;
+    width: 100%;
+}
+
+.lines-row {
+}
+
+.lines-alt-row {
+    background-color: #b0c4de;
+}
+
+.line-value {
+    text-align: center;
+}
+
+.lines-amount {
+    text-align: right;
+}
+
+.summary-row {
+    text-align: right;
+}

@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>aspnet-InvoizR.GUI.InvoiceManager-a7dfd84e-2319-447b-abe9-8450024d4ec1</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\InvoizR.GUI.InvoiceManager.Client\InvoizR.GUI.InvoiceManager.Client.csproj" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.*" />
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.*" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.*" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.*" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.*" />
+    <PackageReference Include="Extensions.MudBlazor.StaticInput" Version="2.*" />
+  </ItemGroup>
+
+</Project>
