@@ -17,41 +17,41 @@ public static class FeFcv1Helper
 {
     public static FeFcv1 Create(CreateDte01InvoiceCommand request, List<InvoiceLine> lines)
     {
-        var eDoc = new FeFcv1();
+        var dte = new FeFcv1();
 
-        eDoc.Identificacion.Version = FeFcv1.Version;
-        eDoc.Identificacion.Ambiente = MhCatalog.Cat001.Prueba;
+        dte.Identificacion.Version = FeFcv1.Version;
+        dte.Identificacion.Ambiente = MhCatalog.Cat001.Prueba;
 
-        eDoc.Identificacion.FecEmi = new DateTimeOffset(request.InvoiceDate.Value);
-        eDoc.Identificacion.HorEmi = eDoc.Identificacion.FecEmi.ToString("hh:mm:ss");
-        eDoc.Identificacion.TipoMoneda = IdentificacionTipoMoneda.USD;
-        eDoc.Identificacion.TipoModelo = MhCatalog.Cat003.Previo;
-        eDoc.Identificacion.TipoModelo = MhCatalog.Cat004.Normal;
+        dte.Identificacion.FecEmi = new DateTimeOffset(request.InvoiceDate.Value);
+        dte.Identificacion.HorEmi = dte.Identificacion.FecEmi.ToString("hh:mm:ss");
+        dte.Identificacion.TipoMoneda = IdentificacionTipoMoneda.USD;
+        dte.Identificacion.TipoModelo = MhCatalog.Cat003.Previo;
+        dte.Identificacion.TipoModelo = MhCatalog.Cat004.Normal;
 
         var emisor = CompanyMocks.GetCapsuleCorp();
 
-        eDoc.Emisor.Nit = emisor.TaxIdNumber;
-        eDoc.Emisor.Nrc = emisor.TaxRegistrationNumber;
-        eDoc.Emisor.Nombre = emisor.BusinessName;
-        eDoc.Emisor.CodActividad = emisor.EconomicActivityId;
-        eDoc.Emisor.DescActividad = emisor.EconomicActivity;
-        eDoc.Emisor.Direccion = new Direccion
+        dte.Emisor.Nit = emisor.TaxIdNumber;
+        dte.Emisor.Nrc = emisor.TaxRegistrationNumber;
+        dte.Emisor.Nombre = emisor.BusinessName;
+        dte.Emisor.CodActividad = emisor.EconomicActivityId;
+        dte.Emisor.DescActividad = emisor.EconomicActivity;
+        dte.Emisor.Direccion = new Direccion
         {
             Departamento = MhCatalog.Cat012.SanSalvador,
             Municipio = MhCatalog.Cat013.SanSalvador,
             Complemento = emisor.Address
         };
 
-        eDoc.Emisor.TipoEstablecimiento = MhCatalog.Cat009.SucursalAgencia;
-        eDoc.Emisor.Telefono = emisor.Phone;
-        eDoc.Emisor.Correo = emisor.Email;
-        //eDoc.Emisor.CodEstable = $"{request.Document.Branch.EstablishmentPrefix}{request.Document.Branch.WhsCode}";
-        //eDoc.Emisor.CodPuntoVenta = request.Document.Branch.Pos;
+        dte.Emisor.TipoEstablecimiento = MhCatalog.Cat009.SucursalAgencia;
+        dte.Emisor.Telefono = emisor.Phone;
+        dte.Emisor.Correo = emisor.Email;
+        //dte.Emisor.CodEstable = $"{request.Document.Branch.EstablishmentPrefix}{request.Document.Branch.WhsCode}";
+        //dte.Emisor.CodPuntoVenta = request.Document.Branch.Pos;
 
         var total = Math.Round(lines.Sum(item => item.Total), 2);
         var vatSum = 0;
 
-        eDoc.Receptor = new()
+        dte.Receptor = new()
         {
             Nombre = request.Customer.Name,
             TipoDocumento = request.Customer.DocumentTypeId,
@@ -70,7 +70,7 @@ public static class FeFcv1Helper
 
         foreach (var line in lines)
         {
-            eDoc.CuerpoDocumento.Add(new CuerpoDocumento
+            dte.CuerpoDocumento.Add(new CuerpoDocumento
             {
                 NumItem = number++,
                 TipoItem = CuerpoDocumentoTipoItem._1,
@@ -87,23 +87,23 @@ public static class FeFcv1Helper
             });
         }
 
-        eDoc.Resumen.CondicionOperacion = MhCatalog.Cat016.Contado;
+        dte.Resumen.CondicionOperacion = MhCatalog.Cat016.Contado;
 
-        eDoc.Resumen.SubTotalVentas = total;
-        eDoc.Resumen.TotalGravada = total;
-        eDoc.Resumen.SubTotal = total;
+        dte.Resumen.SubTotalVentas = total;
+        dte.Resumen.TotalGravada = total;
+        dte.Resumen.SubTotal = total;
 
-        eDoc.Resumen.MontoTotalOperacion = total;
+        dte.Resumen.MontoTotalOperacion = total;
 
-        eDoc.Resumen.TotalPagar = total;
+        dte.Resumen.TotalPagar = total;
 
-        eDoc.Resumen.TotalIva = vatSum;
+        dte.Resumen.TotalIva = vatSum;
 
-        eDoc.Resumen.Pagos =
+        dte.Resumen.Pagos =
         [
-            new() { Codigo = MhCatalog.Cat017.TarjetaCredito, MontoPago = eDoc.Resumen.TotalPagar }
+            new() { Codigo = MhCatalog.Cat017.TarjetaCredito, MontoPago = dte.Resumen.TotalPagar }
         ];
 
-        return eDoc;
+        return dte;
     }
 }

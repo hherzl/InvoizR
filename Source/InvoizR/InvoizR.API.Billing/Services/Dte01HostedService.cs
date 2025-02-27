@@ -35,16 +35,22 @@ public class Dte01HostedService : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        var timer = new PeriodicTimer(TimeSpan.FromMinutes(1));
+        using var scope = _serviceProvider.CreateScope();
+
+        using var dbContext = scope.ServiceProvider.GetRequiredService<InvoizRDbContext>();
+
+        var mhSettings = new MhSettings();
+        _configuration.Bind("Clients:Mh", mhSettings);
+
+        var processingSettings = new ProcessingSettings();
+        _configuration.Bind("ProcessingSettings", processingSettings);
+
+        var timer = new PeriodicTimer(TimeSpan.FromMinutes(2));
 
         while (await timer.WaitForNextTickAsync(stoppingToken))
         {
-            using var scope = _serviceProvider.CreateScope();
-
             try
             {
-                using var dbContext = scope.ServiceProvider.GetRequiredService<InvoizRDbContext>();
-
                 var filters = new
                 {
                     InvoiceTypeId = (short)1,
@@ -68,39 +74,33 @@ public class Dte01HostedService : BackgroundService
 
                 var authResponse = await _seguridadClient.AuthAsync(authRequest);
 
-                var mhSettings = new MhSettings();
-                _configuration.Bind("Clients:Mh", mhSettings);
-
-                var processingSettings = new ProcessingSettings();
-                _configuration.Bind("ProcessingSettings", processingSettings);
-
                 var invProcessingService = scope.ServiceProvider.GetRequiredService<InvoiceProcessingService>();
 
                 var dteHandler = scope.ServiceProvider.GetRequiredService<DteHandler>();
 
-                foreach (var inv in invoices)
+                foreach (var invoice in invoices)
                 {
-                    if (inv.ProcessingStatusId == (short)InvoiceProcessingStatus.Created)
+                    if (invoice.ProcessingStatusId == (short)InvoiceProcessingStatus.Created)
                     {
-                        _logger.LogInformation($"Processing '{inv.InvoiceNumber}' invoice, changing status from '{InvoiceProcessingStatus.Created}'...");
+                        _logger.LogInformation($"Processing '{invoice.InvoiceNumber}' invoice, changing status from '{InvoiceProcessingStatus.Created}'...");
 
-                        await invProcessingService.SetInvoiceAsInitializedAsync(inv.Id, dbContext, stoppingToken);
+                        await invProcessingService.SetInvoiceAsInitializedAsync(invoice.Id, dbContext, stoppingToken);
                     }
-                    else if (inv.ProcessingStatusId == (short)InvoiceProcessingStatus.Initialized)
+                    else if (invoice.ProcessingStatusId == (short)InvoiceProcessingStatus.Initialized)
                     {
-                        _logger.LogInformation($"Processing '{inv.InvoiceNumber}' invoice, changing status from '{InvoiceProcessingStatus.Initialized}'...");
+                        _logger.LogInformation($"Processing '{invoice.InvoiceNumber}' invoice, changing status from '{InvoiceProcessingStatus.Initialized}'...");
 
-                        await invProcessingService.SetInvoiceAsRequestedAsync(inv.Id, dbContext, stoppingToken);
+                        await invProcessingService.SetInvoiceAsRequestedAsync(invoice.Id, dbContext, stoppingToken);
                     }
-                    else if (inv.ProcessingStatusId == (short)InvoiceProcessingStatus.Requested)
+                    else if (invoice.ProcessingStatusId == (short)InvoiceProcessingStatus.Requested)
                     {
-                        _logger.LogInformation($"Processing '{inv.InvoiceNumber}' invoice, changing status from '{InvoiceProcessingStatus.Requested}'...");
+                        _logger.LogInformation($"Processing '{invoice.InvoiceNumber}' invoice, changing status from '{InvoiceProcessingStatus.Requested}'...");
 
-                        var result = await dteHandler.HandleAsync(new(mhSettings, processingSettings, authResponse.Body.Token, inv.Id), dbContext, stoppingToken);
+                        var result = await dteHandler.HandleAsync(new(mhSettings, processingSettings, authResponse.Body.Token, invoice.Id), dbContext, stoppingToken);
                         if (result)
                         {
-                            _logger.LogInformation($"Broadcasting '{inv.InvoiceNumber}' invoice...");
-                            await _hubContext.Clients.All.SendAsync(HubMethods.SendInvoice, inv.InvoiceTypeId, inv.InvoiceNumber, inv.InvoiceTotal, stoppingToken);
+                            _logger.LogInformation($"Broadcasting '{invoice.InvoiceNumber}' invoice...");
+                            await _hubContext.Clients.All.SendAsync(HubMethods.SendInvoice, invoice.InvoiceTypeId, invoice.InvoiceNumber, invoice.InvoiceTotal, stoppingToken);
                         }
                     }
                 }

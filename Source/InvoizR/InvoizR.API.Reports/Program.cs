@@ -1,10 +1,8 @@
-using DinkToPdf.Contracts;
-using DinkToPdf;
 using InvoizR.API.Reports.Services;
 using InvoizR.Application;
+using InvoizR.Application.Common;
 using InvoizR.Infrastructure;
 using Serilog;
-using InvoizR.Application.Common;
 
 var apiSettings = new ApiSettings();
 
@@ -24,12 +22,12 @@ try
     // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
     builder.Services.AddOpenApi();
 
-    builder.Services.AddApplicationServices(builder.Configuration);
-    builder.Services.AddInfrastructureServices(builder.Configuration);
-
-    builder.Services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
+    builder.Services.AddSerilog();
 
     builder.Services.AddHostedService<Dte01NotificationHostedService>();
+
+    builder.Services.AddApplicationServices(builder.Configuration);
+    builder.Services.AddInfrastructureServices(builder.Configuration);
 
     var app = builder.Build();
 
