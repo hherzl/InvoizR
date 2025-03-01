@@ -45,7 +45,7 @@ public class Dte01HostedService : BackgroundService
         var processingSettings = new ProcessingSettings();
         _configuration.Bind("ProcessingSettings", processingSettings);
 
-        var timer = new PeriodicTimer(TimeSpan.FromMinutes(2));
+        var timer = new PeriodicTimer(TimeSpan.FromMinutes(1));
 
         while (await timer.WaitForNextTickAsync(stoppingToken))
         {

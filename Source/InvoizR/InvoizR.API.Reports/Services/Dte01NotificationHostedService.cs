@@ -35,7 +35,7 @@ public class Dte01NotificationHostedService : BackgroundService
 
         var converter = new SynchronizedConverter(new PdfTools());
 
-        var timer = new PeriodicTimer(TimeSpan.FromMinutes(2));
+        var timer = new PeriodicTimer(TimeSpan.FromMinutes(1));
 
         while (await timer.WaitForNextTickAsync(stoppingToken))
         {
@@ -128,6 +128,8 @@ public class Dte01NotificationHostedService : BackgroundService
                     // TODO: emit notification for webhook
 
                     invoice.ProcessingStatusId = (short)InvoiceProcessingStatus.Notified;
+
+                    dbContext.InvoiceProcessingStatusLog.Add(new(invoice.Id, invoice.ProcessingStatusId));
 
                     await dbContext.SaveChangesAsync(stoppingToken);
                 }
