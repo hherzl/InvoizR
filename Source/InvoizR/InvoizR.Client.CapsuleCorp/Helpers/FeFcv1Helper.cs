@@ -26,7 +26,7 @@ public static class FeFcv1Helper
         dte.Identificacion.HorEmi = dte.Identificacion.FecEmi.ToString("hh:mm:ss");
         dte.Identificacion.TipoMoneda = IdentificacionTipoMoneda.USD;
         dte.Identificacion.TipoModelo = MhCatalog.Cat003.Previo;
-        dte.Identificacion.TipoModelo = MhCatalog.Cat004.Normal;
+        dte.Identificacion.TipoOperacion = MhCatalog.Cat004.Normal;
 
         var emisor = CompanyMocks.GetCapsuleCorp();
 

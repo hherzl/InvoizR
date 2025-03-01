@@ -14,7 +14,7 @@ public static class Dte01TemplateFactory
 
         var model = new Dte01TemplateModel
         {
-            Qr = Convert.ToBase64String(QrHelper.GetBytes(invoice.ExternalUrl)),
+            Qr = Convert.ToBase64String(QrHelper.GetBytes(invoice.ExternalUrl ?? "mg.gob.sv/url")),
             Emitter = new()
             {
                 BusinessName = company.BusinessName,
@@ -54,7 +54,7 @@ public static class Dte01TemplateFactory
         }
         catch (Exception ex)
         {
-            var message = ex.Message;
+            model.ErrorMessage = ex.Message;
         }
 
         return model;

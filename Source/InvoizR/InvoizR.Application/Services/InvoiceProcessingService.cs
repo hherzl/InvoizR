@@ -16,7 +16,7 @@ public class InvoiceProcessingService
         _logger = logger;
     }
 
-    private static bool TryInit(Invoice invoice)
+    private bool TryInit(Invoice invoice)
     {
         FeFcv1 dte;
 
@@ -26,6 +26,7 @@ public class InvoiceProcessingService
         }
         catch (Exception ex)
         {
+            _logger.LogCritical(ex, $"There was an error deserializing {invoice.InvoiceNumber} invoice");
             return false;
         }
 
@@ -45,12 +46,12 @@ public class InvoiceProcessingService
     {
         var inv = await dbContext.GetInvoiceAsync(invoiceId, includes: true, tracking: true, ct: cancellationToken);
 
-        var invoiceType = await dbContext.GetInvoiceTypeAsync(inv.InvoiceTypeId, ct: cancellationToken);
+        var invType = await dbContext.GetInvoiceTypeAsync(inv.InvoiceTypeId, ct: cancellationToken);
 
-        var dteInfo = DteInfoHelper.Get(invoiceType.Id, inv.Pos.Branch.EstablishmentPrefix, inv.Pos.Branch.TaxAuthId, inv.Pos.Code, inv.InvoiceNumber);
+        var dteInfo = DteInfoHelper.Get(invType.Id, inv.Pos.Branch.EstablishmentPrefix, inv.Pos.Branch.TaxAuthId, inv.Pos.Code, inv.InvoiceNumber);
 
-        inv.SchemaType = invoiceType.SchemaType;
-        inv.SchemaVersion = invoiceType.SchemaVersion;
+        inv.SchemaType = invType.SchemaType;
+        inv.SchemaVersion = invType.SchemaVersion;
         inv.GenerationCode = dteInfo.GenerationCode;
         inv.ControlNumber = dteInfo.ControlNumber;
         inv.ProcessingStatusId = (short)InvoiceProcessingStatus.Initialized;

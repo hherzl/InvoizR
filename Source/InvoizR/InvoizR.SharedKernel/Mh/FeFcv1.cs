@@ -190,7 +190,7 @@ public partial class Identificacion : object
     [System.Text.Json.Serialization.JsonPropertyName("tipoOperacion")]
 
     [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
-    public IdentificacionTipoOperacion TipoOperacion { get; set; }
+    public int TipoOperacion { get; set; }
 
     /// <summary>
     /// Tipo de Contingencia

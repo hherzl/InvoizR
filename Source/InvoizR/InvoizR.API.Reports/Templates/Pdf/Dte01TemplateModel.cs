@@ -19,4 +19,6 @@ public record Dte01TemplateModel
     public string ExternalUrl { get; set; }
 
     public FeFcv1 Dte { get; set; }
+
+    public string ErrorMessage { get; set; }
 }

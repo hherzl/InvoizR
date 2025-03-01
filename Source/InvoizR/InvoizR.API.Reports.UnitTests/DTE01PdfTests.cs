@@ -15,7 +15,7 @@ public class DTE01PdfTests : ReportsTest
     [Fact]
     public async Task GenerateDTE01Pdf()
     {
-        var invoice = await _dbContext.GetInvoiceAsync(101, includes: true);
+        var invoice = await _dbContext.GetInvoiceAsync(10, includes: true);
         var model = Dte01TemplateFactory.Create(invoice);
 
         var pdfPath = _processingSettings.GetDtePdfPath(invoice.ControlNumber);
