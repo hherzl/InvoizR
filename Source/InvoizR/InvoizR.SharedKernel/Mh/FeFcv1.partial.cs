@@ -26,6 +26,9 @@ public partial class FeFcv1Received : FeFcv1
     [JsonPropertyName("firmaElectronica")]
     public string FirmaElectronica { get; set; }
 
+    public override string ToJson()
+        => JsonSerializer.Serialize(this, DefaultJsonSerializerOpts);
+
     public static FeFcv1Received DeserializeReceived(string json)
         => JsonSerializer.Deserialize<FeFcv1Received>(json, DefaultJsonSerializerOpts);
 }
