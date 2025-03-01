@@ -3,6 +3,7 @@ using InvoizR.Clients.DataContracts;
 using InvoizR.Clients.DataContracts.Common;
 using InvoizR.Domain.Entities;
 using InvoizR.Domain.Enums;
+using InvoizR.Domain.Exceptions;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -21,6 +22,8 @@ public class CreateDte01InvoiceCommandHandler : IRequestHandler<CreateDte01Invoi
 
     public async Task<CreatedResponse<long?>> Handle(CreateDte01InvoiceCommand request, CancellationToken cancellationToken)
     {
+        _ = await _dbContext.GetCurrentInvoiceTypeAsync(request.InvoiceTypeId, ct: cancellationToken) ?? throw new InvalidCurrentInvoiceTypeException();
+
         var txn = await _dbContext.Database.BeginTransactionAsync(cancellationToken);
 
         try

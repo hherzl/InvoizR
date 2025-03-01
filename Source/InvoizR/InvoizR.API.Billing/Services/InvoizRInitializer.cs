@@ -17,7 +17,7 @@ public class InvoizRInitializer
     {
         if (!_dbContext.InvoiceType.Any())
         {
-            _dbContext.InvoiceType.Add(new(1, "Consumidor Final", FeFcv1.SchemaType, FeFcv1.Version));
+            _dbContext.InvoiceType.Add(new(1, "Consumidor Final", FeFcv1.SchemaType, FeFcv1.Version, true));
 
             await _dbContext.SaveChangesAsync();
         }
