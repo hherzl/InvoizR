@@ -60,6 +60,29 @@
     </MudCard>
 
     <br />
+
+    <MudTable Items="@Dte.CuerpoDocumento">
+        <HeaderContent>
+            <MudTh>N°</MudTh>
+            <MudTh>Cantidad</MudTh>
+            <MudTh>Unidad</MudTh>
+            <MudTh>Descripción</MudTh>
+            <MudTh>Precio</MudTh>
+            <MudTh>Venta No Sujeta</MudTh>
+            <MudTh>Venta Exenta</MudTh>
+            <MudTh>Venta Gravada</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="N°">@context.NumItem</MudTd>
+            <MudTd DataLabel="Cantidad">@context.Cantidad</MudTd>
+            <MudTd DataLabel="Unidad">@context.UniMedida</MudTd>
+            <MudTd DataLabel="Descripción">@context.Descripcion</MudTd>
+            <MudTd DataLabel="Precio">@context.PrecioUni</MudTd>
+            <MudTd DataLabel="Venta No Sujeta">@context.VentaNoSuj</MudTd>
+            <MudTd DataLabel="Venta Exenta">@context.VentaExenta</MudTd>
+            <MudTd DataLabel="Venta Gravada">@context.VentaGravada</MudTd>
+        </RowTemplate>
+    </MudTable>
 }
 
 @code {
