@@ -39,7 +39,11 @@ else
 
     <br />
 
-    <Dte01 Json="@response.Serialization" />
+    <MudExpansionPanels>
+        <MudExpansionPanel Text="DTE" Expanded="false">
+            <Dte01 Json="@response.Serialization" />
+        </MudExpansionPanel>
+    </MudExpansionPanels>
 
     <br />
 
@@ -57,6 +61,8 @@ else
             <MudText>Fecha: <strong>@response?.InvoiceDate</strong></MudText>
             <MudText>Total: <strong>@response?.InvoiceTotal.ToCurrency()</strong></MudText>
             <MudText>Esquema: <strong>@response?.SchemaType</strong> - <strong>@response?.SchemaVersion</strong></MudText>
+            <MudText>Código de generación: <strong>@response?.GenerationCode</strong></MudText>
+            <MudText>Número de control: <strong>@response?.ControlNumber</strong></MudText>
             <MudText>Fecha de procesamiento: <strong>@response?.ProcessingDateTime</strong></MudText>
             <MudText>Sello de recepción: <strong>@response?.ReceiptStamp</strong></MudText>
             @if (response?.Processed == true)
@@ -126,7 +132,9 @@ else
                 {
                     <MudExpansionPanel Text="JSON" Expanded="false">
                         <MudText Typo="Typo.subtitle2">
-                            <pre>@GetJson(file.File)</pre>
+                            <div style="overflow-x: auto; white-space: pre-wrap; width: 100%;">
+                                <pre>@GetJson(file.File)</pre>
+                            </div>
                         </MudText>
                     </MudExpansionPanel>
                 }
@@ -161,9 +169,9 @@ else
                 </HeaderContent>
                 <RowTemplate>
                     <MudTd DataLabel="Created at">@context.Email</MudTd>
-                    <MudTd DataLabel="Created at">@context.Bcc</MudTd>
+                    <MudTd DataLabel="Created at">@(context.Bcc == true ? "Yes" : "No")</MudTd>
                     <MudTd DataLabel="Created at">@context.Files</MudTd>
-                    <MudTd DataLabel="Created at">@context.Successful</MudTd>
+                    <MudTd DataLabel="Created at">@(context.Successful == true ? "Yes" : "No")</MudTd>
                     <MudTd DataLabel="Created at">@context.CreatedAt</MudTd>
                 </RowTemplate>
             </MudTable>
