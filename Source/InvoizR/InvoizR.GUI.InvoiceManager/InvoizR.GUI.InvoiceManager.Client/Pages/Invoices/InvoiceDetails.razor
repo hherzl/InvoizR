@@ -29,21 +29,13 @@ else
             </CardHeaderActions>
         </MudCardHeader>
         <MudCardContent>
-            <MudText>Nombre: <strong>@response?.CustomerName</strong></MudText>
-            <MudText>País: <strong>@response?.CustomerCountryId</strong></MudText>
-            <MudText>Dirección: <strong>@response?.CustomerAddress</strong></MudText>
-            <MudText>Teléfono: <strong>@response?.CustomerPhone</strong></MudText>
-            <MudText>Correo electrónico: <strong>@response?.CustomerEmail</strong></MudText>
+            <MudText Typo="Typo.body2">Name: <strong>@response?.CustomerName</strong></MudText>
+            <MudText Typo="Typo.body2">Country: <strong>@response?.CustomerCountryId</strong></MudText>
+            <MudText Typo="Typo.body2">Address: <strong>@response?.CustomerAddress</strong></MudText>
+            <MudText Typo="Typo.body2">Phone: <strong>@response?.CustomerPhone</strong></MudText>
+            <MudText Typo="Typo.body2">Email: <strong>@response?.CustomerEmail</strong></MudText>
         </MudCardContent>
     </MudCard>
-
-    <br />
-
-    <MudExpansionPanels>
-        <MudExpansionPanel Text="DTE" Expanded="false">
-            <Dte01 Json="@response.Serialization" />
-        </MudExpansionPanel>
-    </MudExpansionPanels>
 
     <br />
 
@@ -57,14 +49,14 @@ else
             </CardHeaderActions>
         </MudCardHeader>
         <MudCardContent>
-            <MudText>Tipo y número: <strong>@response?.InvoiceTypeId</strong> - <strong>@response?.InvoiceNumber</strong></MudText>
-            <MudText>Fecha: <strong>@response?.InvoiceDate</strong></MudText>
-            <MudText>Total: <strong>@response?.InvoiceTotal.ToCurrency()</strong></MudText>
-            <MudText>Esquema: <strong>@response?.SchemaType</strong> - <strong>@response?.SchemaVersion</strong></MudText>
-            <MudText>Código de generación: <strong>@response?.GenerationCode</strong></MudText>
-            <MudText>Número de control: <strong>@response?.ControlNumber</strong></MudText>
-            <MudText>Fecha de procesamiento: <strong>@response?.ProcessingDateTime</strong></MudText>
-            <MudText>Sello de recepción: <strong>@response?.ReceiptStamp</strong></MudText>
+            <MudText Typo="Typo.body2">Tipo y número: <strong>@response?.InvoiceTypeId</strong> - <strong>@response?.InvoiceNumber</strong></MudText>
+            <MudText Typo="Typo.body2">Fecha: <strong>@response?.InvoiceDate</strong></MudText>
+            <MudText Typo="Typo.body2">Total: <strong>@response?.InvoiceTotal.ToCurrency()</strong></MudText>
+            <MudText Typo="Typo.body2">Esquema: <strong>@response?.SchemaType</strong> - <strong>@response?.SchemaVersion</strong></MudText>
+            <MudText Typo="Typo.body2">Código de generación: <strong>@response?.GenerationCode</strong></MudText>
+            <MudText Typo="Typo.body2">Número de control: <strong>@response?.ControlNumber</strong></MudText>
+            <MudText Typo="Typo.body2">Fecha de procesamiento: <strong>@response?.ProcessingDateTime</strong></MudText>
+            <MudText Typo="Typo.body2">Sello de recepción: <strong>@response?.ReceiptStamp</strong></MudText>
             @if (response?.Processed == true)
             {
                 <a href="@response?.ExternalUrl" target="_blank">
@@ -75,6 +67,14 @@ else
             }
         </MudCardContent>
     </MudCard>
+
+    <br />
+
+    <MudExpansionPanels>
+        <MudExpansionPanel Text="DTE" Expanded="false">
+            <Dte01 Json="@response.Serialization" />
+        </MudExpansionPanel>
+    </MudExpansionPanels>
 
     <br />
 

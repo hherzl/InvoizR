@@ -8,7 +8,6 @@ using InvoizR.SharedKernel;
 using Microsoft.Extensions.Options;
 
 var clientArgs = new ClientArgs(args);
-//var clientArgs = new ClientArgs("--mock", "--limit=1");
 
 if (clientArgs.ShowCatalog)
 {

@@ -14,16 +14,6 @@
     <MudExpansionPanel Icon="@Icons.Material.Filled.Filter" Title="Filter" Expanded="Loading">
         @if (ViewBag != null)
         {
-            <MudSelect T="ListItem<int>" Label="Page size" @bind-Value="SelectedPageSize">
-                <MudSelectItem T="ListItem<int>" Value="null"></MudSelectItem>
-                @foreach (var item in ViewBag.PageSizes)
-                {
-                    <MudSelectItem T="ListItem<int>" Value="@item">@item.Name</MudSelectItem>
-                }
-            </MudSelect>
-
-            <br />
-
             <MudSelect T="ListItem<short?>" Label="POS" @bind-Value="SelectedPos">
                 <MudSelectItem T="ListItem<short?>" Value="new()"></MudSelectItem>
                 @foreach (var item in ViewBag.BranchPos)
@@ -86,7 +76,11 @@
             </a>
         </MudTd>
     </RowTemplate>
+    <LoadingContent>
+        <MudText>Loading...</MudText>
+    </LoadingContent>
     <PagerContent>
+        <MudTablePager PageSizeOptions="new int[] { 10, 25, 50, 100 }" />
         <MudPagination SelectedChanged="PageChanged" Count="(int)Response?.PageCount" Class="pa-4" />
     </PagerContent>
 </MudTable>
