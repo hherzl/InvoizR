@@ -103,7 +103,7 @@ public static partial class MhCatalog
     /// <summary>
     /// CAT-016 Condición de la operación
     /// </summary>
-    public static class Cat016
+    public static partial class Cat016
     {
         public const double Contado = 1;
         public const double ACredito = 2;
@@ -113,7 +113,7 @@ public static partial class MhCatalog
     /// <summary>
     /// CAT-017 Forma de pago
     /// </summary>
-    public static class Cat017
+    public static partial class Cat017
     {
         public const string BilletesYMonedas = "01";
         public const string TarjetaDebito = "02";

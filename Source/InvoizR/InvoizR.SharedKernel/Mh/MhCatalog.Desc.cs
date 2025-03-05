@@ -23,4 +23,28 @@ public static partial class MhCatalog
                 _ => ""
             };
     }
+
+    public static partial class Cat016
+    {
+        public static string Desc(double value)
+            => value switch
+            {
+                Contado => "Contado",
+                ACredito => "A Crédito",
+                Otro => "Otro",
+                _ => ""
+            };
+    }
+
+    public static partial class Cat017
+    {
+        public static string Desc(string value)
+            => value switch
+            {
+                BilletesYMonedas => "Efetivo",
+                TarjetaDebito => "Tarjeta de débito",
+                TarjetaCredito => "Tarjeta de crédito",
+                _ => ""
+            };
+    }
 }

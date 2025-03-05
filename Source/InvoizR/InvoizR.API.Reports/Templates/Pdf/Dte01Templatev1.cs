@@ -191,6 +191,26 @@ public class DteTemplatev1
         output.AppendLine("   </tr>");
 
         output.AppendLine("   <tr>");
+        output.AppendLine($"    <td colspan='8'>Condición de la operación: {MhCatalog.Cat016.Desc(Model.Dte.Resumen.CondicionOperacion)}</td>");
+        output.AppendLine("   </tr>");
+
+        output.AppendLine("   <tr>");
+        output.AppendLine("    <td colspan='8'>&nbsp;</td>");
+        output.AppendLine("   </tr>");
+
+        output.AppendLine("   <tr>");
+        output.AppendLine($"    <td colspan='8'>{AsStrong("Pagos")}</td>");
+        output.AppendLine("   </tr>");
+
+        foreach (var item in Model.Dte.Resumen.Pagos)
+        {
+            output.AppendLine("   <tr>");
+            output.AppendLine($"    <td colspan='7'>{MhCatalog.Cat017.Desc(item.Codigo)}</td>");
+            output.AppendLine($"    <td class='lines-amount'>{AsAmount(item.MontoPago)}</td>");
+            output.AppendLine("   </tr>");
+        }
+
+        output.AppendLine("   <tr>");
         output.AppendLine("    <td colspan='8'>&nbsp;</td>");
         output.AppendLine("   </tr>");
 
