@@ -3,7 +3,7 @@ using InvoizR.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 
-namespace InvoizR.Application.Common.Persistence;
+namespace InvoizR.Application.Common.Contracts;
 
 public interface IInvoizRDbContext
 {

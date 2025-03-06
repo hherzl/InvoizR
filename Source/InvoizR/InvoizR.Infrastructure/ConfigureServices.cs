@@ -1,5 +1,4 @@
-﻿using InvoizR.Application.Common.FileExport;
-using InvoizR.Application.Common.Persistence;
+﻿using InvoizR.Application.Common.Contracts;
 using InvoizR.Clients;
 using InvoizR.Clients.Contracts;
 using InvoizR.Clients.ThirdParty;

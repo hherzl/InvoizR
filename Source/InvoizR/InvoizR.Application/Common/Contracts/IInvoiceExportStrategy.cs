@@ -1,6 +1,6 @@
 ﻿using InvoizR.Domain.Entities;
 
-namespace InvoizR.Application.Common.FileExport;
+namespace InvoizR.Application.Common.Contracts;
 
 public interface IInvoiceExportStrategy
 {

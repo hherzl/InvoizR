@@ -1,5 +1,5 @@
 ﻿using System.Drawing.Imaging;
-using InvoizR.Application.Common.FileExport;
+using InvoizR.Application.Common.Contracts;
 using QRCoder;
 
 namespace InvoizR.Infrastructure.Reports;

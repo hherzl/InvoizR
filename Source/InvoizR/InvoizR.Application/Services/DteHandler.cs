@@ -1,4 +1,4 @@
-﻿using InvoizR.Application.Common.Persistence;
+﻿using InvoizR.Application.Common.Contracts;
 using InvoizR.Application.Helpers;
 using InvoizR.Application.Services.Models;
 using InvoizR.Clients.ThirdParty.Contracts;

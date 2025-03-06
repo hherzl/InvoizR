@@ -1,7 +1,7 @@
 ﻿using DinkToPdf;
 using DinkToPdf.Contracts;
 using InvoizR.Application.Common;
-using InvoizR.Application.Common.Persistence;
+using InvoizR.Application.Common.Contracts;
 using InvoizR.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;

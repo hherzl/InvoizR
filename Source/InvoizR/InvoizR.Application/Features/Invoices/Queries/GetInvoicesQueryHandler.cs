@@ -1,5 +1,5 @@
 ﻿using InvoizR.Application.Common;
-using InvoizR.Application.Common.Persistence;
+using InvoizR.Application.Common.Contracts;
 using InvoizR.Application.Specifications;
 using InvoizR.Clients.DataContracts;
 using InvoizR.Clients.DataContracts.Common;

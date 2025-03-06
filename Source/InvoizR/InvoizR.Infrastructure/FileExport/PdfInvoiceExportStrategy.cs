@@ -1,6 +1,6 @@
 ﻿using DinkToPdf;
 using DinkToPdf.Contracts;
-using InvoizR.Application.Common.FileExport;
+using InvoizR.Application.Common.Contracts;
 using InvoizR.Application.Reports.Templates;
 using InvoizR.Domain.Entities;
 using InvoizR.Infrastructure.Reports;

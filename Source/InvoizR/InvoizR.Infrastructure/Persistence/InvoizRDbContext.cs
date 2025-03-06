@@ -1,5 +1,5 @@
 ﻿using System.Reflection;
-using InvoizR.Application.Common.Persistence;
+using InvoizR.Application.Common.Contracts;
 using InvoizR.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 

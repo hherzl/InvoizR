@@ -1,4 +1,4 @@
-﻿using InvoizR.Application.Common.FileExport;
+﻿using InvoizR.Application.Common.Contracts;
 using InvoizR.Domain.Entities;
 using InvoizR.SharedKernel.Mh;
 

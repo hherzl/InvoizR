@@ -1,4 +1,4 @@
-﻿using InvoizR.Application.Common.Persistence;
+﻿using InvoizR.Application.Common.Contracts;
 using InvoizR.Domain.Enums;
 using InvoizR.SharedKernel.Mh;
 

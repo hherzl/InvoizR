@@ -1,4 +1,4 @@
-﻿using InvoizR.Application.Common.Persistence;
+﻿using InvoizR.Application.Common.Contracts;
 using InvoizR.Clients.DataContracts;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
