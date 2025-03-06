@@ -1,11 +1,10 @@
-﻿using DinkToPdf;
-using InvoizR.API.Reports.Helpers;
-using InvoizR.API.Reports.Templates.Pdf;
-using InvoizR.API.Reports.Templates.Smtp;
+﻿using InvoizR.API.Reports.Templates.Smtp;
 using InvoizR.Application.Common;
 using InvoizR.Application.Helpers;
+using InvoizR.Application.Reports.Templates;
 using InvoizR.Clients.Contracts;
 using InvoizR.Domain.Enums;
+using InvoizR.Infrastructure.FileExport;
 using InvoizR.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -33,8 +32,6 @@ public class Dte01NotificationHostedService : BackgroundService
         var processingSettings = new ProcessingSettings();
         _configuration.Bind("ProcessingSettings", processingSettings);
 
-        var converter = new SynchronizedConverter(new PdfTools());
-
         var timer = new PeriodicTimer(TimeSpan.FromMinutes(1));
 
         while (await timer.WaitForNextTickAsync(stoppingToken))
@@ -61,36 +58,23 @@ public class Dte01NotificationHostedService : BackgroundService
 
                 var smtpClient = scope.ServiceProvider.GetRequiredService<ISmtpClient>();
 
+                var dte01TemplateFactory = scope.ServiceProvider.GetRequiredService<Dte01TemplateFactory>();
+
+                var jsonInvoiceExportStrategy = scope.ServiceProvider.GetRequiredService<JsonInvoiceExportStrategy>();
+                var pdfInvoiceExportStrategy = scope.ServiceProvider.GetRequiredService<PdfInvoiceExportStrategy>();
+
                 foreach (var item in invoices)
                 {
                     var invoice = await dbContext.GetInvoiceAsync(item.Id, true, true, stoppingToken);
-                    var model = Dte01TemplateFactory.Create(invoice);
 
-                    var jsonPath = processingSettings.GetDteJsonPath(item.ControlNumber);
-
-                    _logger.LogInformation($"Creating JSON file for invoice '{item.InvoiceTypeId}-{item.InvoiceNumber}', path: '{jsonPath}'...");
-
-                    await File.WriteAllTextAsync(jsonPath, invoice.Serialization, stoppingToken);
-
-                    var pdfPath = processingSettings.GetDtePdfPath(item.ControlNumber);
-                    var pdf = new HtmlToPdfDocument
-                    {
-                        GlobalSettings = DinkToPdfHelper.CreateDteGlobalSettings(pdfPath),
-                        Objects =
-                        {
-                            DinkToPdfHelper.CreateDteObjSettings(new DteTemplatev1(model).ToString())
-                        }
-                    };
-
-                    _logger.LogInformation($"Creating PDF file for invoice '{item.InvoiceTypeId}-{item.InvoiceNumber}', path: '{pdfPath}'....");
-
-                    converter.Convert(pdf);
+                    var jsonBytes = await jsonInvoiceExportStrategy.ExportAsync(invoice, processingSettings.GetDteJsonPath(item.ControlNumber), stoppingToken);
+                    var pdfBytes = await pdfInvoiceExportStrategy.ExportAsync(invoice, processingSettings.GetDtePdfPath(item.ControlNumber), stoppingToken);
 
                     var invoiceFiles = await dbContext.GetInvoiceFiles(item.Id).ToListAsync(stoppingToken);
                     if (invoiceFiles.Count == 0)
                     {
-                        dbContext.InvoiceFile.Add(await InvoiceFileHelper.CreateJsonAsync(invoice, jsonPath, stoppingToken));
-                        dbContext.InvoiceFile.Add(await InvoiceFileHelper.CreatePdfAsync(invoice, pdfPath, stoppingToken));
+                        dbContext.InvoiceFile.Add(InvoiceFileHelper.CreateJson(invoice, jsonBytes));
+                        dbContext.InvoiceFile.Add(InvoiceFileHelper.CreatePdf(invoice, pdfBytes));
                     }
 
                     await dbContext.SaveChangesAsync(stoppingToken);

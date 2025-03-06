@@ -1,6 +1,6 @@
 ﻿using InvoizR.SharedKernel.Mh;
 
-namespace InvoizR.API.Reports.Templates.Pdf;
+namespace InvoizR.Application.Reports.Templates;
 
 public record Dte01TemplateModel
 {

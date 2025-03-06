@@ -1,12 +1,19 @@
-﻿using InvoizR.API.Reports.Helpers;
+﻿using InvoizR.Application.Common.FileExport;
 using InvoizR.Domain.Entities;
 using InvoizR.SharedKernel.Mh;
 
-namespace InvoizR.API.Reports.Templates.Pdf;
+namespace InvoizR.Application.Reports.Templates;
 
-public static class Dte01TemplateFactory
+public class Dte01TemplateFactory
 {
-    public static Dte01TemplateModel Create(Invoice invoice)
+    private readonly IQrCodeGenerator _qrCodeGenerator;
+
+    public Dte01TemplateFactory(IQrCodeGenerator qrCodeGenerator)
+    {
+        _qrCodeGenerator = qrCodeGenerator;
+    }
+
+    public Dte01TemplateModel Create(Invoice invoice)
     {
         var branch = invoice.Pos.Branch;
         var company = branch.Company;
@@ -14,7 +21,7 @@ public static class Dte01TemplateFactory
 
         var model = new Dte01TemplateModel
         {
-            Qr = Convert.ToBase64String(QrHelper.GetBytes(invoice.ExternalUrl ?? "mg.gob.sv/url")),
+            Qr = Convert.ToBase64String(_qrCodeGenerator.GetBytes(invoice.ExternalUrl ?? "mg.gob.sv/url")),
             Emitter = new()
             {
                 BusinessName = company.BusinessName,

@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using InvoizR.Application.Common;
+using InvoizR.Application.Reports.Templates;
 using InvoizR.Application.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,6 +22,8 @@ public static class ConfigureServices
 
         services.AddScoped<DteHandler>();
         services.AddScoped<InvoiceProcessingService>();
+
+        services.AddScoped<Dte01TemplateFactory>();
 
         return services;
     }

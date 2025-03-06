@@ -1,11 +1,12 @@
 ﻿using System.Drawing.Imaging;
+using InvoizR.Application.Common.FileExport;
 using QRCoder;
 
-namespace InvoizR.API.Reports.Helpers;
+namespace InvoizR.Infrastructure.Reports;
 
-public static class QrHelper
+public class QrCodeGeneratorService : IQrCodeGenerator
 {
-    public static byte[] GetBytes(string text)
+    public byte[] GetBytes(string text)
     {
         var qrGenerator = new QRCodeGenerator();
         var qrCodeData = qrGenerator.CreateQrCode(text, QRCodeGenerator.ECCLevel.Q);

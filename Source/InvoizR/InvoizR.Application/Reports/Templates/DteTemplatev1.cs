@@ -2,7 +2,7 @@
 using InvoizR.Application.Helpers;
 using InvoizR.SharedKernel.Mh;
 
-namespace InvoizR.API.Reports.Templates.Pdf;
+namespace InvoizR.Application.Reports.Templates;
 
 public class DteTemplatev1
 {

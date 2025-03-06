@@ -1,11 +1,14 @@
-﻿using InvoizR.Application.Common.Persistence;
+﻿using InvoizR.Application.Common.FileExport;
+using InvoizR.Application.Common.Persistence;
 using InvoizR.Clients;
 using InvoizR.Clients.Contracts;
 using InvoizR.Clients.ThirdParty;
 using InvoizR.Clients.ThirdParty.Contracts;
 using InvoizR.Infrastructure.Clients;
 using InvoizR.Infrastructure.Clients.ThirdParty;
+using InvoizR.Infrastructure.FileExport;
 using InvoizR.Infrastructure.Persistence;
+using InvoizR.Infrastructure.Reports;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,7 +20,6 @@ public static class ConfigureServices
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<InvoizRDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("InvoizR")));
-
         services.AddScoped<IInvoizRDbContext, InvoizRDbContext>();
 
         services.Configure<SeguridadClientSettings>(options => options.Endpoint = configuration["Clients:Seguridad:Endpoint"]);
@@ -39,6 +41,11 @@ public static class ConfigureServices
             options.Password = configuration["Clients:Smtp:Password"];
         });
         services.AddScoped<ISmtpClient, SatanCitySmtpClient>();
+
+        services.AddScoped<IQrCodeGenerator, QrCodeGeneratorService>();
+
+        services.AddScoped<JsonInvoiceExportStrategy>();
+        services.AddScoped<PdfInvoiceExportStrategy>();
 
         return services;
     }

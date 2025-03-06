@@ -1,11 +1,12 @@
 ﻿using DinkToPdf;
 
-namespace InvoizR.API.Reports.Helpers;
+namespace InvoizR.Infrastructure.Reports;
 
-public static class DinkToPdfHelper
+public class DinkToPdfHelper
 {
-    public static GlobalSettings CreateDteGlobalSettings(string fileName, string documentTitle = "Documento Tributario Electrónico")
-        => new()
+    public static GlobalSettings CreateDteGlobalSettings(string fileName = "", string documentTitle = "Documento Tributario Electrónico")
+    {
+        var obj = new GlobalSettings
         {
             ColorMode = ColorMode.Color,
             Orientation = Orientation.Portrait,
@@ -16,9 +17,14 @@ public static class DinkToPdfHelper
                 Right = 5,
                 Left = 5
             },
-            DocumentTitle = documentTitle,
-            Out = fileName
+            DocumentTitle = documentTitle
         };
+
+        if (!string.IsNullOrEmpty(fileName))
+            obj.Out = fileName;
+
+        return obj;
+    }
 
     public static ObjectSettings CreateDteObjSettings(string htmlContent)
        => new()
@@ -39,7 +45,7 @@ public static class DinkToPdfHelper
            },
            FooterSettings =
            {
-                FontName = "Arial",
+               FontName = "Arial",
                 FontSize = 10,
                 Line = true,
                 Center = "Capsule Corp."

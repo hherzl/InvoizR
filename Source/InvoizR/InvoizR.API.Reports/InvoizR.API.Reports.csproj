@@ -22,9 +22,6 @@
     <PackageReference Include="Serilog.AspNetCore" Version="8.0.1" />
     <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
-    <PackageReference Include="DinkToPdf" Version="1.0.8" />
-    <PackageReference Include="DinkToPdfCopyDependencies" Version="1.0.8" />
-    <PackageReference Include="QRCoder" Version="1.4.2" />
   </ItemGroup>
   
   <ItemGroup>

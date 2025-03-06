@@ -1,4 +1,4 @@
-﻿namespace InvoizR.API.Reports.Helpers;
+﻿namespace InvoizR.Infrastructure.Reports;
 
 public static class ReportsPathHelper
 {
