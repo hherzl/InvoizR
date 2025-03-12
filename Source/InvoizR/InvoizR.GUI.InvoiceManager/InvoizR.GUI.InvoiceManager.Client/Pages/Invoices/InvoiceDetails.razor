@@ -82,16 +82,39 @@ else
 
     <br />
 
-    <MudTable Items="response?.ProcessingStatusLogs">
-        <HeaderContent>
-            <MudTh>Created At</MudTh>
-            <MudTh>Processing status</MudTh>
-        </HeaderContent>
-        <RowTemplate>
-            <MudTd DataLabel="Created at">@context.CreatedAt</MudTd>
-            <MudTd DataLabel="Sync status">@context.ProcessingStatus</MudTd>
-        </RowTemplate>
-    </MudTable>
+    <MudTimeline>
+        @foreach (var processingStatus in response.ProcessingStatusLogs)
+        {
+                @if (processingStatus.ProcessingStatusId >= 3000)
+                {
+                    <MudTimelineItem Color="Color.Success">
+                        <MudText Color="Color.Success" Typo="Typo.body2">@processingStatus.ProcessingStatus</MudText>
+                        <MudText Typo="Typo.body2">@processingStatus.CreatedAt</MudText>
+                    </MudTimelineItem>
+                }
+                else if (processingStatus.ProcessingStatusId == 2000)
+                {
+                    <MudTimelineItem Color="Color.Error">
+                        <MudText Color="Color.Error" Typo="Typo.body2">@processingStatus.ProcessingStatus</MudText>
+                        <MudText Typo="Typo.body2">@processingStatus.CreatedAt</MudText>
+                    </MudTimelineItem>
+                }
+                else if (processingStatus.ProcessingStatusId == 1000)
+                {
+                    <MudTimelineItem Color="Color.Info">
+                        <MudText Color="Color.Info" Typo="Typo.body2">@processingStatus.ProcessingStatus</MudText>
+                        <MudText Typo="Typo.body2">@processingStatus.CreatedAt</MudText>
+                    </MudTimelineItem>
+                }
+                else
+                {
+                    <MudTimelineItem Color="Color.Default">
+                        <MudText Color="Color.Default" Typo="Typo.body2">@processingStatus.ProcessingStatus</MudText>
+                        <MudText Typo="Typo.body2">@processingStatus.CreatedAt</MudText>
+                    </MudTimelineItem>
+                }
+        }
+    </MudTimeline>
 
     <br />
 
