@@ -6,7 +6,7 @@ using MediatR;
 
 namespace InvoizR.Clients.DataContracts;
 
-public record CreateDte01InvoiceCommand : IRequest<CreatedResponse<long?>>, IValidatableObject
+public record CreateDte01InvoiceCommand : Request, IRequest<CreatedResponse<long?>>, IValidatableObject
 {
     public CreateDte01InvoiceCommand()
     {
@@ -15,7 +15,7 @@ public record CreateDte01InvoiceCommand : IRequest<CreatedResponse<long?>>, IVal
 
     public short? PosId { get; set; }
 
-    public CustomerNode Customer { get; set; }
+    public CustomerNodeModel Customer { get; set; }
 
     public short? InvoiceTypeId { get; set; }
     public long? InvoiceNumber { get; set; }
@@ -26,7 +26,7 @@ public record CreateDte01InvoiceCommand : IRequest<CreatedResponse<long?>>, IVal
     public FeFcv1 Dte { get; set; }
 
     public string ToJson()
-        => JsonSerializer.Serialize(this, new JsonSerializerOptions() { WriteIndented = true });
+        => JsonSerializer.Serialize(this, DefaultJsonSerializerOpts);
 
     // https://www.asamblea.gob.sv/node/13115
     public const decimal MaxAmountForAnonymousCustomers = 25000;

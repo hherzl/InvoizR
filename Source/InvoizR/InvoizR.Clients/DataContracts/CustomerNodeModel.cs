@@ -1,6 +1,6 @@
 ﻿namespace InvoizR.Clients.DataContracts;
 
-public record CustomerNode
+public record CustomerNodeModel
 {
     public string Id { get; set; }
     public string DocumentTypeId { get; set; }

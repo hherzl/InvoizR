@@ -5,14 +5,6 @@ using InvoizR.SharedKernel.Mh;
 
 namespace InvoizR.Client.CapsuleCorp.Helpers;
 
-public record CreateFeFcv1Request
-{
-    public CustomerNode Customer { get; set; }
-    public DateTime? InvoiceDate { get; set; }
-
-    public IEnumerable<InvoiceLine> InvoiceLines { get; set; }
-}
-
 public static class FeFcv1Helper
 {
     public static FeFcv1 Create(CreateDte01InvoiceCommand request, List<InvoiceLine> lines)
