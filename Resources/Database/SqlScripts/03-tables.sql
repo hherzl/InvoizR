@@ -214,6 +214,7 @@ CREATE TABLE [dbo].[Invoice]
 	[GenerationCode] NVARCHAR(50) NULL,
 	[ControlNumber] NVARCHAR(50) NULL,
 	[Serialization] NVARCHAR(MAX) NULL,
+	[ProcessingTypeId] SMALLINT NOT NULL,
 	[ProcessingStatusId] SMALLINT NOT NULL,
 	[RetryIn] INT NULL,
 	[SyncAttempts] INT NULL,

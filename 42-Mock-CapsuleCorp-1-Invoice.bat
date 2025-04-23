@@ -1,5 +1,5 @@
 title Capsule Corp Mock
 set source=%cd%\Source\InvoizR
 cd %source%\InvoizR.Client.CapsuleCorp
-dotnet run --mock --limit=1
+dotnet run --mock --processing-type=rt --limit=1
 pause

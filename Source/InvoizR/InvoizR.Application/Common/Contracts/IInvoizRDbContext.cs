@@ -36,7 +36,7 @@ public interface IInvoizRDbContext
 
     IQueryable<BranchNotification> GetBranchNotificationsBy(short? branchId = null, short? invoiceTypeId = null);
 
-    IQueryable<InvoiceItemModel> GetInvoicesForProcessing(short? typeId = null, short?[] processingStatuses = null);
+    IQueryable<InvoiceItemModel> GetInvoicesForProcessing(short? typeId = null, short? processingTypeId = null, short?[] processingStatuses = null);
     Task<Invoice> GetInvoiceAsync(long? id, bool tracking = false, bool includes = false, CancellationToken ct = default);
 
     IQueryable<InvoiceProcessingStatusLogItemModel> GetInvoiceProcessingStatusLogs(long? invoiceId);

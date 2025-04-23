@@ -82,11 +82,11 @@ public partial class InvoizRDbContext
     public IQueryable<BranchNotification> GetBranchNotificationsBy(short? branchId = null, short? invoiceTypeId = null)
         => BranchNotification.Where(item => item.BranchId == branchId && item.InvoiceTypeId == invoiceTypeId);
 
-    public IQueryable<InvoiceItemModel> GetInvoicesForProcessing(short? typeId = null, short?[] processingStatuses = null)
+    public IQueryable<InvoiceItemModel> GetInvoicesForProcessing(short? typeId = null, short? processingTypeId = null, short?[] processingStatuses = null)
     {
         var query =
             from inv in Invoice
-            where inv.InvoiceTypeId == typeId && processingStatuses.Contains(inv.ProcessingStatusId)
+            where inv.InvoiceTypeId == typeId && inv.ProcessingTypeId == processingTypeId && processingStatuses.Contains(inv.ProcessingStatusId)
             select new InvoiceItemModel
             {
                 Id = inv.Id,

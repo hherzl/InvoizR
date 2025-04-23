@@ -1,7 +1,7 @@
 ﻿using System.Net.Mail;
 using System.Text;
 
-namespace InvoizR.API.Reports.Templates.Smtp;
+namespace InvoizR.Application.Reports.Templates;
 
 public class Dte01NotificationTemplatev1
 {

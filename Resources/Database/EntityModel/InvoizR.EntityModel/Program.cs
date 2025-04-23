@@ -265,6 +265,7 @@ var invoice = db
         GenerationCode = "",
         ControlNumber = "",
         Serialization = "",
+        ProcessingTypeId = (short)0,
         ProcessingStatusId = (short)0,
         RetryIn = 0,
         SyncAttempts = 0,

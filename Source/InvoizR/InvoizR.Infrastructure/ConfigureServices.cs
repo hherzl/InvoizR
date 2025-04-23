@@ -43,6 +43,9 @@ public static class ConfigureServices
 
         services.AddScoped<IQrCodeGenerator, QrCodeGeneratorService>();
 
+        services.AddScoped<IInvoiceExportStrategy, JsonInvoiceExportStrategy>();
+        services.AddScoped<IInvoiceExportStrategy, PdfInvoiceExportStrategy>();
+
         services.AddScoped<JsonInvoiceExportStrategy>();
         services.AddScoped<PdfInvoiceExportStrategy>();
 

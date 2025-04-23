@@ -9,18 +9,18 @@ using Microsoft.Extensions.Logging;
 
 namespace InvoizR.Application.Features.Invoices.Commands;
 
-public class CreateDte01InvoiceCommandHandler : IRequestHandler<CreateDte01InvoiceCommand, CreatedResponse<long?>>
+public class CreateDte01InvoiceOWCommandHandler : IRequestHandler<CreateDte01InvoiceOWCommand, CreatedResponse<long?>>
 {
     private readonly ILogger _logger;
     private readonly IInvoizRDbContext _dbContext;
 
-    public CreateDte01InvoiceCommandHandler(ILogger<CreateDte01InvoiceCommandHandler> logger, IInvoizRDbContext dbContext)
+    public CreateDte01InvoiceOWCommandHandler(ILogger<CreateDte01InvoiceOWCommandHandler> logger, IInvoizRDbContext dbContext)
     {
         _logger = logger;
         _dbContext = dbContext;
     }
 
-    public async Task<CreatedResponse<long?>> Handle(CreateDte01InvoiceCommand request, CancellationToken cancellationToken)
+    public async Task<CreatedResponse<long?>> Handle(CreateDte01InvoiceOWCommand request, CancellationToken cancellationToken)
     {
         _ = await _dbContext.GetCurrentInvoiceTypeAsync(request.InvoiceTypeId, ct: cancellationToken) ?? throw new InvalidCurrentInvoiceTypeException();
 
@@ -44,16 +44,14 @@ public class CreateDte01InvoiceCommandHandler : IRequestHandler<CreateDte01Invoi
                 CustomerPhone = request.Customer.Phone,
                 CustomerEmail = request.Customer.Email,
                 CustomerLastUpdated = DateTime.Now,
-                CreatedAt = DateTime.Now,
                 InvoiceTypeId = request.InvoiceTypeId,
                 InvoiceNumber = request.InvoiceNumber,
                 InvoiceDate = request.InvoiceDate,
                 InvoiceTotal = request.InvoiceTotal,
                 Lines = request.Lines,
                 Serialization = request.Dte.ToJson(),
-                ProcessingStatusId = (short)InvoiceProcessingStatus.Created,
-                RetryIn = 0,
-                SyncAttempts = 0
+                ProcessingTypeId = (short)InvoiceProcessingType.OneWay,
+                ProcessingStatusId = (short)InvoiceProcessingStatus.Created
             };
 
             _dbContext.Invoice.Add(invoice);

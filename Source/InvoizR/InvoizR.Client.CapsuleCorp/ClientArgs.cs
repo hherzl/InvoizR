@@ -17,11 +17,14 @@ public record ClientArgs
             if (item == "--mock")
                 Mock = true;
 
-            if (item.Contains("--limit"))
+            if (item.StartsWith("--processing-type"))
+                ProcessingType = args[1].Replace("--processing-type=", "");
+
+            if (item.StartsWith("--limit"))
             {
                 try
                 {
-                    Limit = Convert.ToInt32(args[1].Replace("--limit=", ""));
+                    Limit = Convert.ToInt32(item.Replace("--limit=", ""));
                 }
                 catch
                 {
@@ -34,5 +37,9 @@ public record ClientArgs
     public bool ShowCatalog { get; }
     public bool Seed { get; }
     public bool Mock { get; }
+    public string ProcessingType { get; set; }
     public int Limit { get; }
+
+    public bool IsRt
+        => string.Compare(ProcessingType, "RT", true) == 0;
 }
