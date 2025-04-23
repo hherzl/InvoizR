@@ -1,4 +1,5 @@
 ﻿using InvoizR.Domain.Entities;
+using InvoizR.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -161,6 +162,12 @@ internal class InvoiceConfiguration : IEntityTypeConfiguration<Invoice>
         builder
             .Property(p => p.Serialization)
             .HasColumnType("nvarchar(max)")
+            ;
+
+        builder
+            .Property(p => p.ProcessingTypeId)
+            .HasColumnType("smallint")
+            .IsRequired()
             ;
 
         builder

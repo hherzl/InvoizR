@@ -7,6 +7,9 @@ public partial class Invoice : Entity
 {
     public Invoice()
     {
+        CreatedAt = DateTime.Now;
+        RetryIn = 0;
+        SyncAttempts = 0;
     }
 
     public Invoice(long? id)
@@ -39,6 +42,7 @@ public partial class Invoice : Entity
     public string GenerationCode { get; set; }
     public string ControlNumber { get; set; }
     public string Serialization { get; set; }
+    public short? ProcessingTypeId { get; set; }
     public short? ProcessingStatusId { get; set; }
     public int? RetryIn { get; set; }
     public int? SyncAttempts { get; set; }

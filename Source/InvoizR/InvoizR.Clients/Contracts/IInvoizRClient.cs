@@ -26,5 +26,6 @@ public interface IInvoizRClient
     Task<InvoiceDetailsModel> GetInvoiceAsync(long? id);
     Task<Response> ChangeProcessingStatusAsync(ChangeProcessingStatusCommand request);
 
-    Task<CreatedResponse<long?>> CreateDte01InvoiceAsync(CreateDte01InvoiceCommand request);
+    Task<CreatedResponse<long?>> CreateDte01InvoiceOWAsync(CreateDte01InvoiceOWCommand request);
+    Task<CreatedResponse<long?>> CreateDte01InvoiceRTAsync(CreateDte01InvoiceRTCommand request);
 }

@@ -12,4 +12,7 @@ public static class InvoiceFileHelper
 
     public static InvoiceFile CreatePdf(Invoice invoice, byte[] data)
         => InvoiceFile.Create(invoice, data, ApplicationPdf, "PDF");
+
+    public static InvoiceFile Create(Invoice invoice, byte[] data, string mimeType, string fileType)
+        => InvoiceFile.Create(invoice, data, mimeType, fileType.ToUpper());
 }

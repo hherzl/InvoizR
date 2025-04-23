@@ -1,6 +1,6 @@
 ﻿using InvoizR.Domain.Entities;
 
-namespace InvoizR.API.Reports.Templates.Smtp;
+namespace InvoizR.Application.Reports.Templates;
 
 public record Dte01NotificationTemplateModel
 {

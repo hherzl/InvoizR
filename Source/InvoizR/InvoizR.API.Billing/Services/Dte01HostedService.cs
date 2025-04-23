@@ -53,7 +53,8 @@ public class Dte01HostedService : BackgroundService
             {
                 var filters = new
                 {
-                    InvoiceTypeId = (short)1,
+                    TypeId = (short)1,
+                    ProcessingTypeId = (short)InvoiceProcessingType.OneWay,
                     ProcessingStatuses = new short?[]
                     {
                         (short)InvoiceProcessingStatus.Created,
@@ -62,10 +63,10 @@ public class Dte01HostedService : BackgroundService
                     }
                 };
 
-                var invoices = await dbContext.GetInvoicesForProcessing(filters.InvoiceTypeId, filters.ProcessingStatuses).ToListAsync(stoppingToken);
+                var invoices = await dbContext.GetInvoicesForProcessing(filters.TypeId, filters.ProcessingTypeId, filters.ProcessingStatuses).ToListAsync(stoppingToken);
                 if (invoices.Count == 0)
                 {
-                    _logger.LogInformation($"There are no invoices to sync...");
+                    _logger.LogInformation($"There are no invoices (OW) to sync...");
                     continue;
                 }
 
