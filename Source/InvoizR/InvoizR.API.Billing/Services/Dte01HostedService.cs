@@ -1,5 +1,6 @@
 ﻿using InvoizR.Application.Common;
 using InvoizR.Application.Services;
+using InvoizR.Application.Services.Models;
 using InvoizR.Clients.ThirdParty.Contracts;
 using InvoizR.Clients.ThirdParty.DataContracts;
 using InvoizR.Domain.Enums;
@@ -97,7 +98,8 @@ public class Dte01HostedService : BackgroundService
                     {
                         _logger.LogInformation($"Processing '{invoice.InvoiceNumber}' invoice, changing status from '{InvoiceProcessingStatus.Requested}'...");
 
-                        var result = await dteHandler.HandleAsync(new(mhSettings, processingSettings, authResponse.Body.Token, invoice.Id), dbContext, stoppingToken);
+                        var request = CreateDte01Request.Create(mhSettings, processingSettings, authResponse.Body.Token, invoice.Id, invoice.Serialization);
+                        var result = await dteHandler.HandleAsync(request, dbContext, stoppingToken);
                         if (result)
                         {
                             _logger.LogInformation($"Broadcasting '{invoice.InvoiceNumber}' invoice...");
