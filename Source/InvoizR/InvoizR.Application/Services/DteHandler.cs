@@ -1,6 +1,5 @@
 ﻿using InvoizR.Application.Common.Contracts;
 using InvoizR.Application.Helpers;
-using InvoizR.Application.Services.Models;
 using InvoizR.Clients.ThirdParty.Contracts;
 using InvoizR.Clients.ThirdParty.DataContracts;
 using InvoizR.Domain.Entities;
@@ -28,20 +27,14 @@ public class DteHandler
     string GetExternalUrl(string env, string genCode, DateTime? invDate)
         => _externalUrl.Replace("env", env).Replace("genCode", genCode).Replace("invDate", invDate?.ToString("yyyy-MM-dd"));
 
-    public async Task<bool> HandleAsync(CreateDte01Request request, IInvoizRDbContext dbContext, CancellationToken cancellationToken = default)
+    public async Task<bool> HandleAsync<TDte>(ICreateDteRequest<TDte> request, IInvoizRDbContext dbContext, CancellationToken cancellationToken = default) where TDte : Dte
     {
         var inv = await dbContext.GetInvoiceAsync(request.InvoiceId, true, true, cancellationToken);
 
         if (!Directory.Exists(request.ProcessingSettings.GetLogsPath(inv.ControlNumber)))
             Directory.CreateDirectory(request.ProcessingSettings.GetLogsPath(inv.ControlNumber));
 
-        var firmarDocumentoReq = new FirmarDocumentoRequest<FeFcv1>
-        {
-            Nit = request.MhSettings.User,
-            Activo = true,
-            PasswordPri = request.MhSettings.PrivateKey,
-            DteJson = request.Dte
-        };
+        var firmarDocumentoReq = new FirmarDocumentoRequest<TDte>(request.MhSettings.User, true, request.MhSettings.PrivateKey, request.Dte);
 
         await File.WriteAllTextAsync(
             request.ProcessingSettings.GetFirmaRequestJsonPath(inv.ControlNumber), firmarDocumentoReq.ToJson(), cancellationToken
@@ -58,7 +51,7 @@ public class DteHandler
         );
 
         var recepcionReq = new RecepcionDteRequest(
-            request.MhSettings.Environment, inv.SchemaVersion, inv.SchemaType, inv.GenerationCode, firmarDocumentoRes.ToJson()
+            request.MhSettings.Environment, inv.SchemaVersion, inv.SchemaType, inv.GenerationCode, firmarDocumentoRes.Body
         );
 
         await File.WriteAllTextAsync(

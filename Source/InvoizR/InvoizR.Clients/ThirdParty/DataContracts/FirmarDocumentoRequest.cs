@@ -6,6 +6,14 @@ namespace InvoizR.Clients.ThirdParty.DataContracts;
 
 public class FirmarDocumentoRequest<TDte> : BaseModel where TDte : Dte
 {
+    public FirmarDocumentoRequest(string nit, bool activo, string passwordPri, TDte dteJson)
+    {
+        Nit = nit;
+        Activo = activo;
+        PasswordPri = passwordPri;
+        DteJson = dteJson;
+    }
+
     [JsonPropertyName("nit")]
     public string Nit { get; set; }
 

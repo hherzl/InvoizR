@@ -22,6 +22,9 @@ public static class DtePathHelper
     public static string GetRecepcionResponseJsonPath(this ProcessingSettings settings, string controlNumber)
         => Path.Combine(settings.OutputPath, settings.LogsPath, controlNumber, $"{controlNumber}.recepcion.response.json");
 
+    public static string GetDtePath(this ProcessingSettings settings, string controlNumber, string extension)
+        => Path.Combine(settings.OutputPath, settings.DtePath, $"{controlNumber}.{extension}");
+
     public static string GetDteJsonPath(this ProcessingSettings settings, string controlNumber)
         => Path.Combine(settings.OutputPath, settings.DtePath, $"{controlNumber}.json");
 

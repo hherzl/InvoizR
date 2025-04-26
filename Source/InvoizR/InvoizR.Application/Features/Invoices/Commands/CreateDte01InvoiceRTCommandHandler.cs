@@ -3,6 +3,7 @@ using InvoizR.Application.Common.Contracts;
 using InvoizR.Application.Helpers;
 using InvoizR.Application.Reports.Templates;
 using InvoizR.Application.Services;
+using InvoizR.Application.Services.Models;
 using InvoizR.Clients.DataContracts;
 using InvoizR.Clients.DataContracts.Common;
 using InvoizR.Clients.ThirdParty.Contracts;
@@ -112,22 +113,19 @@ public class CreateDte01InvoiceRTCommandHandler : IRequestHandler<CreateDte01Inv
 
             var authResponse = await _seguridadClient.AuthAsync(authRequest);
 
-            await _dteHandler.HandleAsync(new(mhSettings, processingSettings, authResponse.Body.Token, invoice.Id), _dbContext, cancellationToken);
+            var createDteRequest = CreateDte01Request.Create(mhSettings, processingSettings, authResponse.Body.Token, invoice.Id, invoice.Serialization);
+            var flag = await _dteHandler.HandleAsync(createDteRequest, _dbContext, cancellationToken);
+            if (!flag)
+                return new(invoice.Id);
 
             foreach (var item in _invoiceExportStrategies)
             {
                 _logger.LogInformation($"Exporting '{invoice.InvoiceTypeId}-{invoice.InvoiceNumber}' invoice as '{item.FileExtension}'...");
-
-                byte[] bytes = item.FileExtension == "json" ?
-                    await item.ExportAsync(invoice, processingSettings.GetDteJsonPath(invoice.ControlNumber), cancellationToken)
-                    : await item.ExportAsync(invoice, processingSettings.GetDtePdfPath(invoice.ControlNumber), cancellationToken);
-
-                _dbContext.InvoiceFile.Add(InvoiceFileHelper.Create(invoice, bytes, item.ContentType, item.FileExtension));
+                var bytes = await item.ExportAsync(invoice, processingSettings.GetDtePath(invoice.ControlNumber, item.FileExtension), cancellationToken);
 
                 _logger.LogInformation($" Adding '{item.FileExtension}' as bytes...");
+                _dbContext.InvoiceFile.Add(InvoiceFileHelper.Create(invoice, bytes, item.ContentType, item.FileExtension));
             }
-
-
 
             var invoiceType = await _dbContext.GetInvoiceTypeAsync(invoice.InvoiceTypeId, ct: cancellationToken);
             var notificationTemplate = new Dte01NotificationTemplatev1(new(invoice.Pos.Branch, invoiceType, invoice));
@@ -164,8 +162,6 @@ public class CreateDte01InvoiceRTCommandHandler : IRequestHandler<CreateDte01Inv
             _dbContext.InvoiceProcessingStatusLog.Add(new(invoice.Id, invoice.ProcessingStatusId));
 
             await _dbContext.SaveChangesAsync(cancellationToken);
-
-
 
             return new(invoice.Id);
         }
