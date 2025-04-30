@@ -12,6 +12,8 @@ try
 {
     var builder = WebApplication.CreateBuilder(args);
 
+    builder.Services.AddProblemDetails();
+
     builder.Configuration.Bind("ApiSettings", apiSettings);
 
     Log.Logger = new LoggerConfiguration()
@@ -47,6 +49,19 @@ try
     });
 
     var app = builder.Build();
+
+    app.UseExceptionHandler(exceptionHandlerApp =>
+    {
+        exceptionHandlerApp.Run(async httpContext =>
+        {
+            var pds = httpContext.RequestServices.GetService<IProblemDetailsService>();
+            if (pds == null || !await pds.TryWriteAsync(new() { HttpContext = httpContext }))
+            {
+                // Fallback behavior
+                await httpContext.Response.WriteAsync("Fallback: An error occurred.");
+            }
+        });
+    });
 
     app.UseResponseCompression();
 
