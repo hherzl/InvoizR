@@ -1,6 +1,6 @@
 ﻿using InvoizR.Application.Helpers;
 using InvoizR.Domain.Entities;
-using InvoizR.SharedKernel.Mh;
+using InvoizR.SharedKernel.Mh.FeFc;
 
 namespace InvoizR.API.Billing.Services;
 

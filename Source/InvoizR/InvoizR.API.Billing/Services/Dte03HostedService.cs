@@ -5,13 +5,13 @@ using InvoizR.Clients.ThirdParty.Contracts;
 using InvoizR.Clients.ThirdParty.DataContracts;
 using InvoizR.Domain.Enums;
 using InvoizR.Infrastructure.Persistence;
-using InvoizR.SharedKernel.Mh.FeFc;
+using InvoizR.SharedKernel.Mh.FeCcf;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 namespace InvoizR.API.Billing.Services;
 
-public class Dte01HostedService : BackgroundService
+public class Dte03HostedService : BackgroundService
 {
     private readonly ILogger _logger;
     private readonly IConfiguration _configuration;
@@ -19,9 +19,9 @@ public class Dte01HostedService : BackgroundService
     private readonly ISeguridadClient _seguridadClient;
     private readonly IHubContext<BillingHub> _hubContext;
 
-    public Dte01HostedService
+    public Dte03HostedService
     (
-        ILogger<Dte01HostedService> logger,
+        ILogger<Dte03HostedService> logger,
         IConfiguration configuration,
         IServiceProvider serviceProvider,
         ISeguridadClient seguridadClient,
@@ -49,22 +49,22 @@ public class Dte01HostedService : BackgroundService
 
         var timer = new PeriodicTimer(TimeSpan.FromMinutes(1));
 
+        var filters = new
+        {
+            FeCcfv3.TypeId,
+            ProcessingTypeId = (short)InvoiceProcessingType.OneWay,
+            ProcessingStatuses = new short?[]
+            {
+                (short)InvoiceProcessingStatus.Created,
+                (short)InvoiceProcessingStatus.Initialized,
+                (short)InvoiceProcessingStatus.Requested
+            }
+        };
+
         while (await timer.WaitForNextTickAsync(stoppingToken))
         {
             try
             {
-                var filters = new
-                {
-                    FeFcv1.TypeId,
-                    ProcessingTypeId = (short)InvoiceProcessingType.OneWay,
-                    ProcessingStatuses = new short?[]
-                    {
-                        (short)InvoiceProcessingStatus.Created,
-                        (short)InvoiceProcessingStatus.Initialized,
-                        (short)InvoiceProcessingStatus.Requested
-                    }
-                };
-
                 var invoices = await dbContext.GetInvoicesForProcessing(filters.TypeId, filters.ProcessingTypeId, filters.ProcessingStatuses).ToListAsync(stoppingToken);
                 if (invoices.Count == 0)
                 {
@@ -99,7 +99,7 @@ public class Dte01HostedService : BackgroundService
                     {
                         _logger.LogInformation($"Processing '{invoice.InvoiceNumber}' invoice, changing status from '{InvoiceProcessingStatus.Requested}'...");
 
-                        var request = CreateDte01Request.Create(mhSettings, processingSettings, authResponse.Body.Token, invoice.Id, invoice.Serialization);
+                        var request = CreateDte03Request.Create(mhSettings, processingSettings, authResponse.Body.Token, invoice.Id, invoice.Serialization);
                         var result = await dteHandler.HandleAsync(request, dbContext, stoppingToken);
                         if (result)
                         {
@@ -111,7 +111,7 @@ public class Dte01HostedService : BackgroundService
             }
             catch (Exception ex)
             {
-                _logger.LogCritical(ex, $"There was on error processing DTE-01");
+                _logger.LogCritical(ex, $"There was on error processing DTE-03");
             }
         }
     }

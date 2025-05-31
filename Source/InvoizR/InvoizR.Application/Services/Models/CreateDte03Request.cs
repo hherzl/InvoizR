@@ -1,16 +1,16 @@
 ﻿using InvoizR.Application.Common;
 using InvoizR.Application.Common.Contracts;
-using InvoizR.SharedKernel.Mh.FeFc;
+using InvoizR.SharedKernel.Mh.FeCcf;
 
 namespace InvoizR.Application.Services.Models;
 
-public record CreateDte01Request : ICreateDteRequest<FeFcv1>
+public class CreateDte03Request : ICreateDteRequest<FeCcfv3>
 {
-    public static ICreateDteRequest<FeFcv1> Create(MhSettings mhSettings, ProcessingSettings processingSettings, string jwt, long? invoiceId, string payload)
+    public static ICreateDteRequest<FeCcfv3> Create(MhSettings mhSettings, ProcessingSettings processingSettings, string jwt, long? invoiceId, string payload)
     {
-        var dte = FeFcv1.Deserialize(payload);
+        var dte = FeCcfv3.Deserialize(payload);
 
-        return new CreateDte01Request
+        return new CreateDte03Request
         {
             MhSettings = mhSettings,
             ProcessingSettings = processingSettings,
@@ -20,7 +20,7 @@ public record CreateDte01Request : ICreateDteRequest<FeFcv1>
         };
     }
 
-    public CreateDte01Request()
+    public CreateDte03Request()
     {
     }
 
@@ -28,5 +28,5 @@ public record CreateDte01Request : ICreateDteRequest<FeFcv1>
     public ProcessingSettings ProcessingSettings { get; set; }
     public string Jwt { get; set; }
     public long? InvoiceId { get; set; }
-    public FeFcv1 Dte { get; set; }
+    public FeCcfv3 Dte { get; set; }
 }

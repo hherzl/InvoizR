@@ -6,6 +6,7 @@ using InvoizR.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using InvoizR.Infrastructure.Reports;
 
 namespace InvoizR.API.Reports.UnitTests;
 
@@ -25,12 +26,15 @@ public class ReportsTest
     protected readonly IServiceCollection _services;
     protected readonly IServiceProvider _serviceProvider;
     protected ProcessingSettings _processingSettings;
+    protected readonly IQrCodeGenerator _qrCodeGenerator;
     protected readonly IConverter _converter;
     protected readonly IInvoizRDbContext _dbContext;
 
     public ReportsTest()
     {
         _services = new ServiceCollection();
+
+        _services.AddScoped<IQrCodeGenerator, QrCodeGeneratorService>();
         _services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
 
         _services.AddDbContext<InvoizRDbContext>(options => options.UseSqlServer(_configurationRoot.GetConnectionString("InvoizR")));
@@ -40,6 +44,8 @@ public class ReportsTest
 
         _processingSettings = new();
         _configurationRoot.Bind("ProcessingSettings", _processingSettings);
+
+        _qrCodeGenerator = _serviceProvider.GetService<IQrCodeGenerator>();
 
         _converter = _serviceProvider.GetService<IConverter>();
 

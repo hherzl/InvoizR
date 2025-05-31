@@ -5,6 +5,7 @@ using InvoizR.Clients.ThirdParty.DataContracts;
 using InvoizR.Domain.Entities;
 using InvoizR.Domain.Enums;
 using InvoizR.SharedKernel.Mh;
+using InvoizR.SharedKernel.Mh.FeFc;
 using Microsoft.Extensions.Configuration;
 
 namespace InvoizR.Application.Services;

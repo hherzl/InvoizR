@@ -27,6 +27,7 @@ try
     builder.Services.AddSerilog();
 
     builder.Services.AddHostedService<Dte01NotificationHostedService>();
+    builder.Services.AddHostedService<Dte03NotificationHostedService>();
 
     builder.Services.AddApplicationServices(builder.Configuration);
     builder.Services.AddInfrastructureServices(builder.Configuration);

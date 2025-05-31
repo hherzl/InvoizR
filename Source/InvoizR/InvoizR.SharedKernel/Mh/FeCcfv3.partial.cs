@@ -1,30 +1,30 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace InvoizR.SharedKernel.Mh.FeFc;
+namespace InvoizR.SharedKernel.Mh.FeCcf;
 
-public partial class FeFcv1 : Dte
+public partial class FeCcfv3 : Dte
 {
     public override string ToJson()
         => JsonSerializer.Serialize(this, DefaultJsonSerializerOpts);
 
     public static short Version
-        => 1;
+        => 3;
 
     public static string SchemaType
-        => "01";
+        => "03";
 
     public static short TypeId
-        => 1;
+        => 3;
 
     public static string Desc
-        => "Consumidor Final";
+        => "Comprobante de Crédito Fiscal";
 
-    public static FeFcv1 Deserialize(string json)
-        => JsonSerializer.Deserialize<FeFcv1>(json, DefaultJsonSerializerOpts);
+    public static FeCcfv3 Deserialize(string json)
+        => JsonSerializer.Deserialize<FeCcfv3>(json, DefaultJsonSerializerOpts);
 }
 
-public partial class FeFcv1Received : FeFcv1
+public partial class FeCcfv3Received : FeCcfv3
 {
     [JsonPropertyName("selloRecibido")]
     public string SelloRecibido { get; set; }
@@ -35,6 +35,6 @@ public partial class FeFcv1Received : FeFcv1
     public override string ToJson()
         => JsonSerializer.Serialize(this, DefaultJsonSerializerOpts);
 
-    public static FeFcv1Received DeserializeReceived(string json)
-        => JsonSerializer.Deserialize<FeFcv1Received>(json, DefaultJsonSerializerOpts);
+    public static FeCcfv3Received DeserializeReceived(string json)
+        => JsonSerializer.Deserialize<FeCcfv3Received>(json, DefaultJsonSerializerOpts);
 }

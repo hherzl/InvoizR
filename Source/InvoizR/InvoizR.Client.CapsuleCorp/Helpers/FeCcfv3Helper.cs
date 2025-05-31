@@ -2,19 +2,19 @@
 using InvoizR.Clients.DataContracts;
 using InvoizR.SharedKernel;
 using InvoizR.SharedKernel.Mh;
-using InvoizR.SharedKernel.Mh.FeFc;
+using InvoizR.SharedKernel.Mh.FeCcf;
 
 namespace InvoizR.Client.CapsuleCorp.Helpers;
 
-public static class FeFcv1Helper
+public static class FeCcfv3Helper
 {
-    public static FeFcv1 Create(CreateDte01InvoiceCommand request, List<InvoiceLine> lines)
+    public static FeCcfv3 Create(CreateDte03InvoiceCommand request, List<InvoiceLine> lines)
     {
-        var dte = new FeFcv1();
+        var dte = new FeCcfv3();
 
-        dte.Identificacion.Version = FeFcv1.Version;
+        dte.Identificacion.Version = FeCcfv3.Version;
         dte.Identificacion.Ambiente = MhCatalog.Cat001.Prueba;
-        dte.Identificacion.TipoDte = FeFcv1.SchemaType;
+        dte.Identificacion.TipoDte = FeCcfv3.SchemaType;
         dte.Identificacion.FecEmi = new DateTimeOffset(request.InvoiceDate.Value);
         dte.Identificacion.HorEmi = dte.Identificacion.FecEmi.ToString("hh:mm:ss");
         dte.Identificacion.TipoMoneda = IdentificacionTipoMoneda.USD;
@@ -46,9 +46,9 @@ public static class FeFcv1Helper
 
         dte.Receptor = new()
         {
+            Nit = request.Customer.DocumentNumber,
+            Nrc = "NRC",
             Nombre = request.Customer.Name,
-            TipoDocumento = request.Customer.DocumentTypeId,
-            NumDocumento = request.Customer.DocumentNumber,
             Direccion = new()
             {
                 Departamento = MhCatalog.Cat012.SanSalvador,
@@ -76,7 +76,7 @@ public static class FeFcv1Helper
                 VentaNoSuj = 0,
                 VentaExenta = 0,
                 VentaGravada = line.Total,
-                IvaItem = line.VatSum
+                Tributos = [MhCatalog.Cat015.ImpuestoValorAgregado]
             });
         }
 
@@ -90,7 +90,7 @@ public static class FeFcv1Helper
 
         dte.Resumen.TotalPagar = total;
 
-        dte.Resumen.TotalIva = vatSum;
+        dte.Resumen.IvaPerci1 = vatSum;
 
         dte.Resumen.Pagos =
         [

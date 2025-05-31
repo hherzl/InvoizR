@@ -3,6 +3,7 @@ using InvoizR.Application.Helpers;
 using InvoizR.Domain.Entities;
 using InvoizR.Domain.Enums;
 using InvoizR.SharedKernel.Mh;
+using InvoizR.SharedKernel.Mh.FeFc;
 using Microsoft.Extensions.Logging;
 
 namespace InvoizR.Application.Services;

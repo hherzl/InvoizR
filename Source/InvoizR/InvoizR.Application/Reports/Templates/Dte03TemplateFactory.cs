@@ -1,29 +1,29 @@
 ﻿using InvoizR.Application.Common.Contracts;
 using InvoizR.Application.Reports.Templates.Common;
 using InvoizR.Domain.Entities;
-using InvoizR.SharedKernel.Mh.FeFc;
+using InvoizR.SharedKernel.Mh.FeCcf;
 
 namespace InvoizR.Application.Reports.Templates;
 
-public class Dte01TemplateFactory : DteTemplateFactory
+public class Dte03TemplateFactory : DteTemplateFactory
 {
     private readonly IQrCodeGenerator _qrCodeGenerator;
 
-    public Dte01TemplateFactory(IQrCodeGenerator qrCodeGenerator)
+    public Dte03TemplateFactory(IQrCodeGenerator qrCodeGenerator)
     {
         _qrCodeGenerator = qrCodeGenerator;
     }
 
-    public Dte01TemplateModel Create(Invoice invoice)
+    public Dte03TemplateModel Create(Invoice invoice)
     {
         var branch = invoice.Pos.Branch;
         var company = branch.Company;
         var logo = branch.Logo ?? branch.Company.Logo;
 
-        var model = new Dte01TemplateModel
+        var model = new Dte03TemplateModel
         {
             Qr = Convert.ToBase64String(_qrCodeGenerator.GetBytes(invoice.ExternalUrl ?? EmptyUrl)),
-            InvoiceType = FeFcv1.Desc,
+            InvoiceType = FeCcfv3.Desc,
             Emitter = new()
             {
                 BusinessName = company.BusinessName,
@@ -59,7 +59,7 @@ public class Dte01TemplateFactory : DteTemplateFactory
 
         try
         {
-            model.Dte = FeFcv1.Deserialize(invoice.Serialization);
+            model.Dte = FeCcfv3.Deserialize(invoice.Serialization);
         }
         catch (Exception ex)
         {
