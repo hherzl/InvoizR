@@ -1,4 +1,6 @@
-﻿using InvoizR.Application.Common.Contracts;
+﻿using DinkToPdf;
+using DinkToPdf.Contracts;
+using InvoizR.Application.Common.Contracts;
 using InvoizR.Clients;
 using InvoizR.Clients.Contracts;
 using InvoizR.Clients.ThirdParty;
@@ -42,6 +44,8 @@ public static class ConfigureServices
         services.AddScoped<ISmtpClient, SatanCitySmtpClient>();
 
         services.AddScoped<IQrCodeGenerator, QrCodeGeneratorService>();
+
+        services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
 
         services.AddScoped<IInvoiceExportStrategy, JsonInvoiceExportStrategy>();
         services.AddScoped<IInvoiceExportStrategy, PdfInvoiceExportStrategy>();

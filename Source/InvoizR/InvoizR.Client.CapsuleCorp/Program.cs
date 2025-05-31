@@ -3,8 +3,11 @@ using InvoizR.Client.CapsuleCorp.Data;
 using InvoizR.Client.CapsuleCorp.Helpers;
 using InvoizR.Client.CapsuleCorp.Mocks;
 using InvoizR.Clients;
+using InvoizR.Clients.Contracts;
 using InvoizR.Clients.DataContracts;
 using InvoizR.SharedKernel;
+using InvoizR.SharedKernel.Mh.FeCcf;
+using InvoizR.SharedKernel.Mh.FeFc;
 using Microsoft.Extensions.Options;
 
 var clientArgs = new ClientArgs(args);
@@ -59,6 +62,7 @@ InvoizRClient client = new(Options.Create(new InvoizRClientSettings
 if (clientArgs.Seed)
 {
     Console.WriteLine($"Seeding data...");
+    Console.WriteLine();
 
     Console.WriteLine($" Creating company...");
 
@@ -116,7 +120,8 @@ if (clientArgs.Seed)
 
 if (clientArgs.Mock)
 {
-    Console.WriteLine($"Mocking '{clientArgs.Limit}' invoices...");
+    Console.WriteLine($"Mocking '{clientArgs.Limit}' invoices for invoice type: '{clientArgs.InvoiceType}' in '{clientArgs.ProcessingType}'...");
+    Console.WriteLine();
 
     for (var i = 0; i < clientArgs.Limit; i++)
     {
@@ -124,25 +129,17 @@ if (clientArgs.Mock)
         {
             if (clientArgs.IsRt)
             {
-                var req = InvoiceMocker.MockRtDte01();
-
-                Console.WriteLine($" Syncing invoice '{req.InvoiceNumber}', {req.InvoiceTotal:C2} in RT processing...");
-
-                var response = await client.CreateDte01InvoiceRTAsync(req);
-
-                Console.WriteLine($"  Generated ID: '{response.Id}'");
-                Console.WriteLine();
+                if (clientArgs.InvoiceType == FeFcv1.SchemaType)
+                    await MockRtDte01(client);
+                else if (clientArgs.InvoiceType == FeCcfv3.SchemaType)
+                    await MockRtDte03(client);
             }
             else
             {
-                var req = InvoiceMocker.MockOwDte01();
-
-                Console.WriteLine($" Syncing invoice '{req.InvoiceNumber}', {req.InvoiceTotal:C2} in OW processing...");
-
-                var response = await client.CreateDte01InvoiceOWAsync(req);
-
-                Console.WriteLine($"  Generated ID: '{response.Id}'");
-                Console.WriteLine();
+                if (clientArgs.InvoiceType == FeFcv1.SchemaType)
+                    await MockOwDte01(client);
+                else if (clientArgs.InvoiceType == FeCcfv3.SchemaType)
+                    await MockOwDte03(client);
             }
         }
         catch (Exception ex)
@@ -150,8 +147,56 @@ if (clientArgs.Mock)
             Console.WriteLine(ex);
         }
 
-        await Task.Delay(3000);
+        await Task.Delay(clientArgs.MockDelay);
     }
+}
+
+static async Task MockRtDte01(IInvoizRClient client)
+{
+    var req = InvoiceMocker.MockRtDte01();
+
+    Console.WriteLine($" Syncing invoice '{req.InvoiceNumber}', {req.InvoiceTotal:C2} in RT processing...");
+
+    var response = await client.CreateDte01InvoiceRTAsync(req);
+
+    Console.WriteLine($"  Generated ID: '{response.Id}'");
+    Console.WriteLine();
+}
+
+static async Task MockRtDte03(IInvoizRClient client)
+{
+    var req = InvoiceMocker.MockRtDte03();
+
+    Console.WriteLine($" Syncing invoice '{req.InvoiceNumber}', {req.InvoiceTotal:C2} in RT processing...");
+
+    var response = await client.CreateDte03InvoiceRTAsync(req);
+
+    Console.WriteLine($"  Generated ID: '{response.Id}'");
+    Console.WriteLine();
+}
+
+static async Task MockOwDte01(IInvoizRClient client)
+{
+    var req = InvoiceMocker.MockOwDte01();
+
+    Console.WriteLine($" Syncing invoice '{req.InvoiceNumber}', {req.InvoiceTotal:C2} in OW processing...");
+
+    var response = await client.CreateDte01InvoiceOWAsync(req);
+
+    Console.WriteLine($"  Generated ID: '{response.Id}'");
+    Console.WriteLine();
+}
+
+static async Task MockOwDte03(IInvoizRClient client)
+{
+    var req = InvoiceMocker.MockOwDte03();
+
+    Console.WriteLine($" Syncing invoice '{req.InvoiceNumber}', {req.InvoiceTotal:C2} in OW processing...");
+
+    var response = await client.CreateDte03InvoiceOWAsync(req);
+
+    Console.WriteLine($"  Generated ID: '{response.Id}'");
+    Console.WriteLine();
 }
 
 class InvoiceMocker
@@ -184,7 +229,7 @@ class InvoiceMocker
         var req = new CreateDte01InvoiceOWCommand
         {
             PosId = (short)Random.Shared.Next(1, data.Branches.Count),
-            InvoiceTypeId = 1,
+            InvoiceTypeId = FeFcv1.TypeId,
             InvoiceNumber = Convert.ToInt64($"{DateTime.Now:MMddhhmmss}"),
             InvoiceDate = DateTime.Now,
             InvoiceTotal = (decimal)total,
@@ -253,7 +298,7 @@ class InvoiceMocker
         var req = new CreateDte01InvoiceRTCommand
         {
             PosId = (short)Random.Shared.Next(1, data.Branches.Count),
-            InvoiceTypeId = 1,
+            InvoiceTypeId = FeFcv1.TypeId,
             InvoiceNumber = Convert.ToInt64($"{DateTime.Now:MMddhhmmss}"),
             InvoiceDate = DateTime.Now,
             InvoiceTotal = (decimal)total,
@@ -290,6 +335,112 @@ class InvoiceMocker
         }
 
         req.Dte = FeFcv1Helper.Create(req, invoiceLines);
+
+        return req;
+    }
+
+    public static CreateDte03InvoiceOWCommand MockOwDte03()
+    {
+        var data = new
+        {
+            Branches = Db.Branches.ToList(),
+            Products = Db.Products.ToList(),
+            Persons = Db.Cards.Where(item => item.CardTypeId == (short)CardType.Person).ToList()
+        };
+
+        var lines = Random.Shared.Next(1, data.Products.Count);
+        var invoiceLines = new List<InvoiceLine>();
+
+        for (var i = 0; i < lines; i++)
+        {
+            var randomIndex = Random.Shared.Next(0, lines - 1);
+            var product = data.Products[randomIndex];
+            if (invoiceLines.Any(item => item.Code == product.Code))
+                continue;
+
+            invoiceLines.Add(new(product.Code, product.Description, (double)product.Price, 1));
+        }
+
+        var total = Math.Round(invoiceLines.Sum(item => item.Total), 2);
+
+        var req = new CreateDte03InvoiceOWCommand
+        {
+            PosId = (short)Random.Shared.Next(1, data.Branches.Count),
+            InvoiceTypeId = FeCcfv3.TypeId,
+            InvoiceNumber = Convert.ToInt64($"{DateTime.Now:MMddhhmmss}"),
+            InvoiceDate = DateTime.Now,
+            InvoiceTotal = (decimal)total,
+            Lines = lines,
+        };
+
+        var persons = data.Persons.ToList();
+        var randomCard = persons[Random.Shared.Next(0, persons.Count - 1)];
+
+        req.Customer.Id = randomCard.Id;
+        req.Customer.DocumentTypeId = randomCard.DocumentTypeId;
+        req.Customer.DocumentNumber = randomCard.DocumentNumber;
+        req.Customer.WtId = randomCard.WtId;
+        req.Customer.Name = randomCard.Name;
+        req.Customer.CountryId = randomCard.CountryId;
+        req.Customer.CountryLevelId = randomCard.CountryLevelId;
+        req.Customer.Address = randomCard.Address;
+        req.Customer.Phone = randomCard.Phone;
+        req.Customer.Email = randomCard.Email;
+
+        req.Dte = FeCcfv3Helper.Create(req, invoiceLines);
+
+        return req;
+    }
+
+    public static CreateDte03InvoiceRTCommand MockRtDte03()
+    {
+        var data = new
+        {
+            Branches = Db.Branches.ToList(),
+            Products = Db.Products.ToList(),
+            Persons = Db.Cards.Where(item => item.CardTypeId == (short)CardType.Person).ToList()
+        };
+
+        var lines = Random.Shared.Next(1, data.Products.Count);
+        var invoiceLines = new List<InvoiceLine>();
+
+        for (var i = 0; i < lines; i++)
+        {
+            var randomIndex = Random.Shared.Next(0, lines - 1);
+            var product = data.Products[randomIndex];
+            if (invoiceLines.Any(item => item.Code == product.Code))
+                continue;
+
+            invoiceLines.Add(new(product.Code, product.Description, (double)product.Price, 1));
+        }
+
+        var total = Math.Round(invoiceLines.Sum(item => item.Total), 2);
+
+        var req = new CreateDte03InvoiceRTCommand
+        {
+            PosId = (short)Random.Shared.Next(1, data.Branches.Count),
+            InvoiceTypeId = FeCcfv3.TypeId,
+            InvoiceNumber = Convert.ToInt64($"{DateTime.Now:MMddhhmmss}"),
+            InvoiceDate = DateTime.Now,
+            InvoiceTotal = (decimal)total,
+            Lines = lines,
+        };
+
+        var persons = data.Persons.ToList();
+        var randomPerson = persons[Random.Shared.Next(0, persons.Count - 1)];
+
+        req.Customer.Id = randomPerson.Id;
+        req.Customer.DocumentTypeId = randomPerson.DocumentTypeId;
+        req.Customer.DocumentNumber = randomPerson.DocumentNumber;
+        req.Customer.WtId = randomPerson.WtId;
+        req.Customer.Name = randomPerson.Name;
+        req.Customer.CountryId = randomPerson.CountryId;
+        req.Customer.CountryLevelId = randomPerson.CountryLevelId;
+        req.Customer.Address = randomPerson.Address;
+        req.Customer.Phone = randomPerson.Phone;
+        req.Customer.Email = randomPerson.Email;
+
+        req.Dte = FeCcfv3Helper.Create(req, invoiceLines);
 
         return req;
     }

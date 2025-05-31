@@ -1,17 +1,16 @@
 ﻿using System.Text;
 using InvoizR.Application.Helpers;
+using InvoizR.Application.Reports.Templates.Common;
 using InvoizR.SharedKernel.Mh;
 
 namespace InvoizR.Application.Reports.Templates;
 
-public class DteTemplatev1
+public class Dte01Templatev1 : DteTemplatev1<Dte01TemplateModel>
 {
-    public DteTemplatev1(Dte01TemplateModel model)
+    public Dte01Templatev1(Dte01TemplateModel model)
+        : base(model)
     {
-        Model = model;
     }
-
-    public Dte01TemplateModel Model { get; }
 
     public override string ToString()
     {
@@ -24,13 +23,14 @@ public class DteTemplatev1
 
         output.AppendLine(" <body>");
 
-        output.AppendLine(" <h1>Documento Tributario Electrónico</h1>");
-        output.AppendLine(" <h2>Consumidor Final</h2>");
+        output.AppendLine($" <h1>{Model.Title}</h1>");
+
+        output.AppendLine($" <h2>{Model.InvoiceType}</h2>");
 
         output.AppendLine(" <table class='header-table'>");
         output.AppendLine("  <tbody>");
         output.AppendLine("   <tr>");
-        output.AppendLine($"    <td><img alt='Consulta pública' src='data:image/png;base64, {Model.Emitter.Logo}' class='logo'></td>");
+        output.AppendLine($"    <td><img alt='Código QR Consulta Pública' src='data:image/png;base64, {Model.Emitter.Logo}' class='logo'></td>");
 
         output.AppendLine($"    <td>");
 
@@ -43,7 +43,7 @@ public class DteTemplatev1
         output.AppendLine($"      <li>Sello de recepción: {AsStrong(Model.ReceiptStamp)}</li>");
 
         output.AppendLine($"      <li>Modelo de facturación: {MhCatalog.Cat003.Desc(Model.Dte.Identificacion.TipoModelo)}</li>");
-        output.AppendLine($"      <li>Tipo de transmisión: {MhCatalog.Cat004.Desc((int)Model.Dte.Identificacion.TipoOperacion)}</li>");
+        output.AppendLine($"      <li>Tipo de transmisión: {MhCatalog.Cat004.Desc(Model.Dte.Identificacion.TipoOperacion)}</li>");
 
         output.AppendLine($"      <li>Fecha y hora de generación: {Model.ProcessingDateTime:yyyy-MM-dd hh:mm:ss}</li>");
         output.AppendLine($"      <li>Versión de JSON: {AsStrong(Model.SchemaVersion.ToString())}</li>");

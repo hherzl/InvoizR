@@ -24,6 +24,7 @@ public static class ConfigureServices
         services.AddScoped<InvoiceProcessingService>();
 
         services.AddScoped<Dte01TemplateFactory>();
+        services.AddScoped<Dte03TemplateFactory>();
 
         return services;
     }

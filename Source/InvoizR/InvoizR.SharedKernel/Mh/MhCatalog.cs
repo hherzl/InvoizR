@@ -1,4 +1,6 @@
-﻿namespace InvoizR.SharedKernel.Mh;
+﻿using System.Data;
+
+namespace InvoizR.SharedKernel.Mh;
 
 public static partial class MhCatalog
 {
@@ -98,6 +100,14 @@ public static partial class MhCatalog
     {
         public const int KilometroCuadrado = 9;
         public const int Otra = 99;
+    }
+
+    /// <summary>
+    /// CAT-015 Tributos
+    /// </summary>
+    public static class Cat015
+    {
+        public const string ImpuestoValorAgregado = "20";
     }
 
     /// <summary>

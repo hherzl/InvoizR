@@ -1,4 +1,4 @@
-﻿namespace InvoizR.Application.Reports.Templates;
+﻿namespace InvoizR.Application.Reports.Templates.Common;
 
 public record DteEmitterModel
 {

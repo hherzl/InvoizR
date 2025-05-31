@@ -1,8 +1,8 @@
 ﻿using InvoizR.Application.Reports.Templates.Common;
-using InvoizR.SharedKernel.Mh.FeFc;
+using InvoizR.SharedKernel.Mh.FeCcf;
 
 namespace InvoizR.Application.Reports.Templates;
 
-public record Dte01TemplateModel : DteTemplateModel<FeFcv1>
+public record Dte03TemplateModel : DteTemplateModel<FeCcfv3>
 {
 }

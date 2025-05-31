@@ -20,9 +20,6 @@ public class DinkToPdfHelper
             DocumentTitle = documentTitle
         };
 
-        if (!string.IsNullOrEmpty(fileName))
-            obj.Out = fileName;
-
         return obj;
     }
 

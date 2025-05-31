@@ -1,16 +1,16 @@
 ﻿using System.Net.Mail;
 using System.Text;
 
-namespace InvoizR.Application.Reports.Templates;
+namespace InvoizR.Application.Reports.Templates.Common;
 
-public class Dte01NotificationTemplatev1
+public class DteNotificationTemplatev1
 {
-    public Dte01NotificationTemplatev1(Dte01NotificationTemplateModel model)
+    public DteNotificationTemplatev1(DteNotificationTemplateModel model)
     {
         Model = model;
     }
 
-    public Dte01NotificationTemplateModel Model { get; }
+    public DteNotificationTemplateModel Model { get; }
 
     public string Build()
     {

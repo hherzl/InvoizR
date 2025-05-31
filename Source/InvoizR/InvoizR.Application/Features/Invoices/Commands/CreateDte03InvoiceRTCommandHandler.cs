@@ -18,7 +18,7 @@ using Microsoft.Extensions.Logging;
 
 namespace InvoizR.Application.Features.Invoices.Commands;
 
-public class CreateDte01InvoiceRTCommandHandler : IRequestHandler<CreateDte01InvoiceRTCommand, CreatedResponse<long?>>
+public class CreateDte03InvoiceRTCommandHandler : IRequestHandler<CreateDte03InvoiceRTCommand, CreatedResponse<long?>>
 {
     private readonly ILogger _logger;
     private readonly IConfiguration _configuration;
@@ -28,7 +28,7 @@ public class CreateDte01InvoiceRTCommandHandler : IRequestHandler<CreateDte01Inv
     private readonly DteHandler _dteHandler;
     private readonly IEnumerable<IInvoiceExportStrategy> _invoiceExportStrategies;
 
-    public CreateDte01InvoiceRTCommandHandler
+    public CreateDte03InvoiceRTCommandHandler
     (
         ILogger<CreateDte01InvoiceRTCommandHandler> logger,
         IConfiguration configuration,
@@ -48,7 +48,7 @@ public class CreateDte01InvoiceRTCommandHandler : IRequestHandler<CreateDte01Inv
         _invoiceExportStrategies = invoiceExportStrategies;
     }
 
-    public async Task<CreatedResponse<long?>> Handle(CreateDte01InvoiceRTCommand request, CancellationToken cancellationToken)
+    public async Task<CreatedResponse<long?>> Handle(CreateDte03InvoiceRTCommand request, CancellationToken cancellationToken)
     {
         _ = await _dbContext.GetCurrentInvoiceTypeAsync(request.InvoiceTypeId, ct: cancellationToken) ?? throw new InvalidCurrentInvoiceTypeException();
 
@@ -113,7 +113,7 @@ public class CreateDte01InvoiceRTCommandHandler : IRequestHandler<CreateDte01Inv
 
             var authResponse = await _seguridadClient.AuthAsync(authRequest);
 
-            var createDteRequest = CreateDte01Request.Create(mhSettings, processingSettings, authResponse.Body.Token, invoice.Id, invoice.Serialization);
+            var createDteRequest = CreateDte03Request.Create(mhSettings, processingSettings, authResponse.Body.Token, invoice.Id, invoice.Serialization);
             var flag = await _dteHandler.HandleAsync(createDteRequest, _dbContext, cancellationToken);
             if (!flag)
                 return new(invoice.Id);
@@ -169,7 +169,7 @@ public class CreateDte01InvoiceRTCommandHandler : IRequestHandler<CreateDte01Inv
         {
             await txn.RollbackAsync(cancellationToken);
 
-            _logger.LogCritical(ex, "There was an error on Create Dte01 Invoice RT");
+            _logger.LogCritical(ex, "There was an error on Create Dte03 Invoice RT");
 
             return new();
         }

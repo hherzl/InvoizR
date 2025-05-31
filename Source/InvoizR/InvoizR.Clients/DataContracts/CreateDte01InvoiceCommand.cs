@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 using InvoizR.Clients.DataContracts.Common;
-using InvoizR.SharedKernel.Mh;
+using InvoizR.SharedKernel.Mh.FeFc;
 using MediatR;
 
 namespace InvoizR.Clients.DataContracts;

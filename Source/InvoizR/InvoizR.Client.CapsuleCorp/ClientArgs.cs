@@ -18,7 +18,7 @@ public record ClientArgs
                 Mock = true;
 
             if (item.StartsWith("--processing-type"))
-                ProcessingType = args[1].Replace("--processing-type=", "");
+                ProcessingType = item.Replace("--processing-type=", "");
 
             if (item.StartsWith("--limit"))
             {
@@ -31,6 +31,9 @@ public record ClientArgs
                     Limit = DefaultLimit;
                 }
             }
+
+            if (item.StartsWith("--invoice-type"))
+                InvoiceType = item.Replace("--invoice-type=", "");
         }
     }
 
@@ -39,7 +42,11 @@ public record ClientArgs
     public bool Mock { get; }
     public string ProcessingType { get; set; }
     public int Limit { get; }
+    public string InvoiceType { get; set; }
 
     public bool IsRt
-        => string.Compare(ProcessingType, "RT", true) == 0;
+        => string.Compare(ProcessingType, "rt", true) == 0;
+
+    public int MockDelay
+        => 3000;
 }

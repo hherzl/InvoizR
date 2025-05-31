@@ -1,10 +1,10 @@
 ﻿using InvoizR.Domain.Entities;
 
-namespace InvoizR.Application.Reports.Templates;
+namespace InvoizR.Application.Reports.Templates.Common;
 
-public record Dte01NotificationTemplateModel
+public record DteNotificationTemplateModel
 {
-    public Dte01NotificationTemplateModel(Branch branch, InvoiceType invoiceType, Invoice invoice)
+    public DteNotificationTemplateModel(Branch branch, InvoiceType invoiceType, Invoice invoice)
     {
         Title = "Documento Tributario Electrónico";
         SourceEmail = branch.Email;
@@ -38,6 +38,6 @@ public record Dte01NotificationTemplateModel
     public decimal? InvoiceTotal { get; }
     public string ControlNumber { get; }
 
-    public List<string> Copies { get; set; }
+    public List<string> Copies { get; }
     public List<string> Bcc { get; }
 }
