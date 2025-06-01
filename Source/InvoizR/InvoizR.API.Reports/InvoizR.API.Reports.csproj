@@ -7,13 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="assets\css\dte.css" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="assets\css\dte.css">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <Compile Remove="Templates\**" />
+    <Content Remove="Templates\**" />
+    <EmbeddedResource Remove="Templates\**" />
+    <None Remove="Templates\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -31,11 +28,6 @@
   <ItemGroup>
     <ProjectReference Include="..\InvoizR.Application\InvoizR.Application.csproj" />
     <ProjectReference Include="..\InvoizR.Infrastructure\InvoizR.Infrastructure.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="assets\img\" />
-    <Folder Include="Templates\" />
   </ItemGroup>
 
 </Project>
