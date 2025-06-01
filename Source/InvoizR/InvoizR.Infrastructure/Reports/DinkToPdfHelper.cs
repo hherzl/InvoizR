@@ -4,7 +4,7 @@ namespace InvoizR.Infrastructure.Reports;
 
 public class DinkToPdfHelper
 {
-    public static GlobalSettings CreateDteGlobalSettings(string fileName = "", string documentTitle = "Documento Tributario Electrónico")
+    public static GlobalSettings CreateDteGlobalSettings(string documentTitle = "Documento Tributario Electrónico")
     {
         var obj = new GlobalSettings
         {
@@ -23,7 +23,7 @@ public class DinkToPdfHelper
         return obj;
     }
 
-    public static ObjectSettings CreateDteObjSettings(string htmlContent)
+    public static ObjectSettings CreateDteObjSettings(string htmlContent, string footerTitle = "Capsule Corp.")
        => new()
        {
            PagesCount = true,
@@ -45,7 +45,7 @@ public class DinkToPdfHelper
                FontName = "Arial",
                 FontSize = 10,
                 Line = true,
-                Center = "Capsule Corp."
+                Center = footerTitle
            }
        };
 }

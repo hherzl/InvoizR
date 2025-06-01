@@ -36,7 +36,7 @@ public class PdfInvoiceExportStrategy : IInvoiceExportStrategy
 
         var pdfDocument = new HtmlToPdfDocument
         {
-            GlobalSettings = DinkToPdfHelper.CreateDteGlobalSettings(fileName: path),
+            GlobalSettings = DinkToPdfHelper.CreateDteGlobalSettings(),
             Objects =
             {
                 objSettings
