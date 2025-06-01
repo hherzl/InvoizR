@@ -17,7 +17,6 @@ public record CreateDte03InvoiceCommand : Request, IRequest<CreatedResponse<long
 
     public CustomerNodeModel Customer { get; set; }
 
-    public short? InvoiceTypeId { get; set; }
     public long? InvoiceNumber { get; set; }
     public DateTime? InvoiceDate { get; set; }
     public decimal? InvoiceTotal { get; set; }
@@ -30,9 +29,6 @@ public record CreateDte03InvoiceCommand : Request, IRequest<CreatedResponse<long
 
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
-        if (InvoiceTypeId == null)
-            yield return new ValidationResult("InvoiceNumber is required", [nameof(InvoiceTypeId)]);
-
         if (InvoiceNumber == null)
             yield return new ValidationResult("InvoiceNumber is required", [nameof(InvoiceNumber)]);
 
@@ -41,5 +37,8 @@ public record CreateDte03InvoiceCommand : Request, IRequest<CreatedResponse<long
 
         if (InvoiceTotal == null)
             yield return new ValidationResult("InvoiceTotal is required", [nameof(InvoiceTotal)]);
+
+        if (Dte == null)
+            yield return new ValidationResult("DTE is required", [nameof(Dte)]);
     }
 }
