@@ -11,6 +11,7 @@ using InvoizR.Clients.ThirdParty.DataContracts;
 using InvoizR.Domain.Entities;
 using InvoizR.Domain.Enums;
 using InvoizR.Domain.Exceptions;
+using InvoizR.SharedKernel.Mh.FeCcf;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -50,7 +51,7 @@ public class CreateDte03InvoiceRTCommandHandler : IRequestHandler<CreateDte03Inv
 
     public async Task<CreatedResponse<long?>> Handle(CreateDte03InvoiceRTCommand request, CancellationToken cancellationToken)
     {
-        _ = await _dbContext.GetCurrentInvoiceTypeAsync(request.InvoiceTypeId, ct: cancellationToken) ?? throw new InvalidCurrentInvoiceTypeException();
+        _ = await _dbContext.GetCurrentInvoiceTypeAsync(FeCcfv3.TypeId, ct: cancellationToken) ?? throw new InvalidCurrentInvoiceTypeException();
 
         var txn = await _dbContext.Database.BeginTransactionAsync(cancellationToken);
 
@@ -72,7 +73,7 @@ public class CreateDte03InvoiceRTCommandHandler : IRequestHandler<CreateDte03Inv
                 CustomerPhone = request.Customer.Phone,
                 CustomerEmail = request.Customer.Email,
                 CustomerLastUpdated = DateTime.Now,
-                InvoiceTypeId = request.InvoiceTypeId,
+                InvoiceTypeId = FeCcfv3.TypeId,
                 InvoiceNumber = request.InvoiceNumber,
                 InvoiceDate = request.InvoiceDate,
                 InvoiceTotal = request.InvoiceTotal,
@@ -169,7 +170,7 @@ public class CreateDte03InvoiceRTCommandHandler : IRequestHandler<CreateDte03Inv
         {
             await txn.RollbackAsync(cancellationToken);
 
-            _logger.LogCritical(ex, "There was an error on Create Dte03 Invoice RT");
+            _logger.LogCritical(ex, "There was an error on Create DTE-03 Invoice in RT processing");
 
             return new();
         }
