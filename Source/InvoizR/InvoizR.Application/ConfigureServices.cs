@@ -21,7 +21,9 @@ public static class ConfigureServices
         });
 
         services.AddScoped<DteHandler>();
-        services.AddScoped<InvoiceProcessingService>();
+
+        services.AddScoped<Dte01ProcessingService>();
+        services.AddScoped<Dte03ProcessingService>();
 
         services.AddScoped<Dte01TemplateFactory>();
         services.AddScoped<Dte03TemplateFactory>();
