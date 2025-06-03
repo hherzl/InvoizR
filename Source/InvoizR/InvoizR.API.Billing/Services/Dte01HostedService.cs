@@ -77,8 +77,7 @@ public class Dte01HostedService : BackgroundService
 
                 var authResponse = await _seguridadClient.AuthAsync(authRequest);
 
-                var invProcessingService = scope.ServiceProvider.GetRequiredService<InvoiceProcessingService>();
-
+                var dteProcessingService = scope.ServiceProvider.GetRequiredService<Dte01ProcessingService>();
                 var dteHandler = scope.ServiceProvider.GetRequiredService<DteHandler>();
 
                 foreach (var invoice in invoices)
@@ -87,13 +86,13 @@ public class Dte01HostedService : BackgroundService
                     {
                         _logger.LogInformation($"Processing '{invoice.InvoiceNumber}' invoice, changing status from '{InvoiceProcessingStatus.Created}'...");
 
-                        await invProcessingService.SetInvoiceAsInitializedAsync(invoice.Id, dbContext, stoppingToken);
+                        await dteProcessingService.SetInvoiceAsInitializedAsync(invoice.Id, dbContext, stoppingToken);
                     }
                     else if (invoice.ProcessingStatusId == (short)InvoiceProcessingStatus.Initialized)
                     {
                         _logger.LogInformation($"Processing '{invoice.InvoiceNumber}' invoice, changing status from '{InvoiceProcessingStatus.Initialized}'...");
 
-                        await invProcessingService.SetInvoiceAsRequestedAsync(invoice.Id, dbContext, stoppingToken);
+                        await dteProcessingService.SetInvoiceAsRequestedAsync(invoice.Id, dbContext, stoppingToken);
                     }
                     else if (invoice.ProcessingStatusId == (short)InvoiceProcessingStatus.Requested)
                     {

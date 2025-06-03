@@ -2,28 +2,27 @@
 using InvoizR.Application.Helpers;
 using InvoizR.Domain.Entities;
 using InvoizR.Domain.Enums;
-using InvoizR.SharedKernel.Mh;
-using InvoizR.SharedKernel.Mh.FeFc;
+using InvoizR.SharedKernel.Mh.FeCcf;
 using Microsoft.Extensions.Logging;
 
 namespace InvoizR.Application.Services;
 
-public class InvoiceProcessingService
+public class Dte03ProcessingService
 {
     private readonly ILogger _logger;
 
-    public InvoiceProcessingService(ILogger<InvoiceProcessingService> logger)
+    public Dte03ProcessingService(ILogger<Dte03ProcessingService> logger)
     {
         _logger = logger;
     }
 
-    private bool TryInit(Invoice invoice)
+    private bool Init(Invoice invoice)
     {
-        FeFcv1 dte;
+        FeCcfv3 dte;
 
         try
         {
-            dte = FeFcv1.Deserialize(invoice.Serialization);
+            dte = FeCcfv3.Deserialize(invoice.Serialization);
         }
         catch (Exception ex)
         {
@@ -68,7 +67,7 @@ public class InvoiceProcessingService
     {
         var inv = await dbContext.GetInvoiceAsync(invoiceId, tracking: true, ct: cancellationToken);
 
-        if (TryInit(inv))
+        if (Init(inv))
             inv.ProcessingStatusId = (short)InvoiceProcessingStatus.Requested;
         else
             inv.ProcessingStatusId = (short)InvoiceProcessingStatus.InvalidSchema;

@@ -24,7 +24,7 @@ public class CreateDte01InvoiceRTCommandHandler : IRequestHandler<CreateDte01Inv
     private readonly ILogger _logger;
     private readonly IConfiguration _configuration;
     private readonly IInvoizRDbContext _dbContext;
-    private readonly InvoiceProcessingService _invoiceProcessingService;
+    private readonly Dte01ProcessingService _dteProcessingService;
     private readonly ISeguridadClient _seguridadClient;
     private readonly DteHandler _dteHandler;
     private readonly IEnumerable<IInvoiceExportStrategy> _invoiceExportStrategies;
@@ -34,7 +34,7 @@ public class CreateDte01InvoiceRTCommandHandler : IRequestHandler<CreateDte01Inv
         ILogger<CreateDte01InvoiceRTCommandHandler> logger,
         IConfiguration configuration,
         IInvoizRDbContext dbContext,
-        InvoiceProcessingService invoiceProcessingService,
+        Dte01ProcessingService dteProcessingService,
         ISeguridadClient seguridadClient,
         DteHandler dteHandler,
         IEnumerable<IInvoiceExportStrategy> invoiceExportStrategies
@@ -43,7 +43,7 @@ public class CreateDte01InvoiceRTCommandHandler : IRequestHandler<CreateDte01Inv
         _logger = logger;
         _configuration = configuration;
         _dbContext = dbContext;
-        _invoiceProcessingService = invoiceProcessingService;
+        _dteProcessingService = dteProcessingService;
         _seguridadClient = seguridadClient;
         _dteHandler = dteHandler;
         _invoiceExportStrategies = invoiceExportStrategies;
@@ -95,11 +95,11 @@ public class CreateDte01InvoiceRTCommandHandler : IRequestHandler<CreateDte01Inv
 
             _logger.LogInformation($"Processing '{invoice.InvoiceNumber}' invoice, changing status from '{InvoiceProcessingStatus.Created}'...");
 
-            await _invoiceProcessingService.SetInvoiceAsInitializedAsync(invoice.Id, _dbContext, cancellationToken);
+            await _dteProcessingService.SetInvoiceAsInitializedAsync(invoice.Id, _dbContext, cancellationToken);
 
             _logger.LogInformation($"Processing '{invoice.InvoiceNumber}' invoice, changing status from '{InvoiceProcessingStatus.Initialized}'...");
 
-            await _invoiceProcessingService.SetInvoiceAsRequestedAsync(invoice.Id, _dbContext, cancellationToken);
+            await _dteProcessingService.SetInvoiceAsRequestedAsync(invoice.Id, _dbContext, cancellationToken);
 
             _logger.LogInformation($"Processing '{invoice.InvoiceNumber}' invoice, changing status from '{InvoiceProcessingStatus.Requested}'...");
 
