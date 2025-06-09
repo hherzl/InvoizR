@@ -15,6 +15,9 @@ public interface IInvoizRClient
     Task<CreatedResponse<short?>> CreateBranchAsync(CreateBranchCommand request);
     Task<CreatedResponse<short?>> AddNotificationToBranchAsync(AddNotificationToBranchCommand request);
 
+    Task<ListResponse<ResponsibleItemModel>> GetResponsiblesAsync(GetResponsiblesQuery request);
+    Task<CreatedResponse<short?>> CreateResponsibleAsync(CreateResponsibleCommand request);
+
     Task<PosDetailsModel> GetPosAsync(short id);
     Task<CreatedResponse<short?>> CreatePosAsync(CreatePosCommand request);
 

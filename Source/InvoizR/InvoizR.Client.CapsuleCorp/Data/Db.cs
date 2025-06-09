@@ -1,8 +1,11 @@
-﻿namespace InvoizR.Client.CapsuleCorp.Data;
+﻿using InvoizR.SharedKernel.Mh;
+
+namespace InvoizR.Client.CapsuleCorp.Data;
 
 public static class Db
 {
     private readonly static List<Branch> _branches;
+    private readonly static List<Responsible> _responsibles;
     private readonly static List<Product> _products;
     private readonly static List<Card> _cards;
 
@@ -10,14 +13,19 @@ public static class Db
     {
         _branches = new()
         {
-            new Branch("Capsule Corp Central Branch", "ES", "01", "1 Capsule Corp Drive, West City", "+1-800-555-0001", "central@capsulecorp.com"),
-            new Branch("Capsule Corp East Branch", "ES", "02", "12 Dragon Street, East City", "+1-800-555-0002", "east@capsulecorp.com"),
-            new Branch("Capsule Corp North Branch", "ES", "03", "99 Ice Lane, North City", "+1-800-555-0003", "north@capsulecorp.com"),
-            new Branch("Capsule Corp South Branch", "ES", "04", "77 Ocean Avenue, South City", "+1-800-555-0004", "south@capsulecorp.com"),
-            new Branch("Capsule Corp Satan City Branch", "ES", "05", "21 Hercule Boulevard, Satan City", "+1-800-555-0005", "satan@capsulecorp.com"),
-            new Branch("Capsule Corp Ginger Town Branch", "ES", "06", "5 Meadow Road, Ginger Town", "+1-800-555-0006", "gingertown@capsulecorp.com"),
-            new Branch("Capsule Corp Orange Star Branch", "ES", "07", "17 Gohan Way, Orange Star City", "+1-800-555-0007", "orangestar@capsulecorp.com"),
-            new Branch("Capsule Corp Penguin Village Branch", "ES", "08", "3 Arale Lane, Penguin Village", "+1-800-555-0008", "penguin@capsulecorp.com")
+            new Branch("CC. Central Branch", "ES", "01", "1 Capsule Corp Drive, West City", "+1-800-555-0001", "central@capsulecorp.com"),
+            new Branch("CC. East Branch", "ES", "02", "12 Dragon Street, East City", "+1-800-555-0002", "east@capsulecorp.com"),
+            new Branch("CC. North Branch", "ES", "03", "99 Ice Lane, North City", "+1-800-555-0003", "north@capsulecorp.com"),
+            new Branch("CC. South Branch", "ES", "04", "77 Ocean Avenue, South City", "+1-800-555-0004", "south@capsulecorp.com"),
+            new Branch("CC. Satan City Branch", "ES", "05", "21 Hercule Boulevard, Satan City", "+1-800-555-0005", "satan@capsulecorp.com"),
+            new Branch("CC. Ginger Town Branch", "ES", "06", "5 Meadow Road, Ginger Town", "+1-800-555-0006", "gingertown@capsulecorp.com"),
+            new Branch("CC. Orange Star Branch", "ES", "07", "17 Gohan Way, Orange Star City", "+1-800-555-0007", "orangestar@capsulecorp.com"),
+            new Branch("CC. Penguin Village Branch", "ES", "08", "3 Arale Lane, Penguin Village", "+1-800-555-0008", "penguin@capsulecorp.com")
+        };
+
+        _responsibles = new()
+        {
+            new("Toriyama Akira", "+1-800-999-0001", "toriyama-akira@capsulecorp.com", MhCatalog.Cat022.Dui, "01234567-8")
         };
 
         _products = new()
@@ -75,6 +83,9 @@ public static class Db
 
     public static IEnumerable<Branch> Branches
         => _branches;
+
+    public static IEnumerable<Responsible> Responsibles
+        => _responsibles;
 
     public static IEnumerable<Product> Products
         => _products;

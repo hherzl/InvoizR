@@ -24,29 +24,6 @@ var enumDescription = db
     .SetPrimaryKey(e => e.Id)
     ;
 
-var responsible = db
-    .DefineEntity(new
-    {
-        Id = (short)0,
-        Name = "",
-        Phone = "",
-        Email = "",
-        IdType = "",
-        IdNumber = "",
-        AuthorizeCancellation = false,
-        AuthorizeContingency = false
-    })
-    .SetNaming("Responsible")
-    .SetColumnFor(e => e.Name, 100)
-    .SetColumnFor(e => e.Email, 25)
-    .SetColumnFor(e => e.Email, 50)
-    .SetColumnFor(e => e.IdType, 2)
-    .SetColumnFor(e => e.IdNumber, 2)
-    .SetIdentity(e => e.Id)
-    .SetPrimaryKey(e => e.Id)
-    .AddUnique(e => e.Email)
-    ;
-
 var company = db
     .DefineEntity(new
     {
@@ -84,6 +61,31 @@ var company = db
     .SetPrimaryKey(e => e.Id)
     .AddUnique(e => e.Name)
     .AddUnique(e => e.BusinessName)
+    ;
+
+var responsible = db
+    .DefineEntity(new
+    {
+        Id = (short)0,
+        CompanyId = (short)0,
+        Name = "",
+        Phone = "",
+        Email = "",
+        IdType = "",
+        IdNumber = "",
+        AuthorizeCancellation = false,
+        AuthorizeContingency = false
+    })
+    .SetNaming("Responsible")
+    .SetColumnFor(e => e.Name, 100)
+    .SetColumnFor(e => e.Email, 25)
+    .SetColumnFor(e => e.Email, 50)
+    .SetColumnFor(e => e.IdType, 2)
+    .SetColumnFor(e => e.IdNumber, 25)
+    .SetIdentity(e => e.Id)
+    .SetPrimaryKey(e => e.Id)
+    .AddUnique(e => e.Email)
+    .AddForeignKey(e => e.CompanyId, company.Table)
     ;
 
 var branch = db

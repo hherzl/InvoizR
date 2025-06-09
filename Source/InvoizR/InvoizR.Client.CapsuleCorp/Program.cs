@@ -116,6 +116,28 @@ if (clientArgs.Seed)
         Console.WriteLine($"    Generated Branch ID: '{createPosResponse.Id}'");
         Console.WriteLine();
     }
+
+    Console.WriteLine($" Creating responsibles...");
+
+    foreach (var item in Db.Responsibles)
+    {
+        var responsible = new CreateResponsibleCommand
+        {
+            CompanyId = createCompanyResponse.Id,
+            Name = item.Name,
+            Phone = item.Phone,
+            Email = item.Email,
+            IdType = item.IdType,
+            IdNumber = item.IdNumber,
+            AuthorizeCancellation = item.AuthorizeCancellation,
+            AuthorizeContingency = item.AuthorizeContingency
+        };
+
+        var createResponsibleResponse = await client.CreateResponsibleAsync(responsible);
+
+        Console.WriteLine($"    Generated Responsible ID: '{createResponsibleResponse.Id}'");
+        Console.WriteLine();
+    }
 }
 
 if (clientArgs.Mock)

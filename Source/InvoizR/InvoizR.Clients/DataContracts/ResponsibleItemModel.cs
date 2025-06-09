@@ -1,20 +1,10 @@
-﻿using System.Collections.ObjectModel;
+﻿using InvoizR.SharedKernel.Mh;
 
-namespace InvoizR.Domain.Entities;
+namespace InvoizR.Clients.DataContracts;
 
-public partial class Responsible
+public record ResponsibleItemModel
 {
-    public Responsible()
-    {
-    }
-
-    public Responsible(short? id)
-    {
-        Id = id;
-    }
-
     public short? Id { get; set; }
-    public short? CompanyId { get; set; }
     public string Name { get; set; }
     public string Phone { get; set; }
     public string Email { get; set; }
@@ -23,5 +13,6 @@ public partial class Responsible
     public bool? AuthorizeCancellation { get; set; }
     public bool? AuthorizeContingency { get; set; }
 
-    public virtual Collection<Branch> Branches { get; set; }
+    public string IdTypeDesc
+        => MhCatalog.Cat022.Desc(IdType);
 }

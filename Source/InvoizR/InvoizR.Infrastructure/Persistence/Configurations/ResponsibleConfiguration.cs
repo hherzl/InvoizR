@@ -25,6 +25,12 @@ internal class ResponsibleConfiguration : IEntityTypeConfiguration<Responsible>
             ;
 
         builder
+            .Property(p => p.CompanyId)
+            .HasColumnType("smallint")
+            .IsRequired()
+            ;
+
+        builder
             .Property(p => p.Name)
             .HasColumnType("nvarchar")
             .HasMaxLength(100)
@@ -54,7 +60,7 @@ internal class ResponsibleConfiguration : IEntityTypeConfiguration<Responsible>
         builder
             .Property(p => p.IdNumber)
             .HasColumnType("nvarchar")
-            .HasMaxLength(2)
+            .HasMaxLength(25)
             .IsRequired()
             ;
 
