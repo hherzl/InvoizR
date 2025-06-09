@@ -73,11 +73,12 @@ GO
 CREATE TABLE [dbo].[Responsible]
 (
 	[Id] SMALLINT NOT NULL IDENTITY(1, 1),
+	[CompanyId] SMALLINT NOT NULL,
 	[Name] NVARCHAR(100) NOT NULL,
 	[Phone] NVARCHAR(MAX) NOT NULL,
 	[Email] NVARCHAR(50) NOT NULL,
 	[IdType] NVARCHAR(2) NOT NULL,
-	[IdNumber] NVARCHAR(2) NOT NULL,
+	[IdNumber] NVARCHAR(25) NOT NULL,
 	[AuthorizeCancellation] BIT NOT NULL,
 	[AuthorizeContingency] BIT NOT NULL
 )

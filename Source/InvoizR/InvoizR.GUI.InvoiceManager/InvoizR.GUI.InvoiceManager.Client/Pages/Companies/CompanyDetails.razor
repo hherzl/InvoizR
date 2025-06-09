@@ -2,6 +2,7 @@
 
 @using InvoizR.Clients.Contracts
 @using InvoizR.Clients.DataContracts
+@using InvoizR.Clients.DataContracts.Common
 
 @inject IInvoizRClient invoizRClient
 
@@ -12,10 +13,7 @@
 
 <br />
 
-@if (response == null)
-{
-}
-else
+@if (response != null)
 {
     <MudCard>
         <MudCardHeader>
@@ -61,6 +59,29 @@ else
 
     <br />
 
+    <h5>Responsibles</h5>
+
+    <br />
+
+    <MudTable Items="responsibles.Model">
+        <HeaderContent>
+            <MudTh>Name</MudTh>
+            <MudTh>Phone</MudTh>
+            <MudTh>Email</MudTh>
+            <MudTh>ID Type</MudTh>
+            <MudTh>ID Number</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Name">@context.Name</MudTd>
+            <MudTd DataLabel="Name">@context.Phone</MudTd>
+            <MudTd DataLabel="Name">@context.Email</MudTd>
+            <MudTd DataLabel="Name">@context.IdTypeDesc</MudTd>
+            <MudTd DataLabel="Name">@context.IdNumber</MudTd>
+        </RowTemplate>
+    </MudTable>
+
+    <br />
+
     <a href="@("/company")">
         <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.ArrowBack" />
     </a>
@@ -70,9 +91,14 @@ else
     [Parameter] public int? Id { get; set; }
 
     private CompanyDetailsModel response { get; set; }
+    private ListResponse<ResponsibleItemModel> responsibles { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         response = await invoizRClient.GetCompanyAsync((short)Id);
+        if (response != null)
+        {
+            responsibles = await invoizRClient.GetResponsiblesAsync(new() { CompanyId = (short)Id });
+        }
     }
 }

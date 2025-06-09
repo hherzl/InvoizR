@@ -99,6 +99,32 @@ public class InvoizRClient : IInvoizRClient
         return JsonSerializer.Deserialize<CreatedResponse<short?>>(responseContent, DefaultJsonSerializerOpts);
     }
 
+    public async Task<ListResponse<ResponsibleItemModel>> GetResponsiblesAsync(GetResponsiblesQuery request)
+    {
+        var qs = HttpUtility.ParseQueryString(string.Empty);
+
+        var response = await _httpClient.GetAsync($"responsible?{qs.ToString()}");
+        response.EnsureSuccessStatusCode();
+
+        var responseContent = await response.Content.ReadAsStringAsync();
+        return JsonSerializer.Deserialize<ListResponse<ResponsibleItemModel>>(responseContent, DefaultJsonSerializerOpts);
+    }
+
+    public async Task<CreatedResponse<short?>> CreateResponsibleAsync(CreateResponsibleCommand request)
+    {
+        var qs = HttpUtility.ParseQueryString(string.Empty);
+
+        if (request.CompanyId != null)
+            qs.Add("posId", request.CompanyId.ToString());
+
+        var response = await _httpClient.PostAsync($"responsible", ContentHelper.Create(request.ToJson()));
+        response.EnsureSuccessStatusCode();
+
+        var responseContent = await response.Content.ReadAsStringAsync();
+
+        return JsonSerializer.Deserialize<CreatedResponse<short?>>(responseContent, DefaultJsonSerializerOpts);
+    }
+
     public async Task<PosDetailsModel> GetPosAsync(short id)
     {
         var response = await _httpClient.GetAsync($"pos/{id}");

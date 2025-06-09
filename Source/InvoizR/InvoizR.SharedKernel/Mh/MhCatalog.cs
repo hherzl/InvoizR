@@ -133,7 +133,7 @@ public static partial class MhCatalog
     /// <summary>
     /// CAT-022 Tipo de documento de identificación del Receptor
     /// </summary>
-    public static class Cat022
+    public static partial class Cat022
     {
         public const string CarnetDeResidente = "02";
         public const string Dui = "13";

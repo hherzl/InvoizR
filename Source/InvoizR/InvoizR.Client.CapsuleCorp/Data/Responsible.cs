@@ -1,6 +1,4 @@
-﻿using System.Collections.ObjectModel;
-
-namespace InvoizR.Domain.Entities;
+﻿namespace InvoizR.Client.CapsuleCorp.Data;
 
 public partial class Responsible
 {
@@ -8,13 +6,17 @@ public partial class Responsible
     {
     }
 
-    public Responsible(short? id)
+    public Responsible(string name, string phone, string email, string idType, string idNumber)
     {
-        Id = id;
+        Name = name;
+        Phone = phone;
+        Email = email;
+        IdType = idType;
+        IdNumber = idNumber;
+        AuthorizeCancellation = true;
+        AuthorizeContingency = true;
     }
 
-    public short? Id { get; set; }
-    public short? CompanyId { get; set; }
     public string Name { get; set; }
     public string Phone { get; set; }
     public string Email { get; set; }
@@ -22,6 +24,4 @@ public partial class Responsible
     public string IdNumber { get; set; }
     public bool? AuthorizeCancellation { get; set; }
     public bool? AuthorizeContingency { get; set; }
-
-    public virtual Collection<Branch> Branches { get; set; }
 }

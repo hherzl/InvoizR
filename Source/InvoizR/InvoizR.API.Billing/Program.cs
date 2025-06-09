@@ -86,6 +86,7 @@ try
 
     app.MapCompanies();
     app.MapBranches();
+    app.MapResponsibles();
     app.MapPos();
     app.MapInvoiceTypes();
     app.MapInvoices();

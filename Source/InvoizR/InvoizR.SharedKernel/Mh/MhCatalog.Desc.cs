@@ -47,4 +47,18 @@ public static partial class MhCatalog
                 _ => ""
             };
     }
+
+    public static partial class Cat022
+    {
+        public static string Desc(string value)
+            => value switch
+            {
+                CarnetDeResidente => "Carné de Residente",
+                Dui => "DUI",
+                Nit => "NIT",
+                Otro => "Otro",
+                Pasaporte => "Pasaporte",
+                _ => ""
+            };
+    }
 }
