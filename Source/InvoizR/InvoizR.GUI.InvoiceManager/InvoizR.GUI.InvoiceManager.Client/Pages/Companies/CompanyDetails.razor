@@ -82,6 +82,17 @@
 
     <br />
 
+    @if (!string.IsNullOrEmpty(response.Logo))
+    {
+        <h5>Logo</h5>
+
+        <br />
+
+        <img alt='Logo' src='data:image/png;base64, @(response.Logo)' style="height: 200px; width: 200px;">
+
+        <br />
+    }
+
     <a href="@("/company")">
         <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.ArrowBack" />
     </a>
