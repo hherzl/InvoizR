@@ -7,11 +7,7 @@ namespace InvoizR.Application.Services.Models;
 public record CreateDte01Request : CreateDteRequest, ICreateDteRequest<FeFcv1>
 {
     public static ICreateDteRequest<FeFcv1> Create(MhSettings mhSettings, ProcessingSettings processingSettings, string jwt, long? invoiceId, string payload)
-    {
-        var dte = FeFcv1.Deserialize(payload);
-
-        return new CreateDte01Request(mhSettings, processingSettings, jwt, invoiceId, dte);
-    }
+        => new CreateDte01Request(mhSettings, processingSettings, jwt, invoiceId, FeFcv1.Deserialize(payload));
 
     public CreateDte01Request() : base() { }
 
@@ -21,5 +17,5 @@ public record CreateDte01Request : CreateDteRequest, ICreateDteRequest<FeFcv1>
         Dte = dte;
     }
 
-    public FeFcv1 Dte { get; set; }
+    public FeFcv1 Dte { get; }
 }

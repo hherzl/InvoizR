@@ -13,6 +13,12 @@ public static class ConfigureServices
             options.Endpoint = "https://localhost:13880";
         });
 
+        services.AddScoped<IDiagnosticsClient, DiagnosticsClient>();
+        services.Configure<DiagnosticsClientSettings>(options =>
+        {
+            options.Endpoint = "https://localhost:13880";
+        });
+
         return services;
     }
 }

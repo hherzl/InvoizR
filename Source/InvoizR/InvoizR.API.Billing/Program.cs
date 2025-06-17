@@ -92,6 +92,7 @@ try
     app.MapInvoices();
     app.MapDte01();
     app.MapDte03();
+    app.MapDiagnostics();
 
     app.MapHub<BillingHub>("/billinghub");
 
