@@ -17,5 +17,5 @@ public record InvoiceItemModel
     public string ControlNumber { get; set; }
     public short? ProcessingStatusId { get; set; }
     public string ProcessingStatus { get; set; }
-    public string Serialization { get; set; }
+    public string Payload { get; set; }
 }

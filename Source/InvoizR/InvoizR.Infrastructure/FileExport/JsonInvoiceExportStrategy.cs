@@ -16,7 +16,7 @@ public class JsonInvoiceExportStrategy : IInvoiceExportStrategy
 
     public async Task<byte[]> ExportAsync(Invoice invoice, string path = "", CancellationToken cancellationToken = default)
     {
-        var array = Encoding.UTF8.GetBytes(invoice.Serialization);
+        var array = Encoding.UTF8.GetBytes(invoice.Payload);
 
         if (!string.IsNullOrEmpty(path))
         {

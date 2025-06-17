@@ -98,7 +98,7 @@ public partial class InvoizRDbContext
                 InvoiceTotal = inv.InvoiceTotal,
                 ControlNumber = inv.ControlNumber,
                 ProcessingStatusId = inv.ProcessingStatusId,
-                Serialization = inv.Serialization
+                Payload = inv.Payload
             };
 
         return query;

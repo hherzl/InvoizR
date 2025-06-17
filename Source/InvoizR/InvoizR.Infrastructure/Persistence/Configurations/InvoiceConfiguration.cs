@@ -160,7 +160,7 @@ internal class InvoiceConfiguration : IEntityTypeConfiguration<Invoice>
             ;
 
         builder
-            .Property(p => p.Serialization)
+            .Property(p => p.Payload)
             .HasColumnType("nvarchar(max)")
             ;
 

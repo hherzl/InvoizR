@@ -59,7 +59,7 @@ public class Dte01TemplateFactory : DteTemplateFactory
 
         try
         {
-            model.Dte = FeFcv1.Deserialize(invoice.Serialization);
+            model.Dte = FeFcv1.Deserialize(invoice.Payload);
         }
         catch (Exception ex)
         {

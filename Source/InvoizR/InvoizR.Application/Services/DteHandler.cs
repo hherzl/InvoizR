@@ -82,12 +82,12 @@ public class DteHandler
 
             dbContext.InvoiceProcessingStatusLog.Add(new(inv.Id, inv.ProcessingStatusId));
 
-            var received = FeFcv1Received.DeserializeReceived(inv.Serialization);
+            var received = FeFcv1Received.DeserializeReceived(inv.Payload);
 
             received.SelloRecibido = inv.ReceiptStamp;
             received.FirmaElectronica = firmarDocumentoRes.Body;
 
-            inv.Serialization = received.ToJson();
+            inv.Payload = received.ToJson();
 
             result = true;
         }

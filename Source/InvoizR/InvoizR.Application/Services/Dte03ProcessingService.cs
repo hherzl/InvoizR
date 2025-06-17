@@ -20,7 +20,7 @@ public class Dte03ProcessingService : DteProcessingService
 
         try
         {
-            dte = FeCcfv3.Deserialize(invoice.Serialization);
+            dte = FeCcfv3.Deserialize(invoice.Payload);
         }
         catch (Exception ex)
         {
@@ -35,7 +35,7 @@ public class Dte03ProcessingService : DteProcessingService
 
         dte.Resumen.TotalLetras = MoneyToWordsConverter.SpellingNumber(invoice.InvoiceTotal);
 
-        invoice.Serialization = dte.ToJson();
+        invoice.Payload = dte.ToJson();
 
         return true;
     }
