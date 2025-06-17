@@ -21,6 +21,14 @@ try
 
     builder.Services.AddAntiforgery();
 
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy("Manager", policy =>
+        {
+            policy.WithOrigins("https://localhost:13890").AllowAnyHeader().AllowAnyMethod();
+        });
+    });
+
     var app = builder.Build();
 
     // Configure the HTTP request pipeline.
@@ -30,6 +38,8 @@ try
     }
 
     app.UseHttpsRedirection();
+
+    app.UseCors("Manager");
 
     app.UseAntiforgery();
 

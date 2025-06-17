@@ -13,4 +13,7 @@ public class FirmarDocumentoResponse : BaseModel
 
     public string ToJson()
         => JsonSerializer.Serialize(this, DefaultJsonSerializerOpts);
+
+    public override string ToString()
+        => ToJson();
 }

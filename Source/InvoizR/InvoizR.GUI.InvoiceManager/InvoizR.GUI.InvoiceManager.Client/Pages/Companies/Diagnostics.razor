@@ -1,0 +1,52 @@
+﻿@page "/company/{Id:int}/diagnostics"
+
+@using InvoizR.Clients.Contracts
+@using InvoizR.Clients.DataContracts
+@using InvoizR.Clients.DataContracts.Common
+@using InvoizR.Clients.ThirdParty.DataContracts
+
+@inject IDiagnosticsClient diagnosticsClient
+
+<PageTitle>Diagnostics</PageTitle>
+
+<h3>Diagnostics</h3>
+<h4>@Id</h4>
+
+<br />
+
+<MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6">
+    <MudTabPanel Text="Seguridad">
+        @if (SeguridadResponse != null)
+        {
+            <pre>@SeguridadResponse.Result</pre>
+            <br />
+        }
+    </MudTabPanel>
+    <MudTabPanel Text="Firmador">
+        @if (FirmadorResponse != null)
+        {
+            <pre>@FirmadorResponse.Result</pre>
+            <br />
+        }
+    </MudTabPanel>
+</MudTabs>
+
+<br />
+
+<a href="@("/company")">
+    <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.ArrowBack" />
+</a>
+
+@code {
+    [Parameter] public int? Id { get; set; }
+
+    public DiagnosticsSeguridadResponse SeguridadResponse { get; set; }
+    public DiagnosticsFirmadorResponse FirmadorResponse { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        SeguridadResponse = await diagnosticsClient.DiagnosticsSeguridadAsync();
+
+        FirmadorResponse = await diagnosticsClient.DiagnosticsFirmadorAsync();
+    }
+}

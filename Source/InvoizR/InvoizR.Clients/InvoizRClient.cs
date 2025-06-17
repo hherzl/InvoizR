@@ -1,5 +1,4 @@
 ﻿using System.Net;
-using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Web;
 using InvoizR.Clients.Contracts;
@@ -9,34 +8,15 @@ using Microsoft.Extensions.Options;
 
 namespace InvoizR.Clients;
 
-public class InvoizRClient : IInvoizRClient
+public class InvoizRClient : Client, IInvoizRClient
 {
-    private const string APPLICATION_JSON = "application/JSON";
-    private const string USER_AGENT = "User-Agent";
-
-    private readonly HttpClient _httpClient;
-
     public InvoizRClient(IOptions<InvoizRClientSettings> options)
+        : base()
     {
         ClientSettings = options.Value;
 
-        _httpClient = new HttpClient
-        {
-            BaseAddress = new Uri(ClientSettings.Endpoint),
-            DefaultRequestHeaders =
-            {
-                Accept =
-                {
-                    new MediaTypeWithQualityHeaderValue(APPLICATION_JSON)
-                }
-            }
-        };
-
-        _httpClient.DefaultRequestHeaders.Add(USER_AGENT, "InvoizR HttpClient");
+        InitClient(ClientSettings.Endpoint, "InvoizR HttpClient");
     }
-
-    protected JsonSerializerOptions DefaultJsonSerializerOpts
-        => new() { PropertyNameCaseInsensitive = true, WriteIndented = true };
 
     public InvoizRClientSettings ClientSettings { get; }
 
