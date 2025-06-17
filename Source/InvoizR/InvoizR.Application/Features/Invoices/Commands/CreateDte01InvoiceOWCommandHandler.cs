@@ -50,7 +50,7 @@ public class CreateDte01InvoiceOWCommandHandler : IRequestHandler<CreateDte01Inv
                 InvoiceDate = request.InvoiceDate,
                 InvoiceTotal = request.InvoiceTotal,
                 Lines = request.Lines,
-                Serialization = request.Dte.ToJson(),
+                Payload = request.Dte.ToJson(),
                 ProcessingTypeId = (short)InvoiceProcessingType.OneWay,
                 ProcessingStatusId = (short)InvoiceProcessingStatus.Created
             };

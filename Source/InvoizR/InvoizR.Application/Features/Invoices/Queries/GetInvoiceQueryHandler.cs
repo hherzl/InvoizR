@@ -52,7 +52,7 @@ public class GetInvoiceQueryHandler : IRequestHandler<GetInvoiceQuery, InvoiceDe
             SchemaVersion = entity.SchemaVersion,
             GenerationCode = entity.GenerationCode,
             ControlNumber = entity.ControlNumber,
-            Serialization = entity.Serialization,
+            Payload = entity.Payload,
             ProcessingStatusId = entity.ProcessingStatusId,
             ProcessingStatus = processingStatuses.First(item => item.Id == entity.ProcessingStatusId).Desc,
             RetryIn = entity.RetryIn,

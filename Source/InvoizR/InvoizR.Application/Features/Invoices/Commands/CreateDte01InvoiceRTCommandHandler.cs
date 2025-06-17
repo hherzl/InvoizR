@@ -78,7 +78,7 @@ public class CreateDte01InvoiceRTCommandHandler : IRequestHandler<CreateDte01Inv
                 InvoiceDate = request.InvoiceDate,
                 InvoiceTotal = request.InvoiceTotal,
                 Lines = request.Lines,
-                Serialization = request.Dte.ToJson(),
+                Payload = request.Dte.ToJson(),
                 ProcessingTypeId = (short)InvoiceProcessingType.RoundTrip,
                 ProcessingStatusId = (short)InvoiceProcessingStatus.Created
             };
@@ -114,7 +114,7 @@ public class CreateDte01InvoiceRTCommandHandler : IRequestHandler<CreateDte01Inv
 
             var authResponse = await _seguridadClient.AuthAsync(authRequest);
 
-            var createDteRequest = CreateDte01Request.Create(mhSettings, processingSettings, authResponse.Body.Token, invoice.Id, invoice.Serialization);
+            var createDteRequest = CreateDte01Request.Create(mhSettings, processingSettings, authResponse.Body.Token, invoice.Id, invoice.Payload);
             var flag = await _dteHandler.HandleAsync(createDteRequest, _dbContext, cancellationToken);
             if (!flag)
                 return new(invoice.Id);

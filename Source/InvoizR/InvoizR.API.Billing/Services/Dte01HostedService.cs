@@ -98,7 +98,7 @@ public class Dte01HostedService : BackgroundService
                     {
                         _logger.LogInformation($"Processing '{invoice.InvoiceNumber}' invoice, changing status from '{InvoiceProcessingStatus.Requested}'...");
 
-                        var request = CreateDte01Request.Create(mhSettings, processingSettings, authResponse.Body.Token, invoice.Id, invoice.Serialization);
+                        var request = CreateDte01Request.Create(mhSettings, processingSettings, authResponse.Body.Token, invoice.Id, invoice.Payload);
                         var result = await dteHandler.HandleAsync(request, dbContext, stoppingToken);
                         if (result)
                         {

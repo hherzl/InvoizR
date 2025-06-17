@@ -28,7 +28,7 @@ public record InvoiceDetailsModel
     public short? SchemaVersion { get; set; }
     public string GenerationCode { get; set; }
     public string ControlNumber { get; set; }
-    public string Serialization { get; set; }
+    public string Payload { get; set; }
     public short? ProcessingStatusId { get; set; }
     public string ProcessingStatus { get; set; }
     public int? RetryIn { get; set; }
