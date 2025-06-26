@@ -1,0 +1,83 @@
+﻿@page "/branch/{Id:int?}"
+
+<PageTitle>Branch Details - @Id</PageTitle>
+
+@using InvoizR.Clients.Contracts
+@using InvoizR.Clients.DataContracts
+@using InvoizR.Clients.DataContracts.Common
+
+@inject IInvoizRClient invoizRClient
+
+<h3>Branch Details</h3>
+<h4>@Id</h4>
+
+@if (response == null)
+{
+    return;
+}
+
+<MudCard>
+    <MudCardHeader>
+        <CardHeaderContent>
+            <MudText Typo="Typo.h6">Branch</MudText>
+        </CardHeaderContent>
+        <CardHeaderActions>
+            <MudIconButton Icon="@Icons.Material.Filled.BusinessCenter" Color="Color.Default" />
+        </CardHeaderActions>
+    </MudCardHeader>
+    <MudCardContent>
+        <MudText>Name: @response?.Model.Name</MudText>
+        <MudText>Establishment Prefix: @response?.Model.EstablishmentPrefix</MudText>
+        <MudText>Tax Auth ID: @response?.Model.TaxAuthId</MudText>
+        <MudText>Address: @response?.Model.Address</MudText>
+        <MudText>Phone: @response?.Model.Phone</MudText>
+        <MudText>Email: @response?.Model.Email</MudText>
+    </MudCardContent>
+</MudCard>
+
+<br />
+
+<h5>POS</h5>
+
+<br />
+
+<MudTable Items="response.Model.Pos">
+    <HeaderContent>
+        <MudTh>Name</MudTh>
+        <MudTh>Code</MudTh>
+        <MudTh>Tax Auth POS</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Name">@context.Name</MudTd>
+        <MudTd DataLabel="Name">@context.Code</MudTd>
+        <MudTd DataLabel="Name">@context.TaxAuthPos</MudTd>
+    </RowTemplate>
+</MudTable>
+
+<br />
+
+@if (response?.Model.HasLogo == true)
+{
+    <h5>Logo</h5>
+
+    <br />
+
+    <img alt='Logo' src='data:image/png;base64, @(response.Model.Logo)' style="height: 200px; width: 200px;">
+
+    <br />
+}
+
+<a href="@($"/company/{response.Model.CompanyId}")">
+    <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.ArrowBack" />
+</a>
+
+@code {
+    [Parameter] public int? Id { get; set; }
+
+    private SingleResponse<BranchDetailsModel> response { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        response = await invoizRClient.GetBranchAsync((short)Id);
+    }
+}

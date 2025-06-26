@@ -3,9 +3,9 @@ using MediatR;
 
 namespace InvoizR.Clients.DataContracts;
 
-public record GetCompanyQuery : IRequest<SingleResponse<CompanyDetailsModel>>
+public record GetBranchQuery : IRequest<SingleResponse<BranchDetailsModel>>
 {
-    public GetCompanyQuery(short? id)
+    public GetBranchQuery(short? id)
     {
         Id = id;
     }

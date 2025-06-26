@@ -33,6 +33,7 @@ public interface IInvoizRDbContext
 
     Task<Branch> GetBranchAsync(short? id, bool tracking = false, bool includes = false, CancellationToken ct = default);
     Task<Pos> GetPosAsync(short? id, bool tracking = false, bool includes = false, CancellationToken ct = default);
+    IQueryable<PosItemModel> GetPosBy(short? branchId = null);
 
     IQueryable<BranchNotification> GetBranchNotificationsBy(short? branchId = null, short? invoiceTypeId = null);
 

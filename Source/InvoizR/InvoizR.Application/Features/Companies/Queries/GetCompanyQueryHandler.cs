@@ -1,11 +1,12 @@
 ﻿using InvoizR.Application.Common.Contracts;
 using InvoizR.Clients.DataContracts;
+using InvoizR.Clients.DataContracts.Common;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace InvoizR.Application.Features.Companies.Queries;
 
-public class GetCompanyQueryHandler : IRequestHandler<GetCompanyQuery, CompanyDetailsModel>
+public class GetCompanyQueryHandler : IRequestHandler<GetCompanyQuery, SingleResponse<CompanyDetailsModel>>
 {
     private readonly IInvoizRDbContext _dbContext;
 
@@ -14,7 +15,7 @@ public class GetCompanyQueryHandler : IRequestHandler<GetCompanyQuery, CompanyDe
         _dbContext = dbContext;
     }
 
-    public async Task<CompanyDetailsModel> Handle(GetCompanyQuery request, CancellationToken cancellationToken)
+    public async Task<SingleResponse<CompanyDetailsModel>> Handle(GetCompanyQuery request, CancellationToken cancellationToken)
     {
         var entity = await _dbContext.GetCompanyAsync(request.Id, ct: cancellationToken);
         if (entity == null)
@@ -44,6 +45,6 @@ public class GetCompanyQueryHandler : IRequestHandler<GetCompanyQuery, CompanyDe
         if (entity.Logo != null)
             model.Logo = Convert.ToBase64String(entity.Logo);
 
-        return model;
+        return new(model);
     }
 }

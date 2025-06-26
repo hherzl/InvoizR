@@ -25,16 +25,16 @@
             </CardHeaderActions>
         </MudCardHeader>
         <MudCardContent>
-            <MudText>Name: @response?.Name</MudText>
-            <MudText>Code: @response?.Code</MudText>
-            <MudText>Business Name: @response?.BusinessName</MudText>
-            <MudText>Tax Id Number: @response?.TaxIdNumber</MudText>
-            <MudText>Tax Registration Number: @response?.TaxRegistrationNumber</MudText>
-            <MudText>Economic Activity Id: @response?.EconomicActivityId</MudText>
-            <MudText>Economic Activity: @response?.EconomicActivity</MudText>
-            <MudText>Address: @response?.Address</MudText>
-            <MudText>Phone: @response?.Phone</MudText>
-            <MudText>Email: @response?.Email</MudText>
+            <MudText>Name: @response?.Model.Name</MudText>
+            <MudText>Code: @response?.Model.Code</MudText>
+            <MudText>Business Name: @response?.Model.BusinessName</MudText>
+            <MudText>Tax Id Number: @response?.Model.TaxIdNumber</MudText>
+            <MudText>Tax Registration Number: @response?.Model.TaxRegistrationNumber</MudText>
+            <MudText>Economic Activity Id: @response?.Model.EconomicActivityId</MudText>
+            <MudText>Economic Activity: @response?.Model.EconomicActivity</MudText>
+            <MudText>Address: @response?.Model.Address</MudText>
+            <MudText>Phone: @response?.Model.Phone</MudText>
+            <MudText>Email: @response?.Model.Email</MudText>
         </MudCardContent>
     </MudCard>
 
@@ -44,16 +44,22 @@
 
     <br />
 
-    <MudTable Items="response.Branches">
+    <MudTable Items="response?.Model.Branches">
         <HeaderContent>
             <MudTh>Name</MudTh>
             <MudTh>Establishment prefix</MudTh>
             <MudTh>Tax Auth ID</MudTh>
+            <MudTh></MudTh>
         </HeaderContent>
         <RowTemplate>
             <MudTd DataLabel="Name">@context.Name</MudTd>
             <MudTd DataLabel="Establishment prefix">@context.EstablishmentPrefix</MudTd>
             <MudTd DataLabel="Tax Auth ID">@context.TaxAuthId</MudTd>
+            <MudTd>
+                <a href="@($"/branch/{@context.Id}")">
+                    <MudIcon Icon="@Icons.Material.Filled.Details" Title="Details" />
+                </a>
+            </MudTd>
         </RowTemplate>
     </MudTable>
 
@@ -82,13 +88,13 @@
 
     <br />
 
-    @if (!string.IsNullOrEmpty(response.Logo))
+    @if (!string.IsNullOrEmpty(response?.Model.Logo))
     {
         <h5>Logo</h5>
 
         <br />
 
-        <img alt='Logo' src='data:image/png;base64, @(response.Logo)' style="height: 200px; width: 200px;">
+        <img alt='Logo' src='data:image/png;base64, @(response?.Model.Logo)' style="height: 200px; width: 200px;">
 
         <br />
     }
@@ -101,7 +107,7 @@
 @code {
     [Parameter] public int? Id { get; set; }
 
-    private CompanyDetailsModel response { get; set; }
+    private SingleResponse<CompanyDetailsModel> response { get; set; }
     private ListResponse<ResponsibleItemModel> responsibles { get; set; }
 
     protected override async Task OnInitializedAsync()

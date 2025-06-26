@@ -1,4 +1,5 @@
-﻿using InvoizR.Application.Specifications;
+﻿using System.ComponentModel.Design;
+using InvoizR.Application.Specifications;
 using InvoizR.Clients.DataContracts;
 using InvoizR.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -77,6 +78,26 @@ public partial class InvoizRDbContext
             query = query.Include(e => e.Branch).ThenInclude(e => e.Company);
 
         return await query.SingleOrDefaultAsync(ct);
+    }
+
+    public IQueryable<PosItemModel> GetPosBy(short? branchId = null)
+    {
+        var query =
+            from pos in Pos
+            join branch in Branch on pos.BranchId equals branch.Id
+            where pos.BranchId == branchId
+            select new PosItemModel
+            {
+                Id = pos.Id,
+                Name = pos.Name,
+                BranchId = pos.BranchId,
+                Branch = branch.Name,
+                Code = pos.Code,
+                TaxAuthPos = pos.TaxAuthPos,
+                Description = pos.Description
+            };
+
+        return query;
     }
 
     public IQueryable<BranchNotification> GetBranchNotificationsBy(short? branchId = null, short? invoiceTypeId = null)
