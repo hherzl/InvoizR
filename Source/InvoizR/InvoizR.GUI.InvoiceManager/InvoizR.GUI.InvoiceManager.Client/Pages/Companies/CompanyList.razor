@@ -15,6 +15,7 @@
         <MudTh>Tax ID</MudTh>
         <MudTh>Code</MudTh>
         <MudTh></MudTh>
+        <MudTh></MudTh>
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="Environment">@context.Environment</MudTd>
@@ -25,6 +26,8 @@
             <a href="@($"/company/{@context.Id}")">
                 <MudIcon Icon="@Icons.Material.Filled.Details" Title="Details" />
             </a>
+        </MudTd>
+        <MudTd DataLabel="Diagnostics">
             <a href="@($"/company/{@context.Id}/diagnostics")">
                 <MudIcon Icon="@Icons.Material.Filled.Router" Title="Diagnostics" />
             </a>

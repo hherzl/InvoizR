@@ -31,13 +31,13 @@ public class InvoizRClient : Client, IInvoizRClient
         return JsonSerializer.Deserialize<ListResponse<CompanyItemModel>>(responseContent, DefaultJsonSerializerOpts);
     }
 
-    public async Task<CompanyDetailsModel> GetCompanyAsync(short? id)
+    public async Task<SingleResponse<CompanyDetailsModel>> GetCompanyAsync(short? id)
     {
         var response = await _httpClient.GetAsync($"company/{id}");
         response.EnsureSuccessStatusCode();
 
         var responseContent = await response.Content.ReadAsStringAsync();
-        return JsonSerializer.Deserialize<CompanyDetailsModel>(responseContent, DefaultJsonSerializerOpts);
+        return JsonSerializer.Deserialize<SingleResponse<CompanyDetailsModel>>(responseContent, DefaultJsonSerializerOpts);
     }
 
     public async Task<CreatedResponse<short?>> CreateCompanyAsync(CreateCompanyCommand request)
@@ -50,13 +50,13 @@ public class InvoizRClient : Client, IInvoizRClient
         return JsonSerializer.Deserialize<CreatedResponse<short?>>(responseContent, DefaultJsonSerializerOpts);
     }
 
-    public async Task<BranchDetailsModel> GetBranchAsync(short id)
+    public async Task<SingleResponse<BranchDetailsModel>> GetBranchAsync(short id)
     {
         var response = await _httpClient.GetAsync($"branch/{id}");
         response.EnsureSuccessStatusCode();
 
         var responseContent = await response.Content.ReadAsStringAsync();
-        return JsonSerializer.Deserialize<BranchDetailsModel>(responseContent, DefaultJsonSerializerOpts);
+        return JsonSerializer.Deserialize<SingleResponse<BranchDetailsModel>>(responseContent, DefaultJsonSerializerOpts);
     }
 
     public async Task<CreatedResponse<short?>> CreateBranchAsync(CreateBranchCommand request)

@@ -8,10 +8,10 @@ public interface IInvoizRClient
     InvoizRClientSettings ClientSettings { get; }
 
     Task<ListResponse<CompanyItemModel>> GetCompaniesAsync(GetCompaniesQuery request);
-    Task<CompanyDetailsModel> GetCompanyAsync(short? id);
+    Task<SingleResponse<CompanyDetailsModel>> GetCompanyAsync(short? id);
     Task<CreatedResponse<short?>> CreateCompanyAsync(CreateCompanyCommand request);
 
-    Task<BranchDetailsModel> GetBranchAsync(short id);
+    Task<SingleResponse<BranchDetailsModel>> GetBranchAsync(short id);
     Task<CreatedResponse<short?>> CreateBranchAsync(CreateBranchCommand request);
     Task<CreatedResponse<short?>> AddNotificationToBranchAsync(AddNotificationToBranchCommand request);
 
