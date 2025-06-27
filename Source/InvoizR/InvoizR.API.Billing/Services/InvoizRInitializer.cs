@@ -2,6 +2,7 @@
 using InvoizR.Domain.Enums;
 using InvoizR.SharedKernel.Mh.FeCcf;
 using InvoizR.SharedKernel.Mh.FeFc;
+using InvoizR.SharedKernel.Mh.FeFse;
 
 namespace InvoizR.API.Billing.Services;
 
@@ -20,6 +21,7 @@ public class InvoizRInitializer
         {
             _dbContext.InvoiceType.Add(new(FeFcv1.TypeId, "Consumidor Final", FeFcv1.SchemaType, FeFcv1.Version, true));
             _dbContext.InvoiceType.Add(new(FeCcfv3.TypeId, "Comprobante de Crédito Fiscal", FeCcfv3.SchemaType, FeCcfv3.Version, true));
+            _dbContext.InvoiceType.Add(new(FeFsev1.TypeId, "Factura Sujeto Excluido", FeFsev1.SchemaType, FeFsev1.Version, true));
 
             await _dbContext.SaveChangesAsync();
         }

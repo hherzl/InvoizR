@@ -6,15 +6,8 @@ using Microsoft.Extensions.Logging;
 
 namespace InvoizR.Application.Services;
 
-public abstract class DteProcessingService
+public abstract class DteProcessingService(ILogger logger)
 {
-    private readonly ILogger _logger;
-
-    public DteProcessingService(ILogger logger)
-    {
-        _logger = logger;
-    }
-
     protected abstract bool Init(Invoice invoice);
 
     public async Task SetInvoiceAsInitializedAsync(long? invoiceId, IInvoizRDbContext dbContext, CancellationToken cancellationToken = default)
@@ -33,7 +26,7 @@ public abstract class DteProcessingService
 
         dbContext.InvoiceProcessingStatusLog.Add(new(inv.Id, inv.ProcessingStatusId));
 
-        _logger.LogInformation($" Updating '{inv.InvoiceNumber}' invoice: '{inv.SchemaType}{inv.SchemaVersion}', '{inv.GenerationCode}', '{inv.ControlNumber}'...");
+        logger.LogInformation($" Updating '{inv.InvoiceNumber}' invoice: '{inv.SchemaType}{inv.SchemaVersion}', '{inv.GenerationCode}', '{inv.ControlNumber}'...");
 
         await dbContext.SaveChangesAsync(cancellationToken);
     }
@@ -49,7 +42,7 @@ public abstract class DteProcessingService
 
         dbContext.InvoiceProcessingStatusLog.Add(new(inv.Id, inv.ProcessingStatusId));
 
-        _logger.LogInformation($" Updating '{inv.InvoiceNumber}' invoice: '{inv.SchemaType}{inv.SchemaVersion}', '{inv.GenerationCode}', '{inv.ControlNumber}'...");
+        logger.LogInformation($" Updating '{inv.InvoiceNumber}' invoice: '{inv.SchemaType}{inv.SchemaVersion}', '{inv.GenerationCode}', '{inv.ControlNumber}'...");
 
         await dbContext.SaveChangesAsync(cancellationToken);
     }

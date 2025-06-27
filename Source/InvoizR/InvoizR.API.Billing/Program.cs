@@ -34,6 +34,7 @@ try
     builder.Services.AddScoped<InvoizRInitializer>();
     builder.Services.AddHostedService<Dte01HostedService>();
     builder.Services.AddHostedService<Dte03HostedService>();
+    builder.Services.AddHostedService<Dte14HostedService>();
 
     builder.Services.AddCors(options =>
     {
@@ -92,6 +93,7 @@ try
     app.MapInvoices();
     app.MapDte01();
     app.MapDte03();
+    app.MapDte14();
     app.MapDiagnostics();
 
     app.MapHub<BillingHub>("/billinghub");

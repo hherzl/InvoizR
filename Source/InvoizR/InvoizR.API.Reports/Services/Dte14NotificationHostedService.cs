@@ -6,32 +6,21 @@ using InvoizR.Clients.Contracts;
 using InvoizR.Domain.Enums;
 using InvoizR.Infrastructure.FileExport;
 using InvoizR.Infrastructure.Persistence;
-using InvoizR.SharedKernel.Mh.FeCcf;
+using InvoizR.SharedKernel.Mh.FeFse;
 using Microsoft.EntityFrameworkCore;
 
 namespace InvoizR.API.Reports.Services;
 
-public class Dte03NotificationHostedService : BackgroundService
+public class Dte14NotificationHostedService(ILogger<Dte14NotificationHostedService> logger, IServiceProvider serviceProvider, IConfiguration configuration) : BackgroundService
 {
-    private readonly ILogger _logger;
-    private readonly IServiceProvider _serviceProvider;
-    private readonly IConfiguration _configuration;
-
-    public Dte03NotificationHostedService(ILogger<Dte03NotificationHostedService> logger, IServiceProvider serviceProvider, IConfiguration configuration)
-    {
-        _logger = logger;
-        _serviceProvider = serviceProvider;
-        _configuration = configuration;
-    }
-
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        using var scope = _serviceProvider.CreateScope();
+        using var scope = serviceProvider.CreateScope();
 
         using var dbContext = scope.ServiceProvider.GetRequiredService<InvoizRDbContext>();
 
         var processingSettings = new ProcessingSettings();
-        _configuration.Bind("ProcessingSettings", processingSettings);
+        configuration.Bind("ProcessingSettings", processingSettings);
 
         var timer = new PeriodicTimer(TimeSpan.FromMinutes(1));
 
@@ -41,7 +30,7 @@ public class Dte03NotificationHostedService : BackgroundService
             {
                 var filters = new
                 {
-                    FeCcfv3.TypeId,
+                    FeFsev1.TypeId,
                     ProcessingTypeId = (short)InvoiceProcessingType.OneWay,
                     ProcessingStatuses = new short?[]
                     {
@@ -52,11 +41,11 @@ public class Dte03NotificationHostedService : BackgroundService
                 var invoices = await dbContext.GetInvoicesForProcessing(filters.TypeId, filters.ProcessingTypeId, filters.ProcessingStatuses).ToListAsync(stoppingToken);
                 if (invoices.Count == 0)
                 {
-                    _logger.LogInformation($"There are no '{FeCcfv3.SchemaType}' invoices to process...");
+                    logger.LogInformation($"There are no '{FeFsev1.SchemaType}' invoices to process...");
                     continue;
                 }
 
-                _logger.LogInformation($"Processing '{invoices.Count}' invoices ...");
+                logger.LogInformation($"Processing '{invoices.Count}' invoices ...");
 
                 var smtpClient = scope.ServiceProvider.GetRequiredService<ISmtpClient>();
 
@@ -85,7 +74,7 @@ public class Dte03NotificationHostedService : BackgroundService
                     var notificationTemplate = new DteNotificationTemplatev1(new(invoice.Pos.Branch, invoiceType, invoice));
                     var notificationPath = processingSettings.GetDteNotificationPath(item.ControlNumber);
 
-                    _logger.LogInformation($"Creating notification file for invoice '{item.InvoiceTypeId}-{item.InvoiceNumber}', path: '{notificationPath}'...");
+                    logger.LogInformation($"Creating notification file for invoice '{item.InvoiceTypeId}-{item.InvoiceNumber}', path: '{notificationPath}'...");
 
                     await File.WriteAllTextAsync(notificationPath, notificationTemplate.ToString(), stoppingToken);
 
@@ -107,7 +96,7 @@ public class Dte03NotificationHostedService : BackgroundService
 
                     await dbContext.SaveChangesAsync(stoppingToken);
 
-                    _logger.LogInformation($"Sending notification for invoice '{item.InvoiceTypeId}-{item.InvoiceNumber}'; customer '{item.CustomerName}', email: '{item.CustomerEmail}'...");
+                    logger.LogInformation($"Sending notification for invoice '{item.InvoiceTypeId}-{item.InvoiceNumber}'; customer '{item.CustomerName}', email: '{item.CustomerEmail}'...");
 
                     smtpClient.Send(notificationTemplate.ToMailMessage());
 
@@ -122,7 +111,7 @@ public class Dte03NotificationHostedService : BackgroundService
             }
             catch (Exception ex)
             {
-                _logger.LogCritical(ex, $"There was on error processing notifications for DTE-03");
+                logger.LogCritical(ex, $"There was on error processing notifications for DTE-14");
             }
         }
     }

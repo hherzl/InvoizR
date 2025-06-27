@@ -6,6 +6,7 @@ using InvoizR.Clients.Contracts;
 using InvoizR.Clients.DataContracts;
 using InvoizR.SharedKernel.Mh.FeCcf;
 using InvoizR.SharedKernel.Mh.FeFc;
+using InvoizR.SharedKernel.Mh.FeFse;
 using Microsoft.Extensions.Options;
 
 const string BillingEndpoint = "https://localhost:13880";
@@ -155,6 +156,8 @@ if (clientArgs.Mock)
                     await MockRtDte01(client);
                 else if (clientArgs.InvoiceType == FeCcfv3.SchemaType)
                     await MockRtDte03(client);
+                else if (clientArgs.InvoiceType == FeFsev1.SchemaType)
+                    await MockRtDte14(client);
             }
             else
             {
@@ -162,6 +165,8 @@ if (clientArgs.Mock)
                     await MockOwDte01(client);
                 else if (clientArgs.InvoiceType == FeCcfv3.SchemaType)
                     await MockOwDte03(client);
+                else if (clientArgs.InvoiceType == FeFsev1.SchemaType)
+                    await MockOwDte14(client);
             }
         }
         catch (Exception ex)
@@ -185,18 +190,6 @@ static async Task MockRtDte01(IInvoizRClient client)
     Console.WriteLine();
 }
 
-static async Task MockRtDte03(IInvoizRClient client)
-{
-    var req = DTE03.MockRtDte03();
-
-    Console.WriteLine($" Syncing invoice '{req.InvoiceNumber}', {req.InvoiceTotal:C2} in RT processing...");
-
-    var response = await client.CreateDte03InvoiceRTAsync(req);
-
-    Console.WriteLine($"  Generated ID: '{response.Id}'");
-    Console.WriteLine();
-}
-
 static async Task MockOwDte01(IInvoizRClient client)
 {
     var req = DTE01.MockOwDte01();
@@ -209,6 +202,18 @@ static async Task MockOwDte01(IInvoizRClient client)
     Console.WriteLine();
 }
 
+static async Task MockRtDte03(IInvoizRClient client)
+{
+    var req = DTE03.MockRtDte03();
+
+    Console.WriteLine($" Syncing invoice '{req.InvoiceNumber}', {req.InvoiceTotal:C2} in RT processing...");
+
+    var response = await client.CreateDte03InvoiceRTAsync(req);
+
+    Console.WriteLine($"  Generated ID: '{response.Id}'");
+    Console.WriteLine();
+}
+
 static async Task MockOwDte03(IInvoizRClient client)
 {
     var req = DTE03.MockOwDte03();
@@ -216,6 +221,30 @@ static async Task MockOwDte03(IInvoizRClient client)
     Console.WriteLine($" Syncing invoice '{req.InvoiceNumber}', {req.InvoiceTotal:C2} in OW processing...");
 
     var response = await client.CreateDte03InvoiceOWAsync(req);
+
+    Console.WriteLine($"  Generated ID: '{response.Id}'");
+    Console.WriteLine();
+}
+
+static async Task MockRtDte14(IInvoizRClient client)
+{
+    var req = DTE14.MockRtDte14();
+
+    Console.WriteLine($" Syncing invoice '{req.InvoiceNumber}', {req.InvoiceTotal:C2} in RT processing...");
+
+    var response = await client.CreateDte14RTAsync(req);
+
+    Console.WriteLine($"  Generated ID: '{response.Id}'");
+    Console.WriteLine();
+}
+
+static async Task MockOwDte14(IInvoizRClient client)
+{
+    var req = DTE14.MockOwDte14();
+
+    Console.WriteLine($" Syncing invoice '{req.InvoiceNumber}', {req.InvoiceTotal:C2} in OW processing...");
+
+    var response = await client.CreateDte14OWAsync(req);
 
     Console.WriteLine($"  Generated ID: '{response.Id}'");
     Console.WriteLine();

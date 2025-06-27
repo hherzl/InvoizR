@@ -5,7 +5,9 @@ using InvoizR.Clients.ThirdParty.DataContracts;
 using InvoizR.Domain.Entities;
 using InvoizR.Domain.Enums;
 using InvoizR.SharedKernel.Mh;
+using InvoizR.SharedKernel.Mh.FeCcf;
 using InvoizR.SharedKernel.Mh.FeFc;
+using InvoizR.SharedKernel.Mh.FeFse;
 using Microsoft.Extensions.Configuration;
 
 namespace InvoizR.Application.Services;
@@ -82,12 +84,30 @@ public class DteHandler
 
             dbContext.InvoiceProcessingStatusLog.Add(new(inv.Id, inv.ProcessingStatusId));
 
-            var received = FeFcv1Received.DeserializeReceived(inv.Payload);
+            if (inv.InvoiceTypeId == FeFcv1.TypeId)
+            {
+                var received = FeFcv1Received.DeserializeReceived(inv.Payload);
+                received.SelloRecibido = inv.ReceiptStamp;
+                received.FirmaElectronica = firmarDocumentoRes.Body;
 
-            received.SelloRecibido = inv.ReceiptStamp;
-            received.FirmaElectronica = firmarDocumentoRes.Body;
+                inv.Payload = received.ToJson();
+            }
+            else if (inv.InvoiceTypeId == FeCcfv3.TypeId)
+            {
+                var received = FeCcfv3Received.DeserializeReceived(inv.Payload);
+                received.SelloRecibido = inv.ReceiptStamp;
+                received.FirmaElectronica = firmarDocumentoRes.Body;
 
-            inv.Payload = received.ToJson();
+                inv.Payload = received.ToJson();
+            }
+            else if (inv.InvoiceTypeId == FeFsev1.TypeId)
+            {
+                var received = FeFsev1Received.DeserializeReceived(inv.Payload);
+                received.SelloRecibido = inv.ReceiptStamp;
+                received.FirmaElectronica = firmarDocumentoRes.Body;
+
+                inv.Payload = received.ToJson();
+            }
 
             result = true;
         }
