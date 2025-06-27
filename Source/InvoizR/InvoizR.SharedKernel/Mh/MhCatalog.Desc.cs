@@ -41,7 +41,7 @@ public static partial class MhCatalog
         public static string Desc(string value)
             => value switch
             {
-                BilletesYMonedas => "Efetivo",
+                BilletesYMonedas => "Efectivo",
                 TarjetaDebito => "Tarjeta de débito",
                 TarjetaCredito => "Tarjeta de crédito",
                 _ => ""

@@ -1,5 +1,6 @@
 ﻿using InvoizR.Clients.DataContracts;
 using InvoizR.Clients.DataContracts.Common;
+using InvoizR.Clients.DataContracts.Dte14;
 
 namespace InvoizR.Clients.Contracts;
 
@@ -34,4 +35,7 @@ public interface IInvoizRClient
 
     Task<CreatedResponse<long?>> CreateDte03InvoiceOWAsync(CreateDte03InvoiceOWCommand request);
     Task<CreatedResponse<long?>> CreateDte03InvoiceRTAsync(CreateDte03InvoiceRTCommand request);
+
+    Task<CreatedResponse<long?>> CreateDte14OWAsync(CreateDte14OWCommand request);
+    Task<CreatedResponse<long?>> CreateDte14RTAsync(CreateDte14RTCommand request);
 }

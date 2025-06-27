@@ -24,7 +24,7 @@ public class CreateDte03InvoiceRTCommandHandler : IRequestHandler<CreateDte03Inv
     private readonly ILogger _logger;
     private readonly IConfiguration _configuration;
     private readonly IInvoizRDbContext _dbContext;
-    private readonly Dte03ProcessingService _dteProcessingService;
+    private readonly Dte14ProcessingService _dteProcessingService;
     private readonly ISeguridadClient _seguridadClient;
     private readonly DteHandler _dteHandler;
     private readonly IEnumerable<IInvoiceExportStrategy> _invoiceExportStrategies;
@@ -34,7 +34,7 @@ public class CreateDte03InvoiceRTCommandHandler : IRequestHandler<CreateDte03Inv
         ILogger<CreateDte01InvoiceRTCommandHandler> logger,
         IConfiguration configuration,
         IInvoizRDbContext dbContext,
-        Dte03ProcessingService dteProcessingService,
+        Dte14ProcessingService dteProcessingService,
         ISeguridadClient seguridadClient,
         DteHandler dteHandler,
         IEnumerable<IInvoiceExportStrategy> invoiceExportStrategies

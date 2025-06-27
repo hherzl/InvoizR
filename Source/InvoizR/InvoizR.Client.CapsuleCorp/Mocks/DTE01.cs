@@ -5,7 +5,7 @@ using InvoizR.SharedKernel;
 
 namespace InvoizR.Client.CapsuleCorp.Mocks;
 
-internal class DTE01
+static class DTE01
 {
     public static CreateDte01InvoiceOWCommand MockOwDte01()
     {

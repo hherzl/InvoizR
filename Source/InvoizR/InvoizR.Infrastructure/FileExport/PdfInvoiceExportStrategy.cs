@@ -6,6 +6,7 @@ using InvoizR.Domain.Entities;
 using InvoizR.Infrastructure.Reports;
 using InvoizR.SharedKernel.Mh.FeCcf;
 using InvoizR.SharedKernel.Mh.FeFc;
+using InvoizR.SharedKernel.Mh.FeFse;
 using Microsoft.Extensions.Logging;
 
 namespace InvoizR.Infrastructure.FileExport;
@@ -16,13 +17,22 @@ public class PdfInvoiceExportStrategy : IInvoiceExportStrategy
     private readonly IConverter _converter;
     private readonly Dte01TemplateFactory _dte01TemplateFactory;
     private readonly Dte03TemplateFactory _dte03TemplateFactory;
+    private readonly Dte14TemplateFactory _dte14TemplateFactory;
 
-    public PdfInvoiceExportStrategy(ILogger<PdfInvoiceExportStrategy> logger, IConverter converter, Dte01TemplateFactory dte01TemplateFactory, Dte03TemplateFactory dte03TemplateFactory)
+    public PdfInvoiceExportStrategy
+    (
+        ILogger<PdfInvoiceExportStrategy> logger,
+        IConverter converter,
+        Dte01TemplateFactory dte01TemplateFactory,
+        Dte03TemplateFactory dte03TemplateFactory,
+        Dte14TemplateFactory dte14TemplateFactory
+    )
     {
         _logger = logger;
         _converter = converter;
         _dte01TemplateFactory = dte01TemplateFactory;
         _dte03TemplateFactory = dte03TemplateFactory;
+        _dte14TemplateFactory = dte14TemplateFactory;
     }
 
     public async Task<byte[]> ExportAsync(Invoice invoice, string path = "", CancellationToken cancellationToken = default)
@@ -33,6 +43,8 @@ public class PdfInvoiceExportStrategy : IInvoiceExportStrategy
             objSettings = DinkToPdfHelper.CreateDteObjSettings(new Dte01Templatev1(_dte01TemplateFactory.Create(invoice)).ToString());
         else if (invoice.InvoiceTypeId == FeCcfv3.TypeId)
             objSettings = DinkToPdfHelper.CreateDteObjSettings(new Dte03Templatev1(_dte03TemplateFactory.Create(invoice)).ToString());
+        else if (invoice.InvoiceTypeId == FeFsev1.TypeId)
+            objSettings = DinkToPdfHelper.CreateDteObjSettings(new Dte14Templatev1(_dte14TemplateFactory.Create(invoice)).ToString());
 
         var pdfDocument = new HtmlToPdfDocument
         {

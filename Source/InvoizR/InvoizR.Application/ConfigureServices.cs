@@ -24,9 +24,11 @@ public static class ConfigureServices
 
         services.AddScoped<Dte01ProcessingService>();
         services.AddScoped<Dte03ProcessingService>();
+        services.AddScoped<Dte14ProcessingService>();
 
         services.AddScoped<Dte01TemplateFactory>();
         services.AddScoped<Dte03TemplateFactory>();
+        services.AddScoped<Dte14TemplateFactory>();
 
         return services;
     }
