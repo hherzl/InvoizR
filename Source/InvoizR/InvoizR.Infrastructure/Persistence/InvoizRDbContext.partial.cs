@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.Design;
-using InvoizR.Application.Specifications;
+﻿using InvoizR.Application.Specifications;
 using InvoizR.Clients.DataContracts;
 using InvoizR.Domain.Entities;
 using Microsoft.EntityFrameworkCore;

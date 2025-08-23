@@ -10,6 +10,8 @@ public interface IInvoizRDbContext
     DatabaseFacade Database { get; }
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 
+    Task DispatchNotificationsAsync(CancellationToken cancellationToken = default);
+
     DbSet<EnumDescription> EnumDescription { get; set; }
     DbSet<Responsible> Responsible { get; set; }
     DbSet<Company> Company { get; set; }

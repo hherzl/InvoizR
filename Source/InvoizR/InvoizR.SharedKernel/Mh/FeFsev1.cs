@@ -350,17 +350,16 @@ public partial class SujetoExcluido : object
 
     [System.Text.Json.Serialization.JsonPropertyName("tipoDocumento")]
 
-    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
     [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-    [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
-    public SujetoExcluidoTipoDocumento TipoDocumento { get; set; }
+    //[System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
+    //public SujetoExcluidoTipoDocumento TipoDocumento { get; set; }
+    public string TipoDocumento { get; set; }
 
     /// <summary>
     /// Número de documento de Identificación (Receptor)
     /// </summary>
-
     [System.Text.Json.Serialization.JsonPropertyName("numDocumento")]
-
     [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
     [System.ComponentModel.DataAnnotations.Required]
     [System.ComponentModel.DataAnnotations.StringLength(20, MinimumLength = 1)]

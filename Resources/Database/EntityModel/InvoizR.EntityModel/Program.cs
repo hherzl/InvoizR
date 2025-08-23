@@ -402,6 +402,24 @@ var invoiceNotification = db
     .AddForeignKey(e => e.InvoiceId, invoice.Table)
     ;
 
+var invoiceCancellationLog = db
+    .DefineEntity(new
+    {
+        Id = (long)0,
+        InvoiceId = (long)0,
+        CreatedAt = now,
+        LogType = "",
+        ContentType = "",
+        Payload = ""
+    })
+    .SetNaming("InvoiceCancellationLog")
+    .SetColumnFor(e => e.LogType, 25)
+    .SetColumnFor(e => e.ContentType, 100)
+    .SetIdentity(e => e.Id)
+    .SetPrimaryKey(e => e.Id)
+    .AddForeignKey(e => e.InvoiceId, invoice.Table)
+    ;
+
 // Add table for special customers
 SqlServerDatabaseScriptCodeBuilder.CreateScript(db, @"C:\Temp\Databases", true, true);
 
