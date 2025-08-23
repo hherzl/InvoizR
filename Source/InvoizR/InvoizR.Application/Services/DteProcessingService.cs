@@ -12,37 +12,36 @@ public abstract class DteProcessingService(ILogger logger)
 
     public async Task SetInvoiceAsInitializedAsync(long? invoiceId, IInvoizRDbContext dbContext, CancellationToken cancellationToken = default)
     {
-        var inv = await dbContext.GetInvoiceAsync(invoiceId, includes: true, tracking: true, ct: cancellationToken);
+        var invoice = await dbContext.GetInvoiceAsync(invoiceId, includes: true, tracking: true, ct: cancellationToken);
+        var invoiceType = await dbContext.GetInvoiceTypeAsync(invoice.InvoiceTypeId, ct: cancellationToken);
 
-        var invType = await dbContext.GetInvoiceTypeAsync(inv.InvoiceTypeId, ct: cancellationToken);
+        var dteInfo = DteInfoHelper.Get(invoiceType.Id, invoice.Pos.Branch.EstablishmentPrefix, invoice.Pos.Branch.TaxAuthId, invoice.Pos.Code, invoice.InvoiceNumber);
 
-        var dteInfo = DteInfoHelper.Get(invType.Id, inv.Pos.Branch.EstablishmentPrefix, inv.Pos.Branch.TaxAuthId, inv.Pos.Code, inv.InvoiceNumber);
+        invoice.SchemaType = invoiceType.SchemaType;
+        invoice.SchemaVersion = invoiceType.SchemaVersion;
+        invoice.GenerationCode = dteInfo.GenerationCode;
+        invoice.ControlNumber = dteInfo.ControlNumber;
+        invoice.ProcessingStatusId = (short)InvoiceProcessingStatus.Initialized;
 
-        inv.SchemaType = invType.SchemaType;
-        inv.SchemaVersion = invType.SchemaVersion;
-        inv.GenerationCode = dteInfo.GenerationCode;
-        inv.ControlNumber = dteInfo.ControlNumber;
-        inv.ProcessingStatusId = (short)InvoiceProcessingStatus.Initialized;
+        dbContext.InvoiceProcessingStatusLog.Add(new(invoice.Id, invoice.ProcessingStatusId));
 
-        dbContext.InvoiceProcessingStatusLog.Add(new(inv.Id, inv.ProcessingStatusId));
-
-        logger.LogInformation($" Updating '{inv.InvoiceNumber}' invoice: '{inv.SchemaType}{inv.SchemaVersion}', '{inv.GenerationCode}', '{inv.ControlNumber}'...");
+        logger.LogInformation($" Updating '{invoice.InvoiceNumber}' invoice: '{invoice.SchemaType}{invoice.SchemaVersion}', '{invoice.GenerationCode}', '{invoice.ControlNumber}'...");
 
         await dbContext.SaveChangesAsync(cancellationToken);
     }
 
     public async Task SetInvoiceAsRequestedAsync(long? invoiceId, IInvoizRDbContext dbContext, CancellationToken cancellationToken = default)
     {
-        var inv = await dbContext.GetInvoiceAsync(invoiceId, tracking: true, ct: cancellationToken);
+        var invoice = await dbContext.GetInvoiceAsync(invoiceId, tracking: true, ct: cancellationToken);
 
-        if (Init(inv))
-            inv.ProcessingStatusId = (short)InvoiceProcessingStatus.Requested;
+        if (Init(invoice))
+            invoice.ProcessingStatusId = (short)InvoiceProcessingStatus.Requested;
         else
-            inv.ProcessingStatusId = (short)InvoiceProcessingStatus.InvalidSchema;
+            invoice.ProcessingStatusId = (short)InvoiceProcessingStatus.InvalidSchema;
 
-        dbContext.InvoiceProcessingStatusLog.Add(new(inv.Id, inv.ProcessingStatusId));
+        dbContext.InvoiceProcessingStatusLog.Add(new(invoice.Id, invoice.ProcessingStatusId));
 
-        logger.LogInformation($" Updating '{inv.InvoiceNumber}' invoice: '{inv.SchemaType}{inv.SchemaVersion}', '{inv.GenerationCode}', '{inv.ControlNumber}'...");
+        logger.LogInformation($" Updating '{invoice.InvoiceNumber}' invoice: '{invoice.SchemaType}{invoice.SchemaVersion}', '{invoice.GenerationCode}', '{invoice.ControlNumber}'...");
 
         await dbContext.SaveChangesAsync(cancellationToken);
     }

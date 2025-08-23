@@ -21,6 +21,7 @@ public static class ConfigureServices
         });
 
         services.AddScoped<DteHandler>();
+        services.AddScoped<DteExporterService>();
 
         services.AddScoped<Dte01ProcessingService>();
         services.AddScoped<Dte03ProcessingService>();

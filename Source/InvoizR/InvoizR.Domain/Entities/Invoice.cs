@@ -6,6 +6,7 @@ namespace InvoizR.Domain.Entities;
 public partial class Invoice : Entity
 {
     public Invoice()
+        : base()
     {
         CreatedAt = DateTime.Now;
         RetryIn = 0;
@@ -13,6 +14,7 @@ public partial class Invoice : Entity
     }
 
     public Invoice(long? id)
+        : base()
     {
         Id = id;
     }

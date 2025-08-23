@@ -1,15 +1,19 @@
 ﻿using System.Reflection;
 using InvoizR.Application.Common.Contracts;
 using InvoizR.Domain.Entities;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace InvoizR.Infrastructure.Persistence;
 
 public partial class InvoizRDbContext : DbContext, IInvoizRDbContext
 {
-    public InvoizRDbContext(DbContextOptions<InvoizRDbContext> options)
+    private readonly IMediator _mediator;
+
+    public InvoizRDbContext(DbContextOptions<InvoizRDbContext> options, IMediator mediator)
         : base(options)
     {
+        _mediator = mediator;
     }
 
     public DbSet<EnumDescription> EnumDescription { get; set; }
@@ -34,5 +38,10 @@ public partial class InvoizRDbContext : DbContext, IInvoizRDbContext
             ;
 
         base.OnModelCreating(modelBuilder);
+    }
+
+    public async Task DispatchNotificationsAsync(CancellationToken cancellationToken = default)
+    {
+        await _mediator?.DispatchNotificationsAsync(this);
     }
 }

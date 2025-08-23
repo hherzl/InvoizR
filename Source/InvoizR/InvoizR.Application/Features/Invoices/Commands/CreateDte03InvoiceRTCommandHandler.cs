@@ -1,7 +1,5 @@
 ﻿using InvoizR.Application.Common;
 using InvoizR.Application.Common.Contracts;
-using InvoizR.Application.Helpers;
-using InvoizR.Application.Reports.Templates.Common;
 using InvoizR.Application.Services;
 using InvoizR.Application.Services.Models;
 using InvoizR.Clients.DataContracts;
@@ -11,15 +9,15 @@ using InvoizR.Clients.ThirdParty.DataContracts;
 using InvoizR.Domain.Entities;
 using InvoizR.Domain.Enums;
 using InvoizR.Domain.Exceptions;
+using InvoizR.Domain.Notifications;
 using InvoizR.SharedKernel.Mh.FeCcf;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace InvoizR.Application.Features.Invoices.Commands;
 
-public class CreateDte03InvoiceRTCommandHandler : IRequestHandler<CreateDte03InvoiceRTCommand, CreatedResponse<long?>>
+public sealed class CreateDte03InvoiceRTCommandHandler : IRequestHandler<CreateDte03InvoiceRTCommand, CreatedResponse<long?>>
 {
     private readonly ILogger _logger;
     private readonly IConfiguration _configuration;
@@ -27,17 +25,15 @@ public class CreateDte03InvoiceRTCommandHandler : IRequestHandler<CreateDte03Inv
     private readonly Dte14ProcessingService _dteProcessingService;
     private readonly ISeguridadClient _seguridadClient;
     private readonly DteHandler _dteHandler;
-    private readonly IEnumerable<IInvoiceExportStrategy> _invoiceExportStrategies;
 
     public CreateDte03InvoiceRTCommandHandler
     (
-        ILogger<CreateDte01InvoiceRTCommandHandler> logger,
+        ILogger<CreateDte03InvoiceRTCommandHandler> logger,
         IConfiguration configuration,
         IInvoizRDbContext dbContext,
         Dte14ProcessingService dteProcessingService,
         ISeguridadClient seguridadClient,
-        DteHandler dteHandler,
-        IEnumerable<IInvoiceExportStrategy> invoiceExportStrategies
+        DteHandler dteHandler
     )
     {
         _logger = logger;
@@ -46,7 +42,6 @@ public class CreateDte03InvoiceRTCommandHandler : IRequestHandler<CreateDte03Inv
         _dteProcessingService = dteProcessingService;
         _seguridadClient = seguridadClient;
         _dteHandler = dteHandler;
-        _invoiceExportStrategies = invoiceExportStrategies;
     }
 
     public async Task<CreatedResponse<long?>> Handle(CreateDte03InvoiceRTCommand request, CancellationToken cancellationToken)
@@ -115,63 +110,19 @@ public class CreateDte03InvoiceRTCommandHandler : IRequestHandler<CreateDte03Inv
             var authResponse = await _seguridadClient.AuthAsync(authRequest);
 
             var createDteRequest = CreateDte03Request.Create(mhSettings, processingSettings, authResponse.Body.Token, invoice.Id, invoice.Payload);
-            var flag = await _dteHandler.HandleAsync(createDteRequest, _dbContext, cancellationToken);
-            if (!flag)
-                return new(invoice.Id);
-
-            foreach (var item in _invoiceExportStrategies)
+            if (await _dteHandler.HandleAsync(createDteRequest, _dbContext, cancellationToken))
             {
-                _logger.LogInformation($"Exporting '{invoice.InvoiceTypeId}-{invoice.InvoiceNumber}' invoice as '{item.FileExtension}'...");
-                var bytes = await item.ExportAsync(invoice, processingSettings.GetDtePath(invoice.ControlNumber, item.FileExtension), cancellationToken);
+                invoice.AddNotification(new ExportInvoiceNotification(invoice));
 
-                _logger.LogInformation($" Adding '{item.FileExtension}' as bytes...");
-                _dbContext.InvoiceFile.Add(InvoiceFileHelper.Create(invoice, bytes, item.ContentType, item.FileExtension));
+                await _dbContext.DispatchNotificationsAsync(cancellationToken);
             }
-
-            var invoiceType = await _dbContext.GetInvoiceTypeAsync(invoice.InvoiceTypeId, ct: cancellationToken);
-            var notificationTemplate = new DteNotificationTemplatev1(new(invoice.Pos.Branch, invoiceType, invoice));
-            var notificationPath = processingSettings.GetDteNotificationPath(invoice.ControlNumber);
-
-            _logger.LogInformation($"Creating notification file for invoice '{invoice.InvoiceTypeId}-{invoice.InvoiceNumber}', path: '{notificationPath}'...");
-
-            await File.WriteAllTextAsync(notificationPath, notificationTemplate.ToString(), cancellationToken);
-
-            if (string.IsNullOrEmpty(invoice.CustomerEmail))
-                invoice.CustomerEmail = "sinfactura@capsule-corp.com";
-
-            _dbContext.InvoiceNotification.Add(new(invoice.Id, invoice.CustomerEmail, false, 2, true));
-
-            var notifications = await _dbContext.GetBranchNotificationsBy(invoice.Pos.BranchId, invoice.InvoiceTypeId).ToListAsync(cancellationToken);
-            foreach (var notification in notifications)
-            {
-                if (notification.Bcc == true)
-                    notificationTemplate.Model.Bcc.Add(notification.Email);
-                else
-                    notificationTemplate.Model.Copies.Add(notification.Email);
-
-                _dbContext.InvoiceNotification.Add(new(invoice.Id, notification.Email, notification.Bcc, 2, true));
-            }
-
-            _logger.LogInformation($"Sending notification for invoice '{invoice.InvoiceTypeId}-{invoice.InvoiceNumber}'; customer '{invoice.CustomerName}', email: '{invoice.CustomerEmail}'...");
-
-            //smtpClient.Send(notificationTemplate.ToMailMessage());
-
-            // TODO: emit notification for webhook
-
-            invoice.ProcessingStatusId = (short)InvoiceProcessingStatus.Notified;
-
-            _dbContext.InvoiceProcessingStatusLog.Add(new(invoice.Id, invoice.ProcessingStatusId));
-
-            await _dbContext.SaveChangesAsync(cancellationToken);
 
             return new(invoice.Id);
         }
         catch (Exception ex)
         {
             await txn.RollbackAsync(cancellationToken);
-
             _logger.LogCritical(ex, "There was an error on Create DTE-03 Invoice in RT processing");
-
             return new();
         }
     }

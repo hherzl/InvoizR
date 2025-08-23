@@ -42,6 +42,8 @@ public static class FeFsev1Helper
 
         dte.SujetoExcluido = new()
         {
+            TipoDocumento = MhCatalog.Cat022.Otro,
+            NumDocumento = "9876543210",
             Nombre = request.Customer.Name,
             Direccion = new()
             {
