@@ -77,8 +77,8 @@ public class Dte03HostedService : BackgroundService
 
                 var authResponse = await _seguridadClient.AuthAsync(authRequest);
 
-                var dteProcessingService = scope.ServiceProvider.GetRequiredService<Dte03ProcessingService>();
-                var dteHandler = scope.ServiceProvider.GetRequiredService<DteHandler>();
+                var dteProcessingStatusChanger = scope.ServiceProvider.GetRequiredService<Dte03ProcessingStatusChanger>();
+                var dteSyncHandler = scope.ServiceProvider.GetRequiredService<DteSyncHandler>();
 
                 foreach (var invoice in invoices)
                 {
@@ -86,20 +86,20 @@ public class Dte03HostedService : BackgroundService
                     {
                         _logger.LogInformation($"Processing '{invoice.InvoiceNumber}' invoice, changing status from '{InvoiceProcessingStatus.Created}'...");
 
-                        await dteProcessingService.SetInvoiceAsInitializedAsync(invoice.Id, dbContext, stoppingToken);
+                        await dteProcessingStatusChanger.SetInvoiceAsInitializedAsync(invoice.Id, dbContext, stoppingToken);
                     }
                     else if (invoice.ProcessingStatusId == (short)InvoiceProcessingStatus.Initialized)
                     {
                         _logger.LogInformation($"Processing '{invoice.InvoiceNumber}' invoice, changing status from '{InvoiceProcessingStatus.Initialized}'...");
 
-                        await dteProcessingService.SetInvoiceAsRequestedAsync(invoice.Id, dbContext, stoppingToken);
+                        await dteProcessingStatusChanger.SetInvoiceAsRequestedAsync(invoice.Id, dbContext, stoppingToken);
                     }
                     else if (invoice.ProcessingStatusId == (short)InvoiceProcessingStatus.Requested)
                     {
                         _logger.LogInformation($"Processing '{invoice.InvoiceNumber}' invoice, changing status from '{InvoiceProcessingStatus.Requested}'...");
 
                         var request = CreateDte03Request.Create(mhSettings, processingSettings, authResponse.Body.Token, invoice.Id, invoice.Payload);
-                        var result = await dteHandler.HandleAsync(request, dbContext, stoppingToken);
+                        var result = await dteSyncHandler.HandleAsync(request, dbContext, stoppingToken);
                         if (result)
                         {
                             _logger.LogInformation($"Broadcasting '{invoice.InvoiceNumber}' invoice...");

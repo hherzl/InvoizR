@@ -21,6 +21,7 @@ public record CreateCompanyCommand : IRequest<CreatedResponse<short?>>, IValidat
     public string Email { get; set; }
     public string Logo { get; set; }
     public int? Headquarters { get; set; }
+    public string NonCustomerEmail { get; set; }
 
     public bool HasLogo
         => !string.IsNullOrEmpty(Logo);

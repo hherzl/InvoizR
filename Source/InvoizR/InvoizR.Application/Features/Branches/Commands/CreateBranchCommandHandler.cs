@@ -26,7 +26,8 @@ public class CreateBranchCommandHandler : IRequestHandler<CreateBranchCommand, C
             Address = request.Address,
             Phone = request.Phone,
             Email = request.Email,
-            Headquarters = request.Headquarters
+            Headquarters = request.Headquarters,
+            NonCustomerEmail = request.NonCustomerEmail
         };
 
         if (request.HasLogo)

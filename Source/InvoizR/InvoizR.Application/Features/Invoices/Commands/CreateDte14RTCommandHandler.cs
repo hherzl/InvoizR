@@ -22,18 +22,18 @@ public sealed class CreateDte14RTCommandHandler : IRequestHandler<CreateDte14RTC
     private readonly ILogger _logger;
     private readonly IConfiguration _configuration;
     private readonly IInvoizRDbContext _dbContext;
-    private readonly Dte14ProcessingService _dteProcessingService;
+    private readonly Dte14ProcessingStatusChanger _dteProcessingService;
     private readonly ISeguridadClient _seguridadClient;
-    private readonly DteHandler _dteHandler;
+    private readonly DteSyncHandler _dteHandler;
 
     public CreateDte14RTCommandHandler
     (
         ILogger<CreateDte14RTCommandHandler> logger,
         IConfiguration configuration,
         IInvoizRDbContext dbContext,
-        Dte14ProcessingService dteProcessingService,
+        Dte14ProcessingStatusChanger dteProcessingService,
         ISeguridadClient seguridadClient,
-        DteHandler dteHandler
+        DteSyncHandler dteHandler
     )
     {
         _logger = logger;

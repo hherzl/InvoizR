@@ -15,7 +15,7 @@ public class Dte14NotificationHostedService(ILogger<Dte14NotificationHostedServi
 
         using var dbContext = scope.ServiceProvider.GetRequiredService<InvoizRDbContext>();
 
-        var dteExporter = scope.ServiceProvider.GetRequiredService<DteExporterService>();
+        var dteExporter = scope.ServiceProvider.GetRequiredService<DteExporter>();
 
         var processingSettings = new ProcessingSettings();
         configuration.Bind("ProcessingSettings", processingSettings);

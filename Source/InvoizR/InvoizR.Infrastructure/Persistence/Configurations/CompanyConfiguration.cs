@@ -117,6 +117,12 @@ internal class CompanyConfiguration : IEntityTypeConfiguration<Company>
             .HasColumnType("int")
             ;
 
+        builder
+            .Property(p => p.NonCustomerEmail)
+            .HasColumnType("nvarchar")
+            .HasMaxLength(50)
+            ;
+
         // Add configuration for uniques
 
         builder

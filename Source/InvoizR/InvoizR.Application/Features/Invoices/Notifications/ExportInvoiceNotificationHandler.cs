@@ -8,9 +8,9 @@ namespace InvoizR.Application.Features.Invoices.Notifications;
 public sealed class ExportInvoiceNotificationHandler : INotificationHandler<ExportInvoiceNotification>
 {
     private readonly ILogger _logger;
-    private readonly DteExporterService _dteExporterService;
+    private readonly DteExporter _dteExporterService;
 
-    public ExportInvoiceNotificationHandler(ILogger<ExportInvoiceNotificationHandler> logger, DteExporterService dteExportService)
+    public ExportInvoiceNotificationHandler(ILogger<ExportInvoiceNotificationHandler> logger, DteExporter dteExportService)
     {
         _logger = logger;
         _dteExporterService = dteExportService;

@@ -20,6 +20,7 @@ public static class CompanyMocks
             Address = "1 Capsule Corp Drive, West City",
             Phone = "+81-555-0000",
             Email = "contact@capsulecorp.com",
-            Logo = Convert.ToBase64String(File.ReadAllBytes(Path.Combine(AppContext.BaseDirectory, "Assets", "logo.png")))
+            Logo = Convert.ToBase64String(File.ReadAllBytes(Path.Combine(AppContext.BaseDirectory, "Assets", "logo.png"))),
+            NonCustomerEmail = "dte@capsule-corp.com"
         };
 }
