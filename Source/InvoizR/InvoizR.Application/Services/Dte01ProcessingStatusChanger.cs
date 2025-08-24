@@ -1,26 +1,26 @@
 ﻿using InvoizR.Application.Helpers;
 using InvoizR.Domain.Entities;
-using InvoizR.SharedKernel.Mh.FeCcf;
+using InvoizR.SharedKernel.Mh.FeFc;
 using Microsoft.Extensions.Logging;
 
 namespace InvoizR.Application.Services;
 
-public class Dte03ProcessingService : DteProcessingService
+public sealed class Dte01ProcessingStatusChanger : DteProcessingStatusChanger
 {
     private readonly ILogger _logger;
 
-    public Dte03ProcessingService(ILogger<Dte03ProcessingService> logger)
+    public Dte01ProcessingStatusChanger(ILogger<Dte01ProcessingStatusChanger> logger)
         : base(logger)
     {
     }
 
     protected override bool Init(Invoice invoice)
     {
-        FeCcfv3 dte;
+        FeFcv1 dte;
 
         try
         {
-            dte = FeCcfv3.Deserialize(invoice.Payload);
+            dte = FeFcv1.Deserialize(invoice.Payload);
         }
         catch (Exception ex)
         {

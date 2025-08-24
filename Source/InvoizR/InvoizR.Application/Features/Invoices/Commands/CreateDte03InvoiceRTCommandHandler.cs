@@ -22,18 +22,18 @@ public sealed class CreateDte03InvoiceRTCommandHandler : IRequestHandler<CreateD
     private readonly ILogger _logger;
     private readonly IConfiguration _configuration;
     private readonly IInvoizRDbContext _dbContext;
-    private readonly Dte14ProcessingService _dteProcessingService;
+    private readonly Dte14ProcessingStatusChanger _dteProcessingService;
     private readonly ISeguridadClient _seguridadClient;
-    private readonly DteHandler _dteHandler;
+    private readonly DteSyncHandler _dteSyncHandler;
 
     public CreateDte03InvoiceRTCommandHandler
     (
         ILogger<CreateDte03InvoiceRTCommandHandler> logger,
         IConfiguration configuration,
         IInvoizRDbContext dbContext,
-        Dte14ProcessingService dteProcessingService,
+        Dte14ProcessingStatusChanger dteProcessingService,
         ISeguridadClient seguridadClient,
-        DteHandler dteHandler
+        DteSyncHandler dteSyncHandler
     )
     {
         _logger = logger;
@@ -41,7 +41,7 @@ public sealed class CreateDte03InvoiceRTCommandHandler : IRequestHandler<CreateD
         _dbContext = dbContext;
         _dteProcessingService = dteProcessingService;
         _seguridadClient = seguridadClient;
-        _dteHandler = dteHandler;
+        _dteSyncHandler = dteSyncHandler;
     }
 
     public async Task<CreatedResponse<long?>> Handle(CreateDte03InvoiceRTCommand request, CancellationToken cancellationToken)
@@ -110,7 +110,7 @@ public sealed class CreateDte03InvoiceRTCommandHandler : IRequestHandler<CreateD
             var authResponse = await _seguridadClient.AuthAsync(authRequest);
 
             var createDteRequest = CreateDte03Request.Create(mhSettings, processingSettings, authResponse.Body.Token, invoice.Id, invoice.Payload);
-            if (await _dteHandler.HandleAsync(createDteRequest, _dbContext, cancellationToken))
+            if (await _dteSyncHandler.HandleAsync(createDteRequest, _dbContext, cancellationToken))
             {
                 invoice.AddNotification(new ExportInvoiceNotification(invoice));
 

@@ -21,19 +21,19 @@ public sealed class CreateDte01InvoiceRTCommandHandler : IRequestHandler<CreateD
 {
     private readonly ILogger _logger;
     private readonly IInvoizRDbContext _dbContext;
-    private readonly Dte01ProcessingService _dteProcessingService;
+    private readonly Dte01ProcessingStatusChanger _dteProcessingService;
     private readonly IConfiguration _configuration;
     private readonly ISeguridadClient _seguridadClient;
-    private readonly DteHandler _dteHandler;
+    private readonly DteSyncHandler _dteHandler;
 
     public CreateDte01InvoiceRTCommandHandler
     (
         ILogger<CreateDte01InvoiceRTCommandHandler> logger,
         IInvoizRDbContext dbContext,
-        Dte01ProcessingService dteProcessingService,
+        Dte01ProcessingStatusChanger dteProcessingService,
         IConfiguration configuration,
         ISeguridadClient seguridadClient,
-        DteHandler dteHandler
+        DteSyncHandler dteHandler
     )
     {
         _logger = logger;

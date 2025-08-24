@@ -41,7 +41,8 @@ var company = db
         Phone = "",
         Email = "",
         Logo = Array.Empty<byte>(),
-        Headquarters = 0
+        Headquarters = 0,
+        NonCustomerEmail = ""
     })
     .SetNaming("Company")
     .SetColumnFor(e => e.Environment, 2)
@@ -57,6 +58,7 @@ var company = db
     .SetColumnFor(e => e.Email, 50)
     .SetColumnFor(e => e.Logo, nullable: true)
     .SetColumnFor(e => e.Headquarters, true)
+    .SetColumnFor(e => e.NonCustomerEmail, 50, true)
     .SetIdentity(e => e.Id)
     .SetPrimaryKey(e => e.Id)
     .AddUnique(e => e.Name)
@@ -101,7 +103,8 @@ var branch = db
         Email = "",
         Logo = Array.Empty<byte>(),
         Headquarters = 0,
-        ResponsibleId = (short)0
+        ResponsibleId = (short)0,
+        NonCustomerEmail = ""
     })
     .SetNaming("Branch")
     .SetColumnFor(e => e.Name, 100)
@@ -113,6 +116,7 @@ var branch = db
     .SetColumnFor(e => e.Logo, nullable: true)
     .SetColumnFor(e => e.Headquarters, true)
     .SetColumnFor(e => e.ResponsibleId, true)
+    .SetColumnFor(e => e.NonCustomerEmail, 50, true)
     .SetIdentity(e => e.Id)
     .SetPrimaryKey(e => e.Id)
     .AddUnique(e => new { e.CompanyId, e.Name })

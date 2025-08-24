@@ -86,7 +86,8 @@ if (clientArgs.Seed)
             TaxAuthId = item.TaxAuthId,
             Address = item.Address,
             Phone = item.Phone,
-            Email = item.Email
+            Email = item.Email,
+            NonCustomerEmail = company.NonCustomerEmail
         };
 
         var createBranchResponse = await client.CreateBranchAsync(branch);

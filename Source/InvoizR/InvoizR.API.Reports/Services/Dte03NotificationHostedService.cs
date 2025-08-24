@@ -26,7 +26,7 @@ public class Dte03NotificationHostedService : BackgroundService
 
         using var dbContext = scope.ServiceProvider.GetRequiredService<InvoizRDbContext>();
 
-        var dteExporter = scope.ServiceProvider.GetRequiredService<DteExporterService>();
+        var dteExporter = scope.ServiceProvider.GetRequiredService<DteExporter>();
 
         var processingSettings = new ProcessingSettings();
         _configuration.Bind("ProcessingSettings", processingSettings);

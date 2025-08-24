@@ -17,6 +17,7 @@ public record CreateBranchCommand : IRequest<CreatedResponse<short?>>, IValidata
     public string Logo { get; set; }
     public int? Headquarters { get; set; }
     public short? ResponsibleId { get; set; }
+    public string NonCustomerEmail { get; set; }
 
     public bool HasLogo
         => !string.IsNullOrEmpty(Logo);

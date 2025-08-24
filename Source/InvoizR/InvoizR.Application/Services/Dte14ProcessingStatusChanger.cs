@@ -5,11 +5,11 @@ using Microsoft.Extensions.Logging;
 
 namespace InvoizR.Application.Services;
 
-public class Dte14ProcessingService : DteProcessingService
+public sealed class Dte14ProcessingStatusChanger : DteProcessingStatusChanger
 {
     private readonly ILogger logger;
 
-    public Dte14ProcessingService(ILogger<Dte14ProcessingService> logger)
+    public Dte14ProcessingStatusChanger(ILogger<Dte14ProcessingStatusChanger> logger)
         : base(logger)
     {
     }

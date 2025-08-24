@@ -29,6 +29,7 @@ public partial class Company : Entity
     public string Email { get; set; }
     public byte[] Logo { get; set; }
     public int? Headquarters { get; set; }
+    public string NonCustomerEmail { get; set; }
 
     public Collection<Branch> Branches { get; set; }
 }

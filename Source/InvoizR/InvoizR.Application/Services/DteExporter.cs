@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 
 namespace InvoizR.Application.Services;
 
-public class DteExporterService
+public class DteExporter
 {
     private readonly ILogger _logger;
     private readonly IEnumerable<IInvoiceExportStrategy> _invoiceExportStrategies;
@@ -19,7 +19,7 @@ public class DteExporterService
     private readonly IInvoizRDbContext _dbContext;
     private readonly ISmtpClient _smtpClient;
 
-    public DteExporterService
+    public DteExporter
     (
         ILogger<ExportInvoiceNotificationHandler> logger,
         IInvoizRDbContext dbContext,
@@ -39,6 +39,7 @@ public class DteExporterService
     {
         var invoice = await _dbContext.GetInvoiceAsync(invoiceId, true, true, cancellationToken);
         var invoiceType = await _dbContext.GetInvoiceTypeAsync(invoice.InvoiceTypeId, ct: cancellationToken);
+        var pos = await _dbContext.GetPosAsync(invoice.PosId, includes: true, ct: cancellationToken);
 
         var processingSettings = new ProcessingSettings();
         _configuration.Bind("ProcessingSettings", processingSettings);
@@ -60,8 +61,8 @@ public class DteExporterService
 
         await File.WriteAllTextAsync(notificationPath, notificationTemplate.ToString(), cancellationToken);
 
-        if (string.IsNullOrEmpty(invoice.CustomerEmail))
-            invoice.CustomerEmail = "sinfactura@capsule-corp.com";
+        if (!invoice.HasCustomerEmail)
+            invoice.CustomerEmail = pos.Branch.NonCustomerEmail;
 
         _dbContext.InvoiceNotification.Add(new(invoice.Id, invoice.CustomerEmail, false, (short)_invoiceExportStrategies.Count(), true));
 

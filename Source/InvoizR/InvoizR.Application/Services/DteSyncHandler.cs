@@ -11,13 +11,13 @@ using InvoizR.SharedKernel.Mh.FeFse;
 
 namespace InvoizR.Application.Services;
 
-public class DteHandler
+public class DteSyncHandler
 {
     private readonly IFirmadorClient _firmadorClient;
     private readonly IFesvClient _fesvClient;
     private readonly string _externalUrl;
 
-    public DteHandler(IFirmadorClient firmadorClient, IFesvClient fesvClient)
+    public DteSyncHandler(IFirmadorClient firmadorClient, IFesvClient fesvClient)
     {
         _firmadorClient = firmadorClient;
         _fesvClient = fesvClient;

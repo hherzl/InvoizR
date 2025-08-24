@@ -20,12 +20,12 @@ public static class ConfigureServices
             options.DtePath = configuration["ProcessingSettings:DtePath"];
         });
 
-        services.AddScoped<DteHandler>();
-        services.AddScoped<DteExporterService>();
+        services.AddScoped<DteSyncHandler>();
+        services.AddScoped<DteExporter>();
 
-        services.AddScoped<Dte01ProcessingService>();
-        services.AddScoped<Dte03ProcessingService>();
-        services.AddScoped<Dte14ProcessingService>();
+        services.AddScoped<Dte01ProcessingStatusChanger>();
+        services.AddScoped<Dte03ProcessingStatusChanger>();
+        services.AddScoped<Dte14ProcessingStatusChanger>();
 
         services.AddScoped<Dte01TemplateFactory>();
         services.AddScoped<Dte03TemplateFactory>();

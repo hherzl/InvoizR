@@ -100,7 +100,8 @@ CREATE TABLE [dbo].[Company]
 	[Phone] NVARCHAR(25) NOT NULL,
 	[Email] NVARCHAR(50) NOT NULL,
 	[Logo] VARBINARY(MAX) NULL,
-	[Headquarters] INT NULL
+	[Headquarters] INT NULL,
+	[NonCustomerEmail] NVARCHAR(50) NULL
 )
 GO
 
@@ -116,7 +117,8 @@ CREATE TABLE [dbo].[Branch]
 	[Email] NVARCHAR(50) NOT NULL,
 	[Logo] VARBINARY(MAX) NULL,
 	[Headquarters] INT NULL,
-	[ResponsibleId] SMALLINT NULL
+	[ResponsibleId] SMALLINT NULL,
+	[NonCustomerEmail] NVARCHAR(50) NULL
 )
 GO
 

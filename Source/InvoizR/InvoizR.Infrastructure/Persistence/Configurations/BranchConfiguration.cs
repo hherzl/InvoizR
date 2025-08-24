@@ -94,6 +94,12 @@ internal class BranchConfiguration : IEntityTypeConfiguration<Branch>
             .HasDatabaseName("UQ_dbo_Branch_CompanyId_Name")
             ;
 
+        builder
+            .Property(p => p.NonCustomerEmail)
+            .HasColumnType("nvarchar")
+            .HasMaxLength(50)
+            ;
+
         // Add configuration for foreign keys
 
         builder

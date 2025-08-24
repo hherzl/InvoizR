@@ -6,7 +6,7 @@ using MediatR;
 
 namespace InvoizR.Application.Features.Companies.Commands;
 
-public class CreateCompanyCommandHandler : IRequestHandler<CreateCompanyCommand, CreatedResponse<short?>>
+public sealed class CreateCompanyCommandHandler : IRequestHandler<CreateCompanyCommand, CreatedResponse<short?>>
 {
     private readonly IInvoizRDbContext _dbContext;
 
@@ -31,7 +31,8 @@ public class CreateCompanyCommandHandler : IRequestHandler<CreateCompanyCommand,
             Address = request.Address,
             Phone = request.Phone,
             Email = request.Email,
-            Headquarters = request.Headquarters
+            Headquarters = request.Headquarters,
+            NonCustomerEmail = request.NonCustomerEmail
         };
 
         if (request.HasLogo)

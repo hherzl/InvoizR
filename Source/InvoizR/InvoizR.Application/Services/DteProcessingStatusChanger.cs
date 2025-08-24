@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace InvoizR.Application.Services;
 
-public abstract class DteProcessingService(ILogger logger)
+public abstract class DteProcessingStatusChanger(ILogger logger)
 {
     protected abstract bool Init(Invoice invoice);
 
