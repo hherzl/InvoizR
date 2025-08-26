@@ -4,6 +4,9 @@ using System.Web;
 using InvoizR.Clients.Contracts;
 using InvoizR.Clients.DataContracts;
 using InvoizR.Clients.DataContracts.Common;
+using InvoizR.Clients.DataContracts.Dte01;
+using InvoizR.Clients.DataContracts.Dte03;
+using InvoizR.Clients.DataContracts.Dte04;
 using InvoizR.Clients.DataContracts.Dte14;
 using Microsoft.Extensions.Options;
 
@@ -195,7 +198,7 @@ public class InvoizRClient : Client, IInvoizRClient
         return JsonSerializer.Deserialize<Response>(responseContent, DefaultJsonSerializerOpts);
     }
 
-    public async Task<CreatedResponse<long?>> CreateDte01InvoiceOWAsync(CreateDte01InvoiceOWCommand request)
+    public async Task<CreatedResponse<long?>> CreateDte01InvoiceOWAsync(CreateDte01OWCommand request)
     {
         var response = await _httpClient.PostAsync($"dte01-ow", ContentHelper.Create(request.ToJson()));
         response.EnsureSuccessStatusCode();
@@ -205,7 +208,7 @@ public class InvoizRClient : Client, IInvoizRClient
         return JsonSerializer.Deserialize<CreatedResponse<long?>>(responseContent, DefaultJsonSerializerOpts);
     }
 
-    public async Task<CreatedResponse<long?>> CreateDte01InvoiceRTAsync(CreateDte01InvoiceRTCommand request)
+    public async Task<CreatedResponse<long?>> CreateDte01InvoiceRTAsync(CreateDte01RTCommand request)
     {
         var response = await _httpClient.PostAsync($"dte01-rt", ContentHelper.Create(request.ToJson()));
         response.EnsureSuccessStatusCode();
@@ -215,7 +218,7 @@ public class InvoizRClient : Client, IInvoizRClient
         return JsonSerializer.Deserialize<CreatedResponse<long?>>(responseContent, DefaultJsonSerializerOpts);
     }
 
-    public async Task<CreatedResponse<long?>> CreateDte03InvoiceOWAsync(CreateDte03InvoiceOWCommand request)
+    public async Task<CreatedResponse<long?>> CreateDte03InvoiceOWAsync(CreateDte03OWCommand request)
     {
         var response = await _httpClient.PostAsync($"dte03-ow", ContentHelper.Create(request.ToJson()));
         response.EnsureSuccessStatusCode();
@@ -225,9 +228,29 @@ public class InvoizRClient : Client, IInvoizRClient
         return JsonSerializer.Deserialize<CreatedResponse<long?>>(responseContent, DefaultJsonSerializerOpts);
     }
 
-    public async Task<CreatedResponse<long?>> CreateDte03InvoiceRTAsync(CreateDte03InvoiceRTCommand request)
+    public async Task<CreatedResponse<long?>> CreateDte03InvoiceRTAsync(CreateDte03RTCommand request)
     {
         var response = await _httpClient.PostAsync($"dte03-rt", ContentHelper.Create(request.ToJson()));
+        var responseContent = await response.Content.ReadAsStringAsync();
+
+        response.EnsureSuccessStatusCode();
+
+        return JsonSerializer.Deserialize<CreatedResponse<long?>>(responseContent, DefaultJsonSerializerOpts);
+    }
+
+    public async Task<CreatedResponse<long?>> CreateDte04OWAsync(CreateDte04OWCommand request)
+    {
+        var response = await _httpClient.PostAsync($"dte04-ow", ContentHelper.Create(request.ToJson()));
+        response.EnsureSuccessStatusCode();
+
+        var responseContent = await response.Content.ReadAsStringAsync();
+
+        return JsonSerializer.Deserialize<CreatedResponse<long?>>(responseContent, DefaultJsonSerializerOpts);
+    }
+
+    public async Task<CreatedResponse<long?>> CreateDte04RTAsync(CreateDte04RTCommand request)
+    {
+        var response = await _httpClient.PostAsync($"dte04-rt", ContentHelper.Create(request.ToJson()));
         var responseContent = await response.Content.ReadAsStringAsync();
 
         response.EnsureSuccessStatusCode();

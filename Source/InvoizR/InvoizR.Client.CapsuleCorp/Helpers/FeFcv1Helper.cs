@@ -1,5 +1,5 @@
 ﻿using InvoizR.Client.CapsuleCorp.Mocks;
-using InvoizR.Clients.DataContracts;
+using InvoizR.Clients.DataContracts.Dte01;
 using InvoizR.SharedKernel;
 using InvoizR.SharedKernel.Mh;
 using InvoizR.SharedKernel.Mh.FeFc;
@@ -8,7 +8,7 @@ namespace InvoizR.Client.CapsuleCorp.Helpers;
 
 public static class FeFcv1Helper
 {
-    public static FeFcv1 Create(CreateDte01InvoiceCommand request, List<InvoiceLine> lines)
+    public static FeFcv1 Create(CreateDte01Command request, List<InvoiceLine> lines)
     {
         var dte = new FeFcv1();
 

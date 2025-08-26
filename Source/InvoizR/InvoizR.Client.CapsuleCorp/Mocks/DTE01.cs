@@ -1,13 +1,13 @@
 ﻿using InvoizR.Client.CapsuleCorp.Data;
 using InvoizR.Client.CapsuleCorp.Helpers;
-using InvoizR.Clients.DataContracts;
+using InvoizR.Clients.DataContracts.Dte01;
 using InvoizR.SharedKernel;
 
 namespace InvoizR.Client.CapsuleCorp.Mocks;
 
 static class DTE01
 {
-    public static CreateDte01InvoiceOWCommand MockOwDte01()
+    public static CreateDte01OWCommand MockOwDte01()
     {
         var data = new
         {
@@ -32,7 +32,7 @@ static class DTE01
 
         var total = Math.Round(invoiceLines.Sum(item => item.Total), 2);
 
-        var req = new CreateDte01InvoiceOWCommand
+        var req = new CreateDte01OWCommand
         {
             PosId = (short)Random.Shared.Next(1, data.Branches.Count),
             InvoiceNumber = Convert.ToInt64($"{DateTime.Now:MMddhhmmss}"),
@@ -41,7 +41,7 @@ static class DTE01
             Lines = lines,
         };
 
-        if (req.InvoiceTotal > CreateDte01InvoiceCommand.MaxAmountForAnonymousCustomers)
+        if (req.InvoiceTotal > CreateDte01Command.MaxAmountForAnonymousCustomers)
         {
             var persons = data.Persons.ToList();
             var randomCard = persons[Random.Shared.Next(0, persons.Count - 1)];
@@ -75,7 +75,7 @@ static class DTE01
         return req;
     }
 
-    public static CreateDte01InvoiceRTCommand MockRtDte01()
+    public static CreateDte01RTCommand MockRtDte01()
     {
         var data = new
         {
@@ -100,7 +100,7 @@ static class DTE01
 
         var total = Math.Round(invoiceLines.Sum(item => item.Total), 2);
 
-        var req = new CreateDte01InvoiceRTCommand
+        var req = new CreateDte01RTCommand
         {
             PosId = (short)Random.Shared.Next(1, data.Branches.Count),
             InvoiceNumber = Convert.ToInt64($"{DateTime.Now:MMddhhmmss}"),
@@ -109,7 +109,7 @@ static class DTE01
             Lines = lines,
         };
 
-        if (req.InvoiceTotal > CreateDte01InvoiceCommand.MaxAmountForAnonymousCustomers)
+        if (req.InvoiceTotal > CreateDte01Command.MaxAmountForAnonymousCustomers)
         {
             var persons = data.Persons.ToList();
             var randomCard = persons[Random.Shared.Next(0, persons.Count - 1)];

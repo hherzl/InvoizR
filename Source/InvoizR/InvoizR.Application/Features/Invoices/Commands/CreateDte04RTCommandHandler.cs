@@ -3,35 +3,35 @@ using InvoizR.Application.Common.Contracts;
 using InvoizR.Application.Services;
 using InvoizR.Application.Services.Models;
 using InvoizR.Clients.DataContracts.Common;
-using InvoizR.Clients.DataContracts.Dte14;
+using InvoizR.Clients.DataContracts.Dte04;
 using InvoizR.Clients.ThirdParty.Contracts;
 using InvoizR.Clients.ThirdParty.DataContracts;
 using InvoizR.Domain.Entities;
 using InvoizR.Domain.Enums;
 using InvoizR.Domain.Exceptions;
 using InvoizR.Domain.Notifications;
-using InvoizR.SharedKernel.Mh.FeFse;
+using InvoizR.SharedKernel.Mh.FeNr;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace InvoizR.Application.Features.Invoices.Commands;
 
-public sealed class CreateDte14RTCommandHandler : IRequestHandler<CreateDte14RTCommand, CreatedResponse<long?>>
+public sealed class CreateDte04RTCommandHandler : IRequestHandler<CreateDte04RTCommand, CreatedResponse<long?>>
 {
     private readonly ILogger _logger;
     private readonly IConfiguration _configuration;
     private readonly IInvoizRDbContext _dbContext;
-    private readonly Dte14ProcessingStatusChanger _dteProcessingService;
+    private readonly Dte04ProcessingStatusChanger _dteProcessingService;
     private readonly ISeguridadClient _seguridadClient;
     private readonly DteSyncHandler _dteHandler;
 
-    public CreateDte14RTCommandHandler
+    public CreateDte04RTCommandHandler
     (
-        ILogger<CreateDte14RTCommandHandler> logger,
+        ILogger<CreateDte04RTCommandHandler> logger,
         IConfiguration configuration,
         IInvoizRDbContext dbContext,
-        Dte14ProcessingStatusChanger dteProcessingService,
+        Dte04ProcessingStatusChanger dteProcessingService,
         ISeguridadClient seguridadClient,
         DteSyncHandler dteHandler
     )
@@ -44,9 +44,9 @@ public sealed class CreateDte14RTCommandHandler : IRequestHandler<CreateDte14RTC
         _dteHandler = dteHandler;
     }
 
-    public async Task<CreatedResponse<long?>> Handle(CreateDte14RTCommand request, CancellationToken cancellationToken)
+    public async Task<CreatedResponse<long?>> Handle(CreateDte04RTCommand request, CancellationToken cancellationToken)
     {
-        _ = await _dbContext.GetCurrentInvoiceTypeAsync(FeFsev1.TypeId, ct: cancellationToken) ?? throw new InvalidCurrentInvoiceTypeException();
+        _ = await _dbContext.GetCurrentInvoiceTypeAsync(FeNrv3.TypeId, ct: cancellationToken) ?? throw new InvalidCurrentInvoiceTypeException();
 
         var txn = await _dbContext.Database.BeginTransactionAsync(cancellationToken);
 
@@ -68,7 +68,7 @@ public sealed class CreateDte14RTCommandHandler : IRequestHandler<CreateDte14RTC
                 CustomerPhone = request.Customer.Phone,
                 CustomerEmail = request.Customer.Email,
                 CustomerLastUpdated = DateTime.Now,
-                InvoiceTypeId = FeFsev1.TypeId,
+                InvoiceTypeId = FeNrv3.TypeId,
                 InvoiceNumber = request.InvoiceNumber,
                 InvoiceDate = request.InvoiceDate,
                 InvoiceTotal = request.InvoiceTotal,
@@ -107,7 +107,7 @@ public sealed class CreateDte14RTCommandHandler : IRequestHandler<CreateDte14RTC
 
             var authResponse = await _seguridadClient.AuthAsync(authRequest);
 
-            var createDteRequest = CreateDte14Request.Create(mhSettings, processingSettings, authResponse.Body.Token, invoice.Id, invoice.Payload);
+            var createDteRequest = CreateDte04Request.Create(mhSettings, processingSettings, authResponse.Body.Token, invoice.Id, invoice.Payload);
             if (await _dteHandler.HandleAsync(createDteRequest, _dbContext, cancellationToken))
             {
                 invoice.AddNotification(new ExportInvoiceNotification(invoice));
@@ -118,7 +118,7 @@ public sealed class CreateDte14RTCommandHandler : IRequestHandler<CreateDte14RTC
         }
         catch (Exception ex)
         {
-            _logger.LogCritical(ex, "There was an error on Create DTE-14 in RT processing");
+            _logger.LogCritical(ex, "There was an error on Create DTE-04 in RT processing");
             await txn.RollbackAsync(cancellationToken);
             return new();
         }

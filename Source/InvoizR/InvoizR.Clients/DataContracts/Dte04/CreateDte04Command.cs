@@ -1,14 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 using InvoizR.Clients.DataContracts.Common;
-using InvoizR.SharedKernel.Mh.FeFse;
+using InvoizR.SharedKernel.Mh.FeNr;
 using MediatR;
 
-namespace InvoizR.Clients.DataContracts.Dte14;
+namespace InvoizR.Clients.DataContracts.Dte04;
 
-public record CreateDte14Command : Request, IRequest<CreatedResponse<long?>>, IValidatableObject
+public record CreateDte04Command : Request, IRequest<CreatedResponse<long?>>, IValidatableObject
 {
-    public CreateDte14Command()
+    public CreateDte04Command()
     {
         Customer = new();
     }
@@ -22,7 +22,7 @@ public record CreateDte14Command : Request, IRequest<CreatedResponse<long?>>, IV
     public decimal? InvoiceTotal { get; set; }
     public int? Lines { get; set; }
 
-    public FeFsev1 Dte { get; set; }
+    public FeNrv3 Dte { get; set; }
 
     public string ToJson()
         => JsonSerializer.Serialize(this, DefaultJsonSerializerOpts);
@@ -36,9 +36,7 @@ public record CreateDte14Command : Request, IRequest<CreatedResponse<long?>>, IV
             yield return new ValidationResult("InvoiceDate is required", [nameof(InvoiceDate)]);
 
         if (InvoiceTotal == null)
-        {
             yield return new ValidationResult("InvoiceTotal is required", [nameof(InvoiceTotal)]);
-        }
 
         if (string.IsNullOrEmpty(Customer.Id))
             yield return new ValidationResult("Customer ID is required", [nameof(Customer.Id)]);

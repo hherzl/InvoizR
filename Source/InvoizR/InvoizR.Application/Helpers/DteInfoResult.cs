@@ -6,18 +6,18 @@ public record DteInfoResult
     {
     }
 
-    public DteInfoResult(short version, string type, string generationCode, string controlNumber)
+    public DteInfoResult(short version, string type, Guid generationCode, string controlNumber)
     {
         Version = version;
         Type = type;
-        GenerationCode = generationCode;
+        GenerationCode = generationCode.ToString().ToUpper();
         ControlNumber = controlNumber;
     }
 
-    public short Version { get; set; }
-    public string Type { get; set; }
-    public string GenerationCode { get; set; }
-    public string ControlNumber { get; set; }
+    public short Version { get; }
+    public string Type { get; }
+    public string GenerationCode { get; }
+    public string ControlNumber { get; }
 
     public bool HasControlNumber
         => !string.IsNullOrEmpty(ControlNumber);
