@@ -1,29 +1,29 @@
 ﻿using InvoizR.Application.Common.Contracts;
 using InvoizR.Clients.DataContracts.Common;
-using InvoizR.Clients.DataContracts.Dte14;
+using InvoizR.Clients.DataContracts.Dte03;
 using InvoizR.Domain.Entities;
 using InvoizR.Domain.Enums;
 using InvoizR.Domain.Exceptions;
-using InvoizR.SharedKernel.Mh.FeFse;
+using InvoizR.SharedKernel.Mh.FeCcf;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
 namespace InvoizR.Application.Features.Invoices.Commands;
 
-public sealed class CreateDte14OWCommandHandler : IRequestHandler<CreateDte14OWCommand, CreatedResponse<long?>>
+public sealed class CreateDte03OWCommandHandler : IRequestHandler<CreateDte03OWCommand, CreatedResponse<long?>>
 {
     private readonly ILogger _logger;
     private readonly IInvoizRDbContext _dbContext;
 
-    public CreateDte14OWCommandHandler(ILogger<CreateDte14OWCommandHandler> logger, IInvoizRDbContext dbContext)
+    public CreateDte03OWCommandHandler(ILogger<CreateDte03OWCommandHandler> logger, IInvoizRDbContext dbContext)
     {
         _logger = logger;
         _dbContext = dbContext;
     }
 
-    public async Task<CreatedResponse<long?>> Handle(CreateDte14OWCommand request, CancellationToken cancellationToken)
+    public async Task<CreatedResponse<long?>> Handle(CreateDte03OWCommand request, CancellationToken cancellationToken)
     {
-        _ = await _dbContext.GetCurrentInvoiceTypeAsync(FeFsev1.TypeId, ct: cancellationToken) ?? throw new InvalidCurrentInvoiceTypeException();
+        _ = await _dbContext.GetCurrentInvoiceTypeAsync(FeCcfv3.TypeId, ct: cancellationToken) ?? throw new InvalidCurrentInvoiceTypeException();
 
         var txn = await _dbContext.Database.BeginTransactionAsync(cancellationToken);
 
@@ -45,7 +45,7 @@ public sealed class CreateDte14OWCommandHandler : IRequestHandler<CreateDte14OWC
                 CustomerPhone = request.Customer.Phone,
                 CustomerEmail = request.Customer.Email,
                 CustomerLastUpdated = DateTime.Now,
-                InvoiceTypeId = FeFsev1.TypeId,
+                InvoiceTypeId = FeCcfv3.TypeId,
                 InvoiceNumber = request.InvoiceNumber,
                 InvoiceDate = request.InvoiceDate,
                 InvoiceTotal = request.InvoiceTotal,
@@ -70,7 +70,7 @@ public sealed class CreateDte14OWCommandHandler : IRequestHandler<CreateDte14OWC
         catch (Exception ex)
         {
             await txn.RollbackAsync(cancellationToken);
-            _logger.LogCritical(ex, "There was an error on Create DTE-14 in OW processing");
+            _logger.LogCritical(ex, "There was an error on Create DTE-03 in OW processing");
             return new();
         }
     }

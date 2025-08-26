@@ -4,11 +4,11 @@ using InvoizR.Clients.DataContracts.Common;
 using InvoizR.SharedKernel.Mh.FeCcf;
 using MediatR;
 
-namespace InvoizR.Clients.DataContracts;
+namespace InvoizR.Clients.DataContracts.Dte03;
 
-public record CreateDte03InvoiceCommand : Request, IRequest<CreatedResponse<long?>>, IValidatableObject
+public record CreateDte03Command : Request, IRequest<CreatedResponse<long?>>, IValidatableObject
 {
-    public CreateDte03InvoiceCommand()
+    public CreateDte03Command()
     {
         Customer = new();
     }

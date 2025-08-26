@@ -5,13 +5,13 @@ using InvoizR.Clients.ThirdParty.Contracts;
 using InvoizR.Clients.ThirdParty.DataContracts;
 using InvoizR.Domain.Enums;
 using InvoizR.Infrastructure.Persistence;
-using InvoizR.SharedKernel.Mh.FeFse;
+using InvoizR.SharedKernel.Mh.FeNr;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 namespace InvoizR.API.Billing.Services;
 
-public class Dte14HostedService : BackgroundService
+public class Dte04HostedService : BackgroundService
 {
     private readonly ILogger _logger;
     private readonly IConfiguration _configuration;
@@ -19,9 +19,9 @@ public class Dte14HostedService : BackgroundService
     private readonly ISeguridadClient _seguridadClient;
     private readonly IHubContext<BillingHub> _hubContext;
 
-    public Dte14HostedService
+    public Dte04HostedService
     (
-        ILogger<Dte14HostedService> logger,
+        ILogger<Dte04HostedService> logger,
         IConfiguration configuration,
         IServiceProvider serviceProvider,
         ISeguridadClient seguridadClient,
@@ -55,7 +55,7 @@ public class Dte14HostedService : BackgroundService
             {
                 var filters = new
                 {
-                    FeFsev1.TypeId,
+                    FeNrv3.TypeId,
                     ProcessingTypeId = (short)InvoiceProcessingType.OneWay,
                     ProcessingStatuses = new short?[]
                     {
@@ -77,7 +77,7 @@ public class Dte14HostedService : BackgroundService
 
                 var authResponse = await _seguridadClient.AuthAsync(authRequest);
 
-                var dteProcessingStatusChanger = scope.ServiceProvider.GetRequiredService<Dte14ProcessingStatusChanger>();
+                var dteProcessingStatusChanger = scope.ServiceProvider.GetRequiredService<Dte04ProcessingStatusChanger>();
                 var dteSyncHandler = scope.ServiceProvider.GetRequiredService<DteSyncHandler>();
 
                 foreach (var invoice in invoices)
@@ -98,7 +98,7 @@ public class Dte14HostedService : BackgroundService
                     {
                         _logger.LogInformation($"Processing '{invoice.InvoiceNumber}' invoice, changing status from '{InvoiceProcessingStatus.Requested}'...");
 
-                        var request = CreateDte14Request.Create(mhSettings, processingSettings, authResponse.Body.Token, invoice.Id, invoice.Payload);
+                        var request = CreateDte04Request.Create(mhSettings, processingSettings, authResponse.Body.Token, invoice.Id, invoice.Payload);
                         if (await dteSyncHandler.HandleAsync(request, dbContext, stoppingToken))
                         {
                             _logger.LogInformation($"Broadcasting '{invoice.InvoiceNumber}' invoice...");
@@ -109,7 +109,7 @@ public class Dte14HostedService : BackgroundService
             }
             catch (Exception ex)
             {
-                _logger.LogCritical(ex, $"There was on error processing DTE-14");
+                _logger.LogCritical(ex, $"There was on error processing DTE-04");
             }
         }
     }

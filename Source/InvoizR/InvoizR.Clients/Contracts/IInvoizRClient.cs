@@ -1,5 +1,8 @@
 ﻿using InvoizR.Clients.DataContracts;
 using InvoizR.Clients.DataContracts.Common;
+using InvoizR.Clients.DataContracts.Dte01;
+using InvoizR.Clients.DataContracts.Dte03;
+using InvoizR.Clients.DataContracts.Dte04;
 using InvoizR.Clients.DataContracts.Dte14;
 
 namespace InvoizR.Clients.Contracts;
@@ -30,11 +33,14 @@ public interface IInvoizRClient
     Task<InvoiceDetailsModel> GetInvoiceAsync(long? id);
     Task<Response> ChangeProcessingStatusAsync(ChangeProcessingStatusCommand request);
 
-    Task<CreatedResponse<long?>> CreateDte01InvoiceOWAsync(CreateDte01InvoiceOWCommand request);
-    Task<CreatedResponse<long?>> CreateDte01InvoiceRTAsync(CreateDte01InvoiceRTCommand request);
+    Task<CreatedResponse<long?>> CreateDte01InvoiceOWAsync(CreateDte01OWCommand request);
+    Task<CreatedResponse<long?>> CreateDte01InvoiceRTAsync(CreateDte01RTCommand request);
 
-    Task<CreatedResponse<long?>> CreateDte03InvoiceOWAsync(CreateDte03InvoiceOWCommand request);
-    Task<CreatedResponse<long?>> CreateDte03InvoiceRTAsync(CreateDte03InvoiceRTCommand request);
+    Task<CreatedResponse<long?>> CreateDte03InvoiceOWAsync(CreateDte03OWCommand request);
+    Task<CreatedResponse<long?>> CreateDte03InvoiceRTAsync(CreateDte03RTCommand request);
+
+    Task<CreatedResponse<long?>> CreateDte04OWAsync(CreateDte04OWCommand request);
+    Task<CreatedResponse<long?>> CreateDte04RTAsync(CreateDte04RTCommand request);
 
     Task<CreatedResponse<long?>> CreateDte14OWAsync(CreateDte14OWCommand request);
     Task<CreatedResponse<long?>> CreateDte14RTAsync(CreateDte14RTCommand request);

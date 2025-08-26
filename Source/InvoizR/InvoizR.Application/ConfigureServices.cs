@@ -24,11 +24,15 @@ public static class ConfigureServices
         services.AddScoped<DteExporter>();
 
         services.AddScoped<Dte01ProcessingStatusChanger>();
-        services.AddScoped<Dte03ProcessingStatusChanger>();
-        services.AddScoped<Dte14ProcessingStatusChanger>();
-
         services.AddScoped<Dte01TemplateFactory>();
+
         services.AddScoped<Dte03TemplateFactory>();
+        services.AddScoped<Dte03ProcessingStatusChanger>();
+
+        services.AddScoped<Dte04ProcessingStatusChanger>();
+        services.AddScoped<Dte04TemplateFactory>();
+
+        services.AddScoped<Dte14ProcessingStatusChanger>();
         services.AddScoped<Dte14TemplateFactory>();
 
         return services;
