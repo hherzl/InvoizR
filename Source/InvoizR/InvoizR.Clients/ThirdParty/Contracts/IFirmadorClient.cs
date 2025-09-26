@@ -5,7 +5,9 @@ namespace InvoizR.Clients.ThirdParty.Contracts;
 
 public interface IFirmadorClient
 {
-    FirmadorClientSettings ClientSettings { get; }
+    string ServiceName { get; }
+
+    FirmadorClientSettings ClientSettings { get; set; }
 
     Task<string> StatusAsync();
 

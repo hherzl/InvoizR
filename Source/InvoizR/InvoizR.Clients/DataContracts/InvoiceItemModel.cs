@@ -3,10 +3,12 @@
 public record InvoiceItemModel
 {
     public long? Id { get; set; }
-    public short? BranchId { get; set; }
-    public string Branch { get; set; }
     public short? PosId { get; set; }
     public string Pos { get; set; }
+    public short? BranchId { get; set; }
+    public string Branch { get; set; }
+    public string Company { get; set; }
+    public string Environment { get; set; }
     public string CustomerName { get; set; }
     public string CustomerEmail { get; set; }
     public short? InvoiceTypeId { get; set; }

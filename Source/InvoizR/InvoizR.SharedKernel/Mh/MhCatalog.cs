@@ -7,7 +7,7 @@ public static partial class MhCatalog
     /// <summary>
     /// CAT-001 Ambiente de destino
     /// </summary>
-    public static class Cat001
+    public static partial class Cat001
     {
         public const string Prueba = "00";
         public const string Produccion = "01";
@@ -16,7 +16,7 @@ public static partial class MhCatalog
     /// <summary>
     /// CAT-002 Tipo de Documento
     /// </summary>
-    public static class Cat002
+    public static partial class Cat002
     {
         public const string Factura = "01";
         public const string CreditoFiscal = "03";

@@ -16,7 +16,10 @@ public class FirmadorClient : MhClient, IFirmadorClient
         ClientSettings = options.Value;
     }
 
-    public FirmadorClientSettings ClientSettings { get; }
+    public string ServiceName
+        => "Firmador";
+
+    public FirmadorClientSettings ClientSettings { get; set; }
 
     public async Task<string> StatusAsync()
     {

@@ -7,6 +7,10 @@ namespace InvoizR.Clients.DataContracts;
 
 public record CreateCompanyCommand : IRequest<CreatedResponse<short?>>, IValidatableObject
 {
+    public CreateCompanyCommand()
+    {
+    }
+
     public string Environment { get; set; }
     public string Name { get; set; }
     public string Code { get; set; }
@@ -41,9 +45,9 @@ public record CreateCompanyCommand : IRequest<CreatedResponse<short?>>, IValidat
             yield return new("Name is required", [nameof(BusinessName)]);
 
         if (string.IsNullOrEmpty(TaxIdNumber))
-            yield return new("Name is required", [nameof(TaxIdNumber)]);
+            yield return new("TaxIdNumber is required", [nameof(TaxIdNumber)]);
 
         if (string.IsNullOrEmpty(TaxRegistrationNumber))
-            yield return new("Name is required", [nameof(TaxRegistrationNumber)]);
+            yield return new("TaxIdNumber is required", [nameof(TaxIdNumber)]);
     }
 }

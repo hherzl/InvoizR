@@ -8,24 +8,21 @@ namespace InvoizR.Infrastructure.Clients.ThirdParty;
 
 public class SeguridadClient : MhClient, ISeguridadClient
 {
-    public SeguridadClient(IOptions<SeguridadClientSettings> options)
-        : base()
-    {
-        ClientSettings = options.Value;
-    }
+    public SeguridadClient(IOptions<SeguridadClientSettings> options) : base() { }
+
+    public string ServiceName
+        => "Seguridad";
 
     public SeguridadClientSettings ClientSettings { get; set; }
 
-    public async Task<AuthResponse> AuthAsync(AuthRequest request)
+    public async Task<AuthResponse> AuthAsync()
     {
-        using var client = CreateHttpClient(ClientSettings.Endpoint);
-
-        client.DefaultRequestHeaders.Add("User-Agent", "mobile");
+        using var client = CreateHttpClient(ClientSettings.Endpoint, ClientSettings.UserAgent);
 
         var formUrlEncodedContent = new FormUrlEncodedContent
         ([
-            new KeyValuePair<string, string>("user", request.User),
-            new KeyValuePair<string, string>("pwd", request.Pwd)
+            new KeyValuePair<string, string>("user", ClientSettings.User),
+            new KeyValuePair<string, string>("pwd", ClientSettings.Pwd)
         ]);
 
         var response = await client.PostAsync($"auth", formUrlEncodedContent);

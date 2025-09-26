@@ -1,3 +1,7 @@
+IF OBJECT_ID('dbo.InvoiceCancellationLog') IS NOT NULL
+	DROP TABLE [dbo].[InvoiceCancellationLog]
+GO
+
 IF OBJECT_ID('dbo.InvoiceNotification') IS NOT NULL
 	DROP TABLE [dbo].[InvoiceNotification]
 GO
@@ -50,12 +54,20 @@ IF OBJECT_ID('dbo.Branch') IS NOT NULL
 	DROP TABLE [dbo].[Branch]
 GO
 
-IF OBJECT_ID('dbo.Company') IS NOT NULL
-	DROP TABLE [dbo].[Company]
-GO
-
 IF OBJECT_ID('dbo.Responsible') IS NOT NULL
 	DROP TABLE [dbo].[Responsible]
+GO
+
+IF OBJECT_ID('dbo.ThirdPartyServiceParameter') IS NOT NULL
+	DROP TABLE [dbo].[ThirdPartyServiceParameter]
+GO
+
+IF OBJECT_ID('dbo.ThirdPartyService') IS NOT NULL
+	DROP TABLE [dbo].[ThirdPartyService]
+GO
+
+IF OBJECT_ID('dbo.Company') IS NOT NULL
+	DROP TABLE [dbo].[Company]
 GO
 
 IF OBJECT_ID('dbo.EnumDescription') IS NOT NULL
@@ -67,20 +79,6 @@ CREATE TABLE [dbo].[EnumDescription]
 	[Id] INT NOT NULL,
 	[Desc] NVARCHAR(50) NOT NULL,
 	[FullName] NVARCHAR(200) NOT NULL
-)
-GO
-
-CREATE TABLE [dbo].[Responsible]
-(
-	[Id] SMALLINT NOT NULL IDENTITY(1, 1),
-	[CompanyId] SMALLINT NOT NULL,
-	[Name] NVARCHAR(100) NOT NULL,
-	[Phone] NVARCHAR(MAX) NOT NULL,
-	[Email] NVARCHAR(50) NOT NULL,
-	[IdType] NVARCHAR(2) NOT NULL,
-	[IdNumber] NVARCHAR(25) NOT NULL,
-	[AuthorizeCancellation] BIT NOT NULL,
-	[AuthorizeContingency] BIT NOT NULL
 )
 GO
 
@@ -102,6 +100,40 @@ CREATE TABLE [dbo].[Company]
 	[Logo] VARBINARY(MAX) NULL,
 	[Headquarters] INT NULL,
 	[NonCustomerEmail] NVARCHAR(50) NULL
+)
+GO
+
+CREATE TABLE [dbo].[ThirdPartyService]
+(
+	[Id] SMALLINT NOT NULL IDENTITY(1, 1),
+	[EnvironmentId] NVARCHAR(2) NOT NULL,
+	[Name] NVARCHAR(50) NOT NULL,
+	[Description] NVARCHAR(200) NOT NULL
+)
+GO
+
+CREATE TABLE [dbo].[ThirdPartyServiceParameter]
+(
+	[Id] SMALLINT NOT NULL IDENTITY(1, 1),
+	[ThirdPartyServiceId] SMALLINT NOT NULL,
+	[Category] NVARCHAR(25) NOT NULL,
+	[Name] NVARCHAR(25) NOT NULL,
+	[Value] NVARCHAR(100) NOT NULL,
+	[RequiresEncryption] BIT NULL
+)
+GO
+
+CREATE TABLE [dbo].[Responsible]
+(
+	[Id] SMALLINT NOT NULL IDENTITY(1, 1),
+	[CompanyId] SMALLINT NOT NULL,
+	[Name] NVARCHAR(100) NOT NULL,
+	[Phone] NVARCHAR(MAX) NOT NULL,
+	[Email] NVARCHAR(50) NOT NULL,
+	[IdType] NVARCHAR(2) NOT NULL,
+	[IdNumber] NVARCHAR(25) NOT NULL,
+	[AuthorizeCancellation] BIT NOT NULL,
+	[AuthorizeContingency] BIT NOT NULL
 )
 GO
 
@@ -283,5 +315,16 @@ CREATE TABLE [dbo].[InvoiceNotification]
 	[Files] SMALLINT NOT NULL,
 	[Successful] BIT NOT NULL,
 	[CreatedAt] DATETIME NOT NULL
+)
+GO
+
+CREATE TABLE [dbo].[InvoiceCancellationLog]
+(
+	[Id] BIGINT NOT NULL IDENTITY(1, 1),
+	[InvoiceId] BIGINT NOT NULL,
+	[CreatedAt] DATETIME NOT NULL,
+	[LogType] NVARCHAR(25) NOT NULL,
+	[ContentType] NVARCHAR(100) NOT NULL,
+	[Payload] NVARCHAR(MAX) NOT NULL
 )
 GO

@@ -1,4 +1,5 @@
-﻿using InvoizR.Application.Common.Contracts;
+﻿using InvoizR.Application.Common;
+using InvoizR.Application.Common.Contracts;
 using InvoizR.Application.Helpers;
 using InvoizR.Clients.ThirdParty.Contracts;
 using InvoizR.Clients.ThirdParty.DataContracts;
@@ -9,24 +10,22 @@ using InvoizR.SharedKernel.Mh.FeCcf;
 using InvoizR.SharedKernel.Mh.FeFc;
 using InvoizR.SharedKernel.Mh.FeFse;
 using InvoizR.SharedKernel.Mh.FeNr;
+using Microsoft.Extensions.Options;
 
 namespace InvoizR.Application.Services;
 
 public class DteSyncHandler
 {
+    private readonly ProcessingSettings _processingSettings;
     private readonly IFirmadorClient _firmadorClient;
     private readonly IFesvClient _fesvClient;
-    private readonly string _externalUrl;
 
-    public DteSyncHandler(IFirmadorClient firmadorClient, IFesvClient fesvClient)
+    public DteSyncHandler(IOptions<ProcessingSettings> processingOptions, IFirmadorClient firmadorClient, IFesvClient fesvClient)
     {
+        _processingSettings = processingOptions.Value;
         _firmadorClient = firmadorClient;
         _fesvClient = fesvClient;
-        _externalUrl = "https://admin.factura.gob.sv/consultaPublica?ambiente=env&codGen=genCode&fechaEmi=invDate";
     }
-
-    string GetExternalUrl(string env, string genCode, DateTime? invDate)
-        => _externalUrl.Replace("env", env).Replace("genCode", genCode).Replace("invDate", invDate?.ToString("yyyy-MM-dd"));
 
     private void ReceiveInvoice(Invoice invoice, string eSignature)
     {
@@ -68,60 +67,54 @@ public class DteSyncHandler
     {
         var invoice = await dbContext.GetInvoiceAsync(request.InvoiceId, true, true, cancellationToken);
 
-        if (!Directory.Exists(request.ProcessingSettings.GetLogsPath(invoice.ControlNumber)))
-            Directory.CreateDirectory(request.ProcessingSettings.GetLogsPath(invoice.ControlNumber));
+        if (!Directory.Exists(_processingSettings.GetLogsPath(invoice.ControlNumber)))
+            Directory.CreateDirectory(_processingSettings.GetLogsPath(invoice.ControlNumber));
 
-        var firmarDocumentoReq = new FirmarDocumentoRequest<TDte>(request.MhSettings.User, true, request.MhSettings.PrivateKey, request.Dte);
+        _firmadorClient.ClientSettings = request.ThirdPartyClientParameters.GetByService(_firmadorClient.ServiceName).ToFirmadorClientSettings();
 
-        await File.WriteAllTextAsync(
-            request.ProcessingSettings.GetFirmaRequestJsonPath(invoice.ControlNumber), firmarDocumentoReq.ToJson(), cancellationToken
-        );
+        var firmarDocumentoRequest = new FirmarDocumentoRequest<TDte>(request.GetUser(), true, request.GetPrivateKey(), request.Dte);
 
-        var firmarDocumentoRes = await _firmadorClient.FirmarDocumentoAsync(firmarDocumentoReq);
+        await File.WriteAllTextAsync(_processingSettings.GetFirmaRequestJsonPath(invoice.ControlNumber), firmarDocumentoRequest.ToJson(), cancellationToken);
 
-        await File.WriteAllTextAsync(
-            request.ProcessingSettings.GetFirmaResponseJsonPath(invoice.ControlNumber), firmarDocumentoRes.ToJson(), cancellationToken
-        );
+        var firmarDocumentoResponse = await _firmadorClient.FirmarDocumentoAsync(firmarDocumentoRequest);
+        await File.WriteAllTextAsync(_processingSettings.GetFirmaResponseJsonPath(invoice.ControlNumber), firmarDocumentoResponse.ToJson(), cancellationToken);
 
         dbContext.InvoiceProcessingLog.Add(
-            InvoiceProcessingLog.CreateRequest(invoice.Id, InvoiceProcessingStatus.Requested, firmarDocumentoRes.ToJson())
+            InvoiceProcessingLog.CreateRequest(invoice.Id, InvoiceProcessingStatus.Requested, firmarDocumentoResponse.ToJson())
         );
 
-        var recepcionReq = new RecepcionDteRequest(
-            request.MhSettings.Environment, invoice.SchemaVersion, invoice.SchemaType, invoice.GenerationCode, firmarDocumentoRes.Body
-        );
+        var recepcionRequest = new RecepcionDteRequest(invoice.Pos.Branch.Company.Environment, invoice.SchemaVersion, invoice.SchemaType, invoice.GenerationCode, firmarDocumentoResponse.Body);
+        await File.WriteAllTextAsync(_processingSettings.GetRecepcionRequestJsonPath(invoice.ControlNumber), recepcionRequest.ToJson(), cancellationToken);
 
-        await File.WriteAllTextAsync(
-            request.ProcessingSettings.GetRecepcionRequestJsonPath(invoice.ControlNumber), recepcionReq.ToJson(), cancellationToken
-        );
+        _fesvClient.Jwt = request.GetToken();
 
-        _fesvClient.Jwt = request.Jwt;
+        var recepcionResponse = await _fesvClient.RecepcionDteAsync(recepcionRequest);
 
-        var recepcionRes = await _fesvClient.RecepcionDteAsync(recepcionReq);
+        await File.WriteAllTextAsync(_processingSettings.GetRecepcionResponseJsonPath(invoice.ControlNumber), recepcionResponse.ToJson(), cancellationToken);
 
-        await File.WriteAllTextAsync(
-            request.ProcessingSettings.GetRecepcionResponseJsonPath(invoice.ControlNumber), recepcionRes.ToJson(), cancellationToken
-        );
-
-        if (recepcionRes.IsSuccessful)
+        if (recepcionResponse.IsSuccessful)
         {
             dbContext.InvoiceProcessingLog.Add(
-                InvoiceProcessingLog.CreateResponse(invoice.Id, InvoiceProcessingStatus.Processed, recepcionReq.ToJson())
+                InvoiceProcessingLog.CreateResponse(invoice.Id, InvoiceProcessingStatus.Processed, recepcionRequest.ToJson())
             );
 
             invoice.ProcessingStatusId = (short)InvoiceProcessingStatus.Processed;
             invoice.ProcessingDateTime = DateTime.Now;
-            invoice.ReceiptStamp = recepcionRes.SelloRecibido;
-            invoice.ExternalUrl = GetExternalUrl(invoice.Pos.Branch.Company.Environment, invoice.GenerationCode, invoice.InvoiceDate);
+            invoice.ReceiptStamp = recepcionResponse.SelloRecibido;
+            invoice.ExternalUrl = request.GetPublicQuery()
+                .Replace("env", invoice.Pos.Branch.Company.Environment)
+                .Replace("genCode", invoice.GenerationCode)
+                .Replace("emitDate", invoice.InvoiceDate?.ToString("yyyy-MM-dd"))
+                ;
 
             dbContext.InvoiceProcessingStatusLog.Add(new(invoice.Id, invoice.ProcessingStatusId));
 
-            ReceiveInvoice(invoice, firmarDocumentoRes.Body);
+            ReceiveInvoice(invoice, firmarDocumentoResponse.Body);
         }
         else
         {
             dbContext.InvoiceProcessingLog.Add(
-                InvoiceProcessingLog.CreateResponse(invoice.Id, InvoiceProcessingStatus.Declined, recepcionReq.ToJson())
+                InvoiceProcessingLog.CreateResponse(invoice.Id, InvoiceProcessingStatus.Declined, recepcionRequest.ToJson())
             );
 
             invoice.ProcessingStatusId = (short)InvoiceProcessingStatus.Declined;
@@ -132,6 +125,6 @@ public class DteSyncHandler
 
         await dbContext.SaveChangesAsync(cancellationToken);
 
-        return recepcionRes.IsSuccessful;
+        return recepcionResponse.IsSuccessful;
     }
 }

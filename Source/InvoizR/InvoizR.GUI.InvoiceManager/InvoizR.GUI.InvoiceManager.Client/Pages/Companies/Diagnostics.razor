@@ -45,8 +45,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-        SeguridadResponse = await diagnosticsClient.DiagnosticsSeguridadAsync();
+        SeguridadResponse = await diagnosticsClient.DiagnosticsSeguridadAsync((short)Id);
 
-        FirmadorResponse = await diagnosticsClient.DiagnosticsFirmadorAsync();
+        FirmadorResponse = await diagnosticsClient.DiagnosticsFirmadorAsync((short)Id);
     }
 }

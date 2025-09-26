@@ -10,6 +10,7 @@ public partial class Company : Entity
     }
 
     public Company(short? id)
+        : this()
     {
         Id = id;
     }

@@ -65,6 +65,67 @@ var company = db
     .AddUnique(e => e.BusinessName)
     ;
 
+var thirdPartyService = db
+    .DefineEntity(new
+    {
+        Id = (short)0,
+        EnvironmentId = "",
+        Name = "",
+        Description = ""
+    })
+    .SetNaming("ThirdPartyService")
+    .SetColumnFor(e => e.EnvironmentId, 2)
+    .SetColumnFor(e => e.Name, 50)
+    .SetColumnFor(e => e.Description, 200)
+    .SetIdentity(e => e.Id)
+    .SetPrimaryKey(e => e.Id)
+    .AddUnique(e => new { e.EnvironmentId, e.Name })
+    ;
+
+var thirdPartyServiceParameter = db
+    .DefineEntity(new
+    {
+        Id = (short)0,
+        ThirdPartyServiceId = (short)0,
+        Category = "",
+        Name = "",
+        DefaultValue = "",
+        RequiresEncryption = false
+    })
+    .SetNaming("ThirdPartyServiceParameter")
+    .SetColumnFor(e => e.Category, 25)
+    .SetColumnFor(e => e.Name, 25)
+    .SetColumnFor(e => e.DefaultValue, 100)
+    .SetColumnFor(e => e.RequiresEncryption, true)
+    .SetIdentity(e => e.Id)
+    .SetPrimaryKey(e => e.Id)
+    .AddUnique(e => new { e.ThirdPartyServiceId, e.Category, e.Name })
+    .AddForeignKey(e => e.ThirdPartyServiceId, thirdPartyService.Table)
+    ;
+
+var companyThirdPartyServiceParameter = db
+    .DefineEntity(new
+    {
+        Id = (short)0,
+        CompanyId = (short)0,
+        ThirdPartyServiceId = (short)0,
+        EnvironmentId = "",
+        Category = "",
+        Name = "",
+        Value = "",
+    })
+    .SetNaming("CompanyThirdPartyServiceParameter")
+    .SetColumnFor(e => e.EnvironmentId, 2)
+    .SetColumnFor(e => e.Category, 25)
+    .SetColumnFor(e => e.Name, 25)
+    .SetColumnFor(e => e.Value, 100)
+    .SetIdentity(e => e.Id)
+    .SetPrimaryKey(e => e.Id)
+    .AddUnique(e => new { e.CompanyId, e.ThirdPartyServiceId, e.EnvironmentId, e.Category, e.Name })
+    .AddForeignKey(e => e.CompanyId, company.Table)
+    .AddForeignKey(e => e.ThirdPartyServiceId, thirdPartyService.Table)
+    ;
+
 var responsible = db
     .DefineEntity(new
     {

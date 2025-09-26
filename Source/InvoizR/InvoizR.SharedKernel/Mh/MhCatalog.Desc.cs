@@ -2,6 +2,30 @@
 
 public static partial class MhCatalog
 {
+    public static partial class Cat001
+    {
+        public static string Desc(string value)
+            => value switch
+            {
+                Prueba => "Prueba",
+                Produccion => "Producción",
+                _ => ""
+            };
+    }
+
+    public static partial class Cat002
+    {
+        public static string Desc(string value)
+            => value switch
+            {
+                Factura => "Factura",
+                CreditoFiscal => "Comprobante de Crédito Fiscal",
+                NotaRemision => "Nota de Remisión",
+                SujetoExcluido => "Factura de Sujeto Excluido",
+                _ => ""
+            };
+    }
+
     public static partial class Cat003
     {
         public static string Desc(double value)

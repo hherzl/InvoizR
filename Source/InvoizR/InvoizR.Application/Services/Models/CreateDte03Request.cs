@@ -1,22 +1,17 @@
-﻿using InvoizR.Application.Common;
-using InvoizR.Application.Common.Contracts;
+﻿using InvoizR.Application.Common.Contracts;
+using InvoizR.SharedKernel;
 using InvoizR.SharedKernel.Mh.FeCcf;
 
 namespace InvoizR.Application.Services.Models;
 
 public record CreateDte03Request : CreateDteRequest, ICreateDteRequest<FeCcfv3>
 {
-    public static ICreateDteRequest<FeCcfv3> Create(MhSettings mhSettings, ProcessingSettings processingSettings, string jwt, long? invoiceId, string payload)
-    {
-        var dte = FeCcfv3.Deserialize(payload);
-
-        return new CreateDte03Request(mhSettings, processingSettings, jwt, invoiceId, dte);
-    }
+    public static ICreateDteRequest<FeCcfv3> Create(IEnumerable<ThirdPartyClientParameter> clientParameters, long? invoiceId, string payload)
+        => new CreateDte03Request(clientParameters, invoiceId, FeCcfv3.Deserialize(payload));
 
     public CreateDte03Request() : base() { }
 
-    public CreateDte03Request(MhSettings mhSettings, ProcessingSettings processingSettings, string jwt, long? invoiceId, FeCcfv3 dte)
-        : base(mhSettings, processingSettings, jwt, invoiceId)
+    public CreateDte03Request(IEnumerable<ThirdPartyClientParameter> clientParameters, long? invoiceId, FeCcfv3 dte) : base(clientParameters, invoiceId)
     {
         Dte = dte;
     }

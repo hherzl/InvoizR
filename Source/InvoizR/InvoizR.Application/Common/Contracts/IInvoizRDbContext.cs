@@ -12,6 +12,8 @@ public interface IInvoizRDbContext
 
     Task DispatchNotificationsAsync(CancellationToken cancellationToken = default);
 
+    DbSet<ThirdPartyService> ThirdPartyService { get; set; }
+    DbSet<ThirdPartyServiceParameter> ThirdPartyServiceParameter { get; set; }
     DbSet<EnumDescription> EnumDescription { get; set; }
     DbSet<Responsible> Responsible { get; set; }
     DbSet<Company> Company { get; set; }
@@ -26,6 +28,8 @@ public interface IInvoizRDbContext
     DbSet<InvoiceFile> InvoiceFile { get; set; }
 
     DbSet<VInvoiceProcessingStatus> VInvoiceProcessingStatus { get; set; }
+
+    IQueryable<ThirdPartyService> ThirdPartyServices(string environmentId, bool tracking = false, bool includes = false);
 
     Task<InvoiceType> GetInvoiceTypeAsync(short? id, bool tracking = false, bool includes = false, CancellationToken ct = default);
     Task<InvoiceType> GetCurrentInvoiceTypeAsync(short? id, bool tracking = false, bool includes = false, CancellationToken ct = default);
