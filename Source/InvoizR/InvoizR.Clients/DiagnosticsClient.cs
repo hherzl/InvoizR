@@ -17,18 +17,18 @@ public class DiagnosticsClient : Client, IDiagnosticsClient
 
     public DiagnosticsClientSettings ClientSettings { get; }
 
-    public async Task<DiagnosticsSeguridadResponse> DiagnosticsSeguridadAsync()
+    public async Task<DiagnosticsSeguridadResponse> DiagnosticsSeguridadAsync(short id)
     {
-        var response = await _httpClient.GetAsync($"diagnostics/seguridad");
+        var response = await _httpClient.GetAsync($"diagnostics/seguridad/{id}");
         response.EnsureSuccessStatusCode();
 
         var responseContent = await response.Content.ReadAsStringAsync();
         return JsonSerializer.Deserialize<DiagnosticsSeguridadResponse>(responseContent, DefaultJsonSerializerOpts);
     }
 
-    public async Task<DiagnosticsFirmadorResponse> DiagnosticsFirmadorAsync()
+    public async Task<DiagnosticsFirmadorResponse> DiagnosticsFirmadorAsync(short id)
     {
-        var response = await _httpClient.GetAsync($"diagnostics/firmador");
+        var response = await _httpClient.GetAsync($"diagnostics/firmador/{id}");
         response.EnsureSuccessStatusCode();
 
         var responseContent = await response.Content.ReadAsStringAsync();

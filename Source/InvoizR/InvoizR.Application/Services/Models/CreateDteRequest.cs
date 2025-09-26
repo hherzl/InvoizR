@@ -1,4 +1,6 @@
-﻿using InvoizR.Application.Common;
+﻿using System.Collections.ObjectModel;
+using InvoizR.Application.Common;
+using InvoizR.SharedKernel;
 
 namespace InvoizR.Application.Services.Models;
 
@@ -8,16 +10,15 @@ public record CreateDteRequest
     {
     }
 
-    public CreateDteRequest(MhSettings mhSettings, ProcessingSettings processingSettings, string jwt, long? invoiceId)
+    public CreateDteRequest(IEnumerable<ThirdPartyClientParameter> thirdPartyClientParameters, long? invoiceId)
+        : base()
     {
-        MhSettings = mhSettings;
-        ProcessingSettings = processingSettings;
-        Jwt = jwt;
+        ThirdPartyClientParameters = new([.. thirdPartyClientParameters]);
         InvoiceId = invoiceId;
     }
 
-    public MhSettings MhSettings { get; set; }
+    public Collection<ThirdPartyClientParameter> ThirdPartyClientParameters { get; protected set; }
+
     public ProcessingSettings ProcessingSettings { get; set; }
-    public string Jwt { get; set; }
     public long? InvoiceId { get; set; }
 }

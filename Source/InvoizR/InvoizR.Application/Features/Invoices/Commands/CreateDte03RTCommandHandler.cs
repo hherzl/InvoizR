@@ -1,18 +1,16 @@
-﻿using InvoizR.Application.Common;
-using InvoizR.Application.Common.Contracts;
+﻿using InvoizR.Application.Common.Contracts;
 using InvoizR.Application.Services;
 using InvoizR.Application.Services.Models;
 using InvoizR.Clients.DataContracts.Common;
 using InvoizR.Clients.DataContracts.Dte03;
 using InvoizR.Clients.ThirdParty.Contracts;
-using InvoizR.Clients.ThirdParty.DataContracts;
 using InvoizR.Domain.Entities;
 using InvoizR.Domain.Enums;
 using InvoizR.Domain.Exceptions;
 using InvoizR.Domain.Notifications;
 using InvoizR.SharedKernel.Mh.FeCcf;
 using MediatR;
-using Microsoft.Extensions.Configuration;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace InvoizR.Application.Features.Invoices.Commands;
@@ -20,7 +18,6 @@ namespace InvoizR.Application.Features.Invoices.Commands;
 public sealed class CreateDte03RTCommandHandler : IRequestHandler<CreateDte03RTCommand, CreatedResponse<long?>>
 {
     private readonly ILogger _logger;
-    private readonly IConfiguration _configuration;
     private readonly IInvoizRDbContext _dbContext;
     private readonly Dte14ProcessingStatusChanger _dteProcessingService;
     private readonly ISeguridadClient _seguridadClient;
@@ -29,7 +26,6 @@ public sealed class CreateDte03RTCommandHandler : IRequestHandler<CreateDte03RTC
     public CreateDte03RTCommandHandler
     (
         ILogger<CreateDte03RTCommandHandler> logger,
-        IConfiguration configuration,
         IInvoizRDbContext dbContext,
         Dte14ProcessingStatusChanger dteProcessingService,
         ISeguridadClient seguridadClient,
@@ -37,7 +33,6 @@ public sealed class CreateDte03RTCommandHandler : IRequestHandler<CreateDte03RTC
     )
     {
         _logger = logger;
-        _configuration = configuration;
         _dbContext = dbContext;
         _dteProcessingService = dteProcessingService;
         _seguridadClient = seguridadClient;
@@ -52,7 +47,7 @@ public sealed class CreateDte03RTCommandHandler : IRequestHandler<CreateDte03RTC
 
         try
         {
-            var pos = await _dbContext.GetPosAsync(request.PosId, ct: cancellationToken);
+            var pos = await _dbContext.GetPosAsync(request.PosId, includes: true, ct: cancellationToken);
 
             var invoice = new Invoice
             {
@@ -98,19 +93,16 @@ public sealed class CreateDte03RTCommandHandler : IRequestHandler<CreateDte03RTC
 
             _logger.LogInformation($"Processing '{invoice.InvoiceNumber}' invoice, changing status from '{InvoiceProcessingStatus.Requested}'...");
 
-            var mhSettings = new MhSettings();
-            _configuration.Bind("Clients:Mh", mhSettings);
+            var thirdPartyServices = await _dbContext.ThirdPartyServices(pos.Branch.Company.Environment, includes: true).ToListAsync(cancellationToken);
+            if (thirdPartyServices.Count == 0)
+                throw new NoThirdPartyServicesException(pos.Branch.Company.Name, pos.Branch.Company.Environment);
 
-            var processingSettings = new ProcessingSettings();
-            _configuration.Bind("ProcessingSettings", processingSettings);
+            var thirdPartyServicesParameters = thirdPartyServices.GetThirdPartyClientParameters().ToList();
+            _seguridadClient.ClientSettings = thirdPartyServicesParameters.GetByService(_seguridadClient.ServiceName).ToSeguridadClientSettings();
+            var authResponse = await _seguridadClient.AuthAsync();
+            thirdPartyServicesParameters.AddJwt(pos.Branch.Company.Environment, authResponse.Body.Token);
 
-            var authRequest = new AuthRequest();
-            _configuration.Bind("Clients:Mh", authRequest);
-
-            var authResponse = await _seguridadClient.AuthAsync(authRequest);
-
-            var createDteRequest = CreateDte03Request.Create(mhSettings, processingSettings, authResponse.Body.Token, invoice.Id, invoice.Payload);
-            if (await _dteSyncHandler.HandleAsync(createDteRequest, _dbContext, cancellationToken))
+            if (await _dteSyncHandler.HandleAsync(CreateDte03Request.Create(thirdPartyServicesParameters, invoice.Id, invoice.Payload), _dbContext, cancellationToken))
             {
                 invoice.AddNotification(new ExportInvoiceNotification(invoice));
                 await _dbContext.DispatchNotificationsAsync(cancellationToken);
@@ -121,7 +113,7 @@ public sealed class CreateDte03RTCommandHandler : IRequestHandler<CreateDte03RTC
         catch (Exception ex)
         {
             await txn.RollbackAsync(cancellationToken);
-            _logger.LogCritical(ex, "There was an error on Create DTE-03 Invoice in RT processing");
+            _logger.LogCritical(ex, "There was an error on Create DTE-03 in RT processing");
             return new();
         }
     }

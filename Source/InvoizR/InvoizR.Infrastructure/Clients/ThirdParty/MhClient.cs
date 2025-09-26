@@ -15,7 +15,7 @@ public class MhClient
             WriteIndented = true
         };
 
-    public virtual HttpClient CreateHttpClient(string endpoint)
+    public virtual HttpClient CreateHttpClient(string endpoint, string userAgent = "mobile")
     {
         var client = new HttpClient
         {
@@ -29,7 +29,7 @@ public class MhClient
             }
         };
 
-        client.DefaultRequestHeaders.Add(USER_AGENT, "InvoizR HttpClient");
+        client.DefaultRequestHeaders.Add(USER_AGENT, userAgent);
 
         return client;
     }

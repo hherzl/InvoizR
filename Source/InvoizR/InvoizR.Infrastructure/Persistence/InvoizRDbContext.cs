@@ -16,6 +16,8 @@ public partial class InvoizRDbContext : DbContext, IInvoizRDbContext
         _mediator = mediator;
     }
 
+    public DbSet<ThirdPartyService> ThirdPartyService { get; set; }
+    public DbSet<ThirdPartyServiceParameter> ThirdPartyServiceParameter { get; set; }
     public DbSet<EnumDescription> EnumDescription { get; set; }
     public DbSet<Responsible> Responsible { get; set; }
     public DbSet<Company> Company { get; set; }

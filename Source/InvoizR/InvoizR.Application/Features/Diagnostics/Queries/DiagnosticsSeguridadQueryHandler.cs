@@ -1,27 +1,34 @@
-﻿using InvoizR.Clients.DataContracts;
+﻿using InvoizR.Application.Common.Contracts;
+using InvoizR.Clients.DataContracts;
 using InvoizR.Clients.ThirdParty.Contracts;
-using InvoizR.Clients.ThirdParty.DataContracts;
+using InvoizR.Domain.Exceptions;
 using MediatR;
-using Microsoft.Extensions.Configuration;
+using Microsoft.EntityFrameworkCore;
 
 namespace InvoizR.Application.Features.Diagnostics.Queries;
 
 public class DiagnosticsSeguridadQueryHandler : IRequestHandler<DiagnosticsSeguridadQuery, DiagnosticsSeguridadResponse>
 {
-    private readonly IConfiguration _configuration;
+    private readonly IInvoizRDbContext _dbContext;
     private readonly ISeguridadClient _seguridadClient;
 
-    public DiagnosticsSeguridadQueryHandler(IConfiguration configuration, ISeguridadClient seguridadClient)
+    public DiagnosticsSeguridadQueryHandler(IInvoizRDbContext dbContext, ISeguridadClient seguridadClient)
     {
-        _configuration = configuration;
+        _dbContext = dbContext;
         _seguridadClient = seguridadClient;
     }
 
     public async Task<DiagnosticsSeguridadResponse> Handle(DiagnosticsSeguridadQuery request, CancellationToken cancellationToken)
     {
-        var authRequest = new AuthRequest();
-        _configuration.Bind("Clients:Mh", authRequest);
+        var company = await _dbContext.GetCompanyAsync(request.CompanyId, ct: cancellationToken);
 
-        return new DiagnosticsSeguridadResponse(await _seguridadClient.AuthAsync(authRequest));
+        var thirdPartyServices = await _dbContext.ThirdPartyServices(company.Environment, includes: true).ToListAsync(cancellationToken);
+        if (thirdPartyServices.Count == 0)
+            throw new NoThirdPartyServicesException(company.Name, company.Environment);
+
+        var thirdPartyServicesParameters = thirdPartyServices.GetThirdPartyClientParameters().ToList();
+        _seguridadClient.ClientSettings = thirdPartyServicesParameters.GetByService(_seguridadClient.ServiceName).ToSeguridadClientSettings();
+
+        return new DiagnosticsSeguridadResponse(await _seguridadClient.AuthAsync());
     }
 }

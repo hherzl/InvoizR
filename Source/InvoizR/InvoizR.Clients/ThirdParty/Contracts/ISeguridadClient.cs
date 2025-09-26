@@ -4,7 +4,9 @@ namespace InvoizR.Clients.ThirdParty.Contracts;
 
 public interface ISeguridadClient
 {
-    SeguridadClientSettings ClientSettings { get; }
+    string ServiceName { get; }
 
-    Task<AuthResponse> AuthAsync(AuthRequest request);
+    SeguridadClientSettings ClientSettings { get; set; }
+
+    Task<AuthResponse> AuthAsync();
 }

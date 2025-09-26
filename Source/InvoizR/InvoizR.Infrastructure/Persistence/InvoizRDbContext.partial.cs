@@ -7,6 +7,19 @@ namespace InvoizR.Infrastructure.Persistence;
 
 public partial class InvoizRDbContext
 {
+    public IQueryable<ThirdPartyService> ThirdPartyServices(string environmentId, bool tracking = false, bool includes = false)
+    {
+        var query = ThirdPartyService.AsQueryable();
+
+        if (tracking)
+            query = query.AsNoTracking();
+
+        if (includes)
+            query = query.Include(e => e.ThirdPartyServiceParameters);
+
+        return query.Where(item => item.EnvironmentId == environmentId);
+    }
+
     public async Task<InvoiceType> GetInvoiceTypeAsync(short? id, bool tracking = false, bool includes = false, CancellationToken ct = default)
     {
         var query = InvoiceType.AsQueryable();
@@ -106,11 +119,15 @@ public partial class InvoizRDbContext
     {
         var query =
             from inv in Invoice
+            join pos in Pos on inv.PosId equals pos.Id
+            join branch in Branch on pos.BranchId equals branch.Id
+            join company in Company on branch.CompanyId equals company.Id
             where inv.InvoiceTypeId == typeId && inv.ProcessingTypeId == processingTypeId && processingStatuses.Contains(inv.ProcessingStatusId)
             select new InvoiceItemModel
             {
                 Id = inv.Id,
                 PosId = inv.PosId,
+                Environment = company.Environment,
                 CustomerName = inv.CustomerName,
                 InvoiceTypeId = inv.InvoiceTypeId,
                 InvoiceNumber = inv.InvoiceNumber,

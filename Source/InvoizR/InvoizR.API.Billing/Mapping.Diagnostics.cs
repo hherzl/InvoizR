@@ -7,15 +7,15 @@ public static partial class Mapping
 {
     public static WebApplication MapDiagnostics(this WebApplication webApplication)
     {
-        webApplication.MapGet("diagnostics/seguridad", async (ISender mediator, [AsParameters] DiagnosticsSeguridadQuery request) =>
+        webApplication.MapGet("diagnostics/seguridad/{id}", async (ISender mediator, short id) =>
         {
-            var result = await mediator.Send(request);
+            var result = await mediator.Send(new DiagnosticsSeguridadQuery(id));
             return Results.Ok(result);
         });
 
-        webApplication.MapGet("diagnostics/firmador", async (ISender mediator, [AsParameters] DiagnosticsFirmadorQuery request) =>
+        webApplication.MapGet("diagnostics/firmador/{id}", async (ISender mediator, short id) =>
         {
-            var result = await mediator.Send(request);
+            var result = await mediator.Send(new DiagnosticsFirmadorQuery(id));
             return Results.Ok(result);
         });
 

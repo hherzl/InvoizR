@@ -1,9 +1,11 @@
-﻿using InvoizR.Application.Common;
+﻿using InvoizR.Application;
+using InvoizR.Application.Common;
 using InvoizR.Application.Services;
 using InvoizR.Application.Services.Models;
 using InvoizR.Clients.ThirdParty.Contracts;
-using InvoizR.Clients.ThirdParty.DataContracts;
+using InvoizR.Domain.Entities;
 using InvoizR.Domain.Enums;
+using InvoizR.Domain.Exceptions;
 using InvoizR.Infrastructure.Persistence;
 using InvoizR.SharedKernel.Mh.FeFc;
 using Microsoft.AspNetCore.SignalR;
@@ -14,7 +16,6 @@ namespace InvoizR.API.Billing.Services;
 public class Dte01HostedService : BackgroundService
 {
     private readonly ILogger _logger;
-    private readonly IConfiguration _configuration;
     private readonly IServiceProvider _serviceProvider;
     private readonly ISeguridadClient _seguridadClient;
     private readonly IHubContext<BillingHub> _hubContext;
@@ -22,14 +23,12 @@ public class Dte01HostedService : BackgroundService
     public Dte01HostedService
     (
         ILogger<Dte01HostedService> logger,
-        IConfiguration configuration,
         IServiceProvider serviceProvider,
         ISeguridadClient seguridadClient,
         IHubContext<BillingHub> hubContext
     )
     {
         _logger = logger;
-        _configuration = configuration;
         _serviceProvider = serviceProvider;
         _seguridadClient = seguridadClient;
         _hubContext = hubContext;
@@ -41,41 +40,23 @@ public class Dte01HostedService : BackgroundService
 
         using var dbContext = scope.ServiceProvider.GetRequiredService<InvoizRDbContext>();
 
-        var mhSettings = new MhSettings();
-        _configuration.Bind("Clients:Mh", mhSettings);
-
-        var processingSettings = new ProcessingSettings();
-        _configuration.Bind("ProcessingSettings", processingSettings);
-
         var timer = new PeriodicTimer(TimeSpan.FromMinutes(1));
 
         while (await timer.WaitForNextTickAsync(stoppingToken))
         {
             try
             {
-                var filters = new
-                {
-                    FeFcv1.TypeId,
-                    ProcessingTypeId = (short)InvoiceProcessingType.OneWay,
-                    ProcessingStatuses = new short?[]
-                    {
-                        (short)InvoiceProcessingStatus.Created,
-                        (short)InvoiceProcessingStatus.Initialized,
-                        (short)InvoiceProcessingStatus.Requested
-                    }
-                };
+                var filters = new Filters(FeFcv1.TypeId)
+                    .Set(InvoiceProcessingType.OneWay)
+                    .Add(InvoiceProcessingStatus.Created, InvoiceProcessingStatus.Initialized, InvoiceProcessingStatus.Requested)
+                    ;
 
-                var invoices = await dbContext.GetInvoicesForProcessing(filters.TypeId, filters.ProcessingTypeId, filters.ProcessingStatuses).ToListAsync(stoppingToken);
+                var invoices = await dbContext.GetInvoicesForProcessing(filters.InvoiceTypeId, filters.ProcessingTypeId, [.. filters.ProcessingStatuses]).ToListAsync(stoppingToken);
                 if (invoices.Count == 0)
                 {
-                    _logger.LogInformation($"There are no invoices (OW) to sync...");
+                    _logger.LogInformation($"There are no invoices (DTE-01 OW) to sync...");
                     continue;
                 }
-
-                var authRequest = new AuthRequest();
-                _configuration.Bind("Clients:Mh", authRequest);
-
-                var authResponse = await _seguridadClient.AuthAsync(authRequest);
 
                 var dteProcessingStatusChanger = scope.ServiceProvider.GetRequiredService<Dte01ProcessingStatusChanger>();
                 var dteSyncHandler = scope.ServiceProvider.GetRequiredService<DteSyncHandler>();
@@ -98,9 +79,16 @@ public class Dte01HostedService : BackgroundService
                     {
                         _logger.LogInformation($"Processing '{invoice.InvoiceNumber}' invoice, changing status from '{InvoiceProcessingStatus.Requested}'...");
 
-                        var request = CreateDte01Request.Create(mhSettings, processingSettings, authResponse.Body.Token, invoice.Id, invoice.Payload);
-                        var result = await dteSyncHandler.HandleAsync(request, dbContext, stoppingToken);
-                        if (result)
+                        var thirdPartyServices = await dbContext.ThirdPartyServices(invoice.Environment, includes: true).ToListAsync(stoppingToken);
+                        if (thirdPartyServices.Count == 0)
+                            throw new NoThirdPartyServicesException(invoice.Company, invoice.Environment);
+
+                        var thirdPartyServicesParameters = thirdPartyServices.GetThirdPartyClientParameters().ToList();
+                        _seguridadClient.ClientSettings = thirdPartyServicesParameters.GetByService(_seguridadClient.ServiceName).ToSeguridadClientSettings();
+                        var authResponse = await _seguridadClient.AuthAsync();
+                        thirdPartyServicesParameters.AddJwt(invoice.Environment, authResponse.Body.Token);
+
+                        if (await dteSyncHandler.HandleAsync(CreateDte01Request.Create(thirdPartyServicesParameters, invoice.Id, invoice.Payload), dbContext, stoppingToken))
                         {
                             _logger.LogInformation($"Broadcasting '{invoice.InvoiceNumber}' invoice...");
                             await _hubContext.Clients.All.SendAsync(HubMethods.SendInvoice, invoice.InvoiceTypeId, invoice.InvoiceNumber, invoice.InvoiceTotal, stoppingToken);
@@ -110,7 +98,7 @@ public class Dte01HostedService : BackgroundService
             }
             catch (Exception ex)
             {
-                _logger.LogCritical(ex, $"There was on error processing DTE-01");
+                _logger.LogCritical(ex, $"There was on error processing DTE-01 in OW");
             }
         }
     }

@@ -17,7 +17,7 @@ public sealed class CreateCompanyCommandHandler : IRequestHandler<CreateCompanyC
 
     public async Task<CreatedResponse<short?>> Handle(CreateCompanyCommand request, CancellationToken cancellationToken)
     {
-        var entity = new Company
+        var company = new Company
         {
             Environment = request.Environment,
             Name = request.Name,
@@ -36,12 +36,12 @@ public sealed class CreateCompanyCommandHandler : IRequestHandler<CreateCompanyC
         };
 
         if (request.HasLogo)
-            entity.Logo = Convert.FromBase64String(request.Logo);
+            company.Logo = Convert.FromBase64String(request.Logo);
 
-        _dbContext.Company.Add(entity);
+        _dbContext.Company.Add(company);
 
         await _dbContext.SaveChangesAsync(cancellationToken);
 
-        return new(entity.Id);
+        return new(company.Id);
     }
 }

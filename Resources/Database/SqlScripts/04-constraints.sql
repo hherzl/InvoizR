@@ -2,14 +2,6 @@ ALTER TABLE [dbo].[EnumDescription] ADD CONSTRAINT [PK_dbo_EnumDescription]
 	PRIMARY KEY ([Id])
 GO
 
-ALTER TABLE [dbo].[Responsible] ADD CONSTRAINT [PK_dbo_Responsible]
-	PRIMARY KEY ([Id])
-GO
-
-ALTER TABLE [dbo].[Responsible] ADD CONSTRAINT [UQ_dbo_Responsible_Email]
-	UNIQUE ([Email])
-GO
-
 ALTER TABLE [dbo].[Company] ADD CONSTRAINT [PK_dbo_Company]
 	PRIMARY KEY ([Id])
 GO
@@ -20,6 +12,38 @@ GO
 
 ALTER TABLE [dbo].[Company] ADD CONSTRAINT [UQ_dbo_Company_BusinessName]
 	UNIQUE ([BusinessName])
+GO
+
+ALTER TABLE [dbo].[ThirdPartyService] ADD CONSTRAINT [PK_dbo_ThirdPartyService]
+	PRIMARY KEY ([Id])
+GO
+
+ALTER TABLE [dbo].[ThirdPartyService] ADD CONSTRAINT [UQ_dbo_ThirdPartyService_EnvironmentId_Name]
+	UNIQUE ([EnvironmentId], [Name])
+GO
+
+ALTER TABLE [dbo].[ThirdPartyServiceParameter] ADD CONSTRAINT [PK_dbo_ThirdPartyServiceParameter]
+	PRIMARY KEY ([Id])
+GO
+
+ALTER TABLE [dbo].[ThirdPartyServiceParameter] ADD CONSTRAINT [UQ_dbo_ThirdPartyServiceParameter_ThirdPartyServiceId_Category_Name]
+	UNIQUE ([ThirdPartyServiceId], [Category], [Name])
+GO
+
+ALTER TABLE [dbo].[ThirdPartyServiceParameter] ADD CONSTRAINT [FK_dbo_ThirdPartyServiceParameter_ThirdPartyServiceId_dbo_ThirdPartyService]
+	FOREIGN KEY ([ThirdPartyServiceId]) REFERENCES [dbo].[ThirdPartyService]
+GO
+
+ALTER TABLE [dbo].[Responsible] ADD CONSTRAINT [PK_dbo_Responsible]
+	PRIMARY KEY ([Id])
+GO
+
+ALTER TABLE [dbo].[Responsible] ADD CONSTRAINT [UQ_dbo_Responsible_Email]
+	UNIQUE ([Email])
+GO
+
+ALTER TABLE [dbo].[Responsible] ADD CONSTRAINT [FK_dbo_Responsible_CompanyId_dbo_Company]
+	FOREIGN KEY ([CompanyId]) REFERENCES [dbo].[Company]
 GO
 
 ALTER TABLE [dbo].[Branch] ADD CONSTRAINT [PK_dbo_Branch]
@@ -167,5 +191,13 @@ ALTER TABLE [dbo].[InvoiceNotification] ADD CONSTRAINT [PK_dbo_InvoiceNotificati
 GO
 
 ALTER TABLE [dbo].[InvoiceNotification] ADD CONSTRAINT [FK_dbo_InvoiceNotification_InvoiceId_dbo_Invoice]
+	FOREIGN KEY ([InvoiceId]) REFERENCES [dbo].[Invoice]
+GO
+
+ALTER TABLE [dbo].[InvoiceCancellationLog] ADD CONSTRAINT [PK_dbo_InvoiceCancellationLog]
+	PRIMARY KEY ([Id])
+GO
+
+ALTER TABLE [dbo].[InvoiceCancellationLog] ADD CONSTRAINT [FK_dbo_InvoiceCancellationLog_InvoiceId_dbo_Invoice]
 	FOREIGN KEY ([InvoiceId]) REFERENCES [dbo].[Invoice]
 GO

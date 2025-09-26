@@ -1,4 +1,5 @@
 ﻿using InvoizR.Clients.DataContracts;
+using InvoizR.SharedKernel;
 using InvoizR.SharedKernel.Mh;
 
 namespace InvoizR.Client.CapsuleCorp.Mocks;
@@ -8,7 +9,7 @@ public static class CompanyMocks
     public static CreateCompanyCommand GetCapsuleCorp()
         => new()
         {
-            Environment = MhCatalog.Cat001.Prueba,
+            Environment = "LC",
             Name = "Capsule Corp.",
             Code = "CC",
             BusinessName = "Capsule Corp.",

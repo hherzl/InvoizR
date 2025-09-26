@@ -23,16 +23,19 @@ public class GetInvoicesQueryHandler : IRequestHandler<GetInvoicesQuery, PagedRe
             from inv in _dbContext.Invoice
             join branchPos in _dbContext.Pos on inv.PosId equals branchPos.Id
             join branch in _dbContext.Branch on branchPos.BranchId equals branch.Id
+            join company in _dbContext.Company on branch.CompanyId equals company.Id
             join invType in _dbContext.InvoiceType on inv.InvoiceTypeId equals invType.Id
             join vInvProcessingStatus in _dbContext.VInvoiceProcessingStatus on inv.ProcessingStatusId equals vInvProcessingStatus.Id
             orderby inv.InvoiceDate descending
             select new InvoiceItemModel
             {
                 Id = inv.Id,
-                BranchId = branchPos.BranchId,
-                Branch = branch.Name,
                 PosId = inv.PosId,
                 Pos = branchPos.Name,
+                BranchId = branchPos.BranchId,
+                Branch = branch.Name,
+                Company = company.Name,
+                Environment = company.Environment,
                 CustomerName = inv.CustomerName,
                 CustomerEmail = inv.CustomerEmail,
                 InvoiceTypeId = inv.InvoiceTypeId,

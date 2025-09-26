@@ -6,7 +6,7 @@ public interface IDiagnosticsClient
 {
     DiagnosticsClientSettings ClientSettings { get; }
 
-    Task<DiagnosticsSeguridadResponse> DiagnosticsSeguridadAsync();
+    Task<DiagnosticsSeguridadResponse> DiagnosticsSeguridadAsync(short id);
 
-    Task<DiagnosticsFirmadorResponse> DiagnosticsFirmadorAsync();
+    Task<DiagnosticsFirmadorResponse> DiagnosticsFirmadorAsync(short id);
 }

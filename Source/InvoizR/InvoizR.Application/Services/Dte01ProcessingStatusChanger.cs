@@ -12,6 +12,7 @@ public sealed class Dte01ProcessingStatusChanger : DteProcessingStatusChanger
     public Dte01ProcessingStatusChanger(ILogger<Dte01ProcessingStatusChanger> logger)
         : base(logger)
     {
+        _logger = logger;
     }
 
     protected override bool Init(Invoice invoice)
