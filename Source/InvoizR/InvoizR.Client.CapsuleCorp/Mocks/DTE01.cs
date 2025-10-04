@@ -5,9 +5,9 @@ using InvoizR.SharedKernel;
 
 namespace InvoizR.Client.CapsuleCorp.Mocks;
 
-static class DTE01
+static class Dte01
 {
-    public static CreateDte01OWCommand MockOwDte01()
+    public static CreateDte01OWCommand MockOwDte()
     {
         var data = new
         {
@@ -32,7 +32,7 @@ static class DTE01
 
         var total = Math.Round(invoiceLines.Sum(item => item.Total), 2);
 
-        var req = new CreateDte01OWCommand
+        var request = new CreateDte01OWCommand
         {
             PosId = (short)Random.Shared.Next(1, data.Branches.Count),
             InvoiceNumber = Convert.ToInt64($"{DateTime.Now:MMddhhmmss}"),
@@ -41,41 +41,41 @@ static class DTE01
             Lines = lines,
         };
 
-        if (req.InvoiceTotal > CreateDte01Command.MaxAmountForAnonymousCustomers)
+        if (request.InvoiceTotal > CreateDte01Command.MaxAmountForAnonymousCustomers)
         {
             var persons = data.Persons.ToList();
             var randomCard = persons[Random.Shared.Next(0, persons.Count - 1)];
 
-            req.Customer.Id = randomCard.Id;
-            req.Customer.DocumentTypeId = randomCard.DocumentTypeId;
-            req.Customer.DocumentNumber = randomCard.DocumentNumber;
-            req.Customer.WtId = randomCard.WtId;
-            req.Customer.Name = randomCard.Name;
-            req.Customer.CountryId = randomCard.CountryId;
-            req.Customer.CountryLevelId = randomCard.CountryLevelId;
-            req.Customer.Address = randomCard.Address;
-            req.Customer.Phone = randomCard.Phone;
-            req.Customer.Email = randomCard.Email;
+            request.Customer.Id = randomCard.Id;
+            request.Customer.DocumentTypeId = randomCard.DocumentTypeId;
+            request.Customer.DocumentNumber = randomCard.DocumentNumber;
+            request.Customer.WtId = randomCard.WtId;
+            request.Customer.Name = randomCard.Name;
+            request.Customer.CountryId = randomCard.CountryId;
+            request.Customer.CountryLevelId = randomCard.CountryLevelId;
+            request.Customer.Address = randomCard.Address;
+            request.Customer.Phone = randomCard.Phone;
+            request.Customer.Email = randomCard.Email;
         }
         else
         {
             var card = data.WalkIns.First();
 
-            req.Customer.Id = card.Id;
-            req.Customer.Name = card.Name;
-            req.Customer.CountryId = card.CountryId;
-            req.Customer.CountryLevelId = card.CountryLevelId;
-            req.Customer.Address = card.Address;
-            req.Customer.Phone = card.Phone;
-            req.Customer.Email = card.Email;
+            request.Customer.Id = card.Id;
+            request.Customer.Name = card.Name;
+            request.Customer.CountryId = card.CountryId;
+            request.Customer.CountryLevelId = card.CountryLevelId;
+            request.Customer.Address = card.Address;
+            request.Customer.Phone = card.Phone;
+            request.Customer.Email = card.Email;
         }
 
-        req.Dte = FeFcv1Helper.Create(req, invoiceLines);
+        request.Dte = FeFcv1Helper.Create(request, invoiceLines);
 
-        return req;
+        return request;
     }
 
-    public static CreateDte01RTCommand MockRtDte01()
+    public static CreateDte01RTCommand MockRtDte()
     {
         var data = new
         {
@@ -100,7 +100,7 @@ static class DTE01
 
         var total = Math.Round(invoiceLines.Sum(item => item.Total), 2);
 
-        var req = new CreateDte01RTCommand
+        var request = new CreateDte01RTCommand
         {
             PosId = (short)Random.Shared.Next(1, data.Branches.Count),
             InvoiceNumber = Convert.ToInt64($"{DateTime.Now:MMddhhmmss}"),
@@ -109,37 +109,37 @@ static class DTE01
             Lines = lines,
         };
 
-        if (req.InvoiceTotal > CreateDte01Command.MaxAmountForAnonymousCustomers)
+        if (request.InvoiceTotal > CreateDte01Command.MaxAmountForAnonymousCustomers)
         {
             var persons = data.Persons.ToList();
             var randomCard = persons[Random.Shared.Next(0, persons.Count - 1)];
 
-            req.Customer.Id = randomCard.Id;
-            req.Customer.DocumentTypeId = randomCard.DocumentTypeId;
-            req.Customer.DocumentNumber = randomCard.DocumentNumber;
-            req.Customer.WtId = randomCard.WtId;
-            req.Customer.Name = randomCard.Name;
-            req.Customer.CountryId = randomCard.CountryId;
-            req.Customer.CountryLevelId = randomCard.CountryLevelId;
-            req.Customer.Address = randomCard.Address;
-            req.Customer.Phone = randomCard.Phone;
-            req.Customer.Email = randomCard.Email;
+            request.Customer.Id = randomCard.Id;
+            request.Customer.DocumentTypeId = randomCard.DocumentTypeId;
+            request.Customer.DocumentNumber = randomCard.DocumentNumber;
+            request.Customer.WtId = randomCard.WtId;
+            request.Customer.Name = randomCard.Name;
+            request.Customer.CountryId = randomCard.CountryId;
+            request.Customer.CountryLevelId = randomCard.CountryLevelId;
+            request.Customer.Address = randomCard.Address;
+            request.Customer.Phone = randomCard.Phone;
+            request.Customer.Email = randomCard.Email;
         }
         else
         {
             var card = data.WalkIns.First();
 
-            req.Customer.Id = card.Id;
-            req.Customer.Name = card.Name;
-            req.Customer.CountryId = card.CountryId;
-            req.Customer.CountryLevelId = card.CountryLevelId;
-            req.Customer.Address = card.Address;
-            req.Customer.Phone = card.Phone;
-            req.Customer.Email = card.Email;
+            request.Customer.Id = card.Id;
+            request.Customer.Name = card.Name;
+            request.Customer.CountryId = card.CountryId;
+            request.Customer.CountryLevelId = card.CountryLevelId;
+            request.Customer.Address = card.Address;
+            request.Customer.Phone = card.Phone;
+            request.Customer.Email = card.Email;
         }
 
-        req.Dte = FeFcv1Helper.Create(req, invoiceLines);
+        request.Dte = FeFcv1Helper.Create(request, invoiceLines);
 
-        return req;
+        return request;
     }
 }

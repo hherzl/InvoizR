@@ -9,6 +9,7 @@ using InvoizR.SharedKernel.Mh;
 using InvoizR.SharedKernel.Mh.FeCcf;
 using InvoizR.SharedKernel.Mh.FeFc;
 using InvoizR.SharedKernel.Mh.FeFse;
+using InvoizR.SharedKernel.Mh.FeNc;
 using InvoizR.SharedKernel.Mh.FeNr;
 using Microsoft.Extensions.Options;
 
@@ -45,17 +46,25 @@ public class DteSyncHandler
 
             invoice.Payload = receivedInvoice.ToJson();
         }
-        else if (invoice.InvoiceTypeId == FeFsev1.TypeId)
+        else if (invoice.InvoiceTypeId == FeNrv3.TypeId)
         {
-            var receivedInvoice = FeFsev1Received.DeserializeReceived(invoice.Payload);
+            var receivedInvoice = FeNrv3Received.DeserializeReceived(invoice.Payload);
             receivedInvoice.SelloRecibido = invoice.ReceiptStamp;
             receivedInvoice.FirmaElectronica = eSignature;
 
             invoice.Payload = receivedInvoice.ToJson();
         }
-        else if (invoice.InvoiceTypeId == FeNrv3.TypeId)
+        else if (invoice.InvoiceTypeId == FeNcv3.TypeId)
         {
-            var receivedInvoice = FeNrv3Received.DeserializeReceived(invoice.Payload);
+            var receivedInvoice = FeNcv3Received.DeserializeReceived(invoice.Payload);
+            receivedInvoice.SelloRecibido = invoice.ReceiptStamp;
+            receivedInvoice.FirmaElectronica = eSignature;
+
+            invoice.Payload = receivedInvoice.ToJson();
+        }
+        else if (invoice.InvoiceTypeId == FeFsev1.TypeId)
+        {
+            var receivedInvoice = FeFsev1Received.DeserializeReceived(invoice.Payload);
             receivedInvoice.SelloRecibido = invoice.ReceiptStamp;
             receivedInvoice.FirmaElectronica = eSignature;
 

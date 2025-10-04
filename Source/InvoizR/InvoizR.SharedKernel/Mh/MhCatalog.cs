@@ -48,7 +48,7 @@ public static partial class MhCatalog
     /// <summary>
     /// CAT-007 Tipo de Generación del Documento
     /// </summary>
-    public static class Cat007
+    public static partial class Cat007
     {
         public const int Fisico = 1;
         public const int Electronico = 2;

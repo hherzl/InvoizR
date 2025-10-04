@@ -2,12 +2,12 @@
 using InvoizR.Application.Services;
 using InvoizR.Domain.Enums;
 using InvoizR.Infrastructure.Persistence;
-using InvoizR.SharedKernel.Mh.FeFse;
+using InvoizR.SharedKernel.Mh.FeNc;
 using Microsoft.EntityFrameworkCore;
 
 namespace InvoizR.API.Reports.Services;
 
-public class Dte14NotificationHostedService(ILogger<Dte14NotificationHostedService> logger, IServiceProvider serviceProvider, IConfiguration configuration) : BackgroundService
+public class Dte05NotificationHostedService(ILogger<Dte05NotificationHostedService> logger, IServiceProvider serviceProvider, IConfiguration configuration) : BackgroundService
 {
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
@@ -26,7 +26,7 @@ public class Dte14NotificationHostedService(ILogger<Dte14NotificationHostedServi
         {
             try
             {
-                var filters = new Filters(FeFsev1.TypeId)
+                var filters = new Filters(FeNcv3.TypeId)
                     .Set(InvoiceProcessingType.OneWay)
                     .Add(InvoiceProcessingStatus.Processed)
                     ;
@@ -34,7 +34,7 @@ public class Dte14NotificationHostedService(ILogger<Dte14NotificationHostedServi
                 var invoices = await dbContext.GetInvoicesForProcessing(filters.InvoiceTypeId, filters.ProcessingTypeId, [.. filters.ProcessingStatuses]).ToListAsync(stoppingToken);
                 if (invoices.Count == 0)
                 {
-                    logger.LogInformation($"There are no '{FeFsev1.SchemaType}' invoices to process...");
+                    logger.LogInformation($"There are no '{FeNcv3.SchemaType}' invoices to process...");
                     continue;
                 }
 
@@ -47,7 +47,7 @@ public class Dte14NotificationHostedService(ILogger<Dte14NotificationHostedServi
             }
             catch (Exception ex)
             {
-                logger.LogCritical(ex, $"There was on error exporting DTE-14 invoices");
+                logger.LogCritical(ex, $"There was on error exporting DTE-05 invoices");
             }
         }
     }

@@ -34,9 +34,6 @@ public class Dte04Templatev1 : DteTemplatev1<Dte04TemplateModel>
 
         output.AppendLine($"    <td>");
 
-        string AsStrong(string value)
-            => $"<strong>{value}</strong>";
-
         output.AppendLine($"     <ul>");
         output.AppendLine($"      <li>Código de generación: {AsStrong(Model.GenerationCode)}</li>");
         output.AppendLine($"      <li>Número de control: {AsStrong(Model.ControlNumber)}</li>");
@@ -92,9 +89,6 @@ public class Dte04Templatev1 : DteTemplatev1<Dte04TemplateModel>
 
         output.AppendLine("  </tbody>");
         output.AppendLine(" </table>");
-
-        string AsAmount(double amount)
-            => $"{amount:N2}";
 
         output.AppendLine(" <br>");
 

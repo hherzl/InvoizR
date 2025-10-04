@@ -17,36 +17,42 @@ public record ClientArgs
             if (item == "--mock")
                 Mock = true;
 
+            if (item.StartsWith("--invoice-type"))
+                InvoiceType = item.Replace("--invoice-type=", "");
+
             if (item.StartsWith("--processing-type"))
                 ProcessingType = item.Replace("--processing-type=", "");
 
             if (item.StartsWith("--limit"))
             {
-                try
-                {
-                    Limit = Convert.ToInt32(item.Replace("--limit=", ""));
-                }
-                catch
-                {
-                    Limit = DefaultLimit;
-                }
-            }
+                if (int.TryParse(item.Replace("--limit=", ""), out var limit))
+                    Limit = limit;
 
-            if (item.StartsWith("--invoice-type"))
-                InvoiceType = item.Replace("--invoice-type=", "");
+                //try
+                //{
+                //    Limit = Convert.ToInt32(item.Replace("--limit=", ""));
+                //}
+                //catch
+                //{
+                //    Limit = DefaultLimit;
+                //}
+            }
         }
     }
 
     public bool ShowCatalog { get; }
     public bool Seed { get; }
     public bool Mock { get; }
+
+    public string BillingEndpoint = "https://localhost:13880";
+
+    public string InvoiceType { get; set; }
     public string ProcessingType { get; set; }
     public int Limit { get; }
-    public string InvoiceType { get; set; }
 
     public bool IsRt
         => string.Compare(ProcessingType, "rt", true) == 0;
 
-    public int MockDelay
+    public static int MockDelay
         => 3000;
 }

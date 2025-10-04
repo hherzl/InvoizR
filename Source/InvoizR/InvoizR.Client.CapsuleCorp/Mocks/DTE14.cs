@@ -5,9 +5,9 @@ using InvoizR.SharedKernel;
 
 namespace InvoizR.Client.CapsuleCorp.Mocks;
 
-static class DTE14
+static class Dte14
 {
-    public static CreateDte14OWCommand MockOwDte14()
+    public static CreateDte14OWCommand MockOwDte()
     {
         var data = new
         {
@@ -23,7 +23,7 @@ static class DTE14
 
         var total = Math.Round(invoiceLines.Sum(item => item.Total), 2);
 
-        var req = new CreateDte14OWCommand
+        var request = new CreateDte14OWCommand
         {
             PosId = (short)Random.Shared.Next(1, data.Branches.Count),
             InvoiceNumber = Convert.ToInt64($"{DateTime.Now:MMddhhmmss}"),
@@ -35,23 +35,23 @@ static class DTE14
         var persons = data.Persons.ToList();
         var randomCard = persons[Random.Shared.Next(0, persons.Count - 1)];
 
-        req.Customer.Id = randomCard.Id;
-        req.Customer.DocumentTypeId = randomCard.DocumentTypeId;
-        req.Customer.DocumentNumber = randomCard.DocumentNumber;
-        req.Customer.WtId = randomCard.WtId;
-        req.Customer.Name = randomCard.Name;
-        req.Customer.CountryId = randomCard.CountryId;
-        req.Customer.CountryLevelId = randomCard.CountryLevelId;
-        req.Customer.Address = randomCard.Address;
-        req.Customer.Phone = randomCard.Phone;
-        req.Customer.Email = randomCard.Email;
+        request.Customer.Id = randomCard.Id;
+        request.Customer.DocumentTypeId = randomCard.DocumentTypeId;
+        request.Customer.DocumentNumber = randomCard.DocumentNumber;
+        request.Customer.WtId = randomCard.WtId;
+        request.Customer.Name = randomCard.Name;
+        request.Customer.CountryId = randomCard.CountryId;
+        request.Customer.CountryLevelId = randomCard.CountryLevelId;
+        request.Customer.Address = randomCard.Address;
+        request.Customer.Phone = randomCard.Phone;
+        request.Customer.Email = randomCard.Email;
 
-        req.Dte = FeFsev1Helper.Create(req, invoiceLines);
+        request.Dte = FeFsev1Helper.Create(request, invoiceLines);
 
-        return req;
+        return request;
     }
 
-    public static CreateDte14RTCommand MockRtDte14()
+    public static CreateDte14RTCommand MockRtDte()
     {
         var data = new
         {
@@ -67,7 +67,7 @@ static class DTE14
 
         var total = Math.Round(invoiceLines.Sum(item => item.Total), 2);
 
-        var req = new CreateDte14RTCommand
+        var request = new CreateDte14RTCommand
         {
             PosId = (short)Random.Shared.Next(1, data.Branches.Count),
             InvoiceNumber = Convert.ToInt64($"{DateTime.Now:MMddhhmmss}"),
@@ -79,19 +79,19 @@ static class DTE14
         var persons = data.Persons.ToList();
         var randomPerson = persons[Random.Shared.Next(0, persons.Count - 1)];
 
-        req.Customer.Id = randomPerson.Id;
-        req.Customer.DocumentTypeId = randomPerson.DocumentTypeId;
-        req.Customer.DocumentNumber = randomPerson.DocumentNumber;
-        req.Customer.WtId = randomPerson.WtId;
-        req.Customer.Name = randomPerson.Name;
-        req.Customer.CountryId = randomPerson.CountryId;
-        req.Customer.CountryLevelId = randomPerson.CountryLevelId;
-        req.Customer.Address = randomPerson.Address;
-        req.Customer.Phone = randomPerson.Phone;
-        req.Customer.Email = randomPerson.Email;
+        request.Customer.Id = randomPerson.Id;
+        request.Customer.DocumentTypeId = randomPerson.DocumentTypeId;
+        request.Customer.DocumentNumber = randomPerson.DocumentNumber;
+        request.Customer.WtId = randomPerson.WtId;
+        request.Customer.Name = randomPerson.Name;
+        request.Customer.CountryId = randomPerson.CountryId;
+        request.Customer.CountryLevelId = randomPerson.CountryLevelId;
+        request.Customer.Address = randomPerson.Address;
+        request.Customer.Phone = randomPerson.Phone;
+        request.Customer.Email = randomPerson.Email;
 
-        req.Dte = FeFsev1Helper.Create(req, invoiceLines);
+        request.Dte = FeFsev1Helper.Create(request, invoiceLines);
 
-        return req;
+        return request;
     }
 }

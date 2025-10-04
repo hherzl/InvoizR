@@ -1,19 +1,19 @@
 ﻿using InvoizR.Client.CapsuleCorp.Data;
 using InvoizR.Client.CapsuleCorp.Helpers;
-using InvoizR.Clients.DataContracts.Dte03;
+using InvoizR.Clients.DataContracts.Dte05;
 using InvoizR.SharedKernel;
 
 namespace InvoizR.Client.CapsuleCorp.Mocks;
 
-static class Dte03
+internal class Dte05
 {
-    public static CreateDte03OWCommand MockOwDte()
+    public static CreateDte05OWCommand MockOwDte()
     {
         var data = new
         {
             Branches = Db.Branches.ToList(),
             Products = Db.Products.ToList(),
-            Persons = Db.Cards.Where(item => item.CardTypeId == (short)CardType.Person).ToList()
+            Persons = Db.Cards.ToList()
         };
 
         var lines = Random.Shared.Next(1, data.Products.Count);
@@ -31,7 +31,7 @@ static class Dte03
 
         var total = Math.Round(invoiceLines.Sum(item => item.Total), 2);
 
-        var request = new CreateDte03OWCommand
+        var request = new CreateDte05OWCommand
         {
             PosId = (short)Random.Shared.Next(1, data.Branches.Count),
             InvoiceNumber = Convert.ToInt64($"{DateTime.Now:MMddhhmmss}"),
@@ -54,18 +54,18 @@ static class Dte03
         request.Customer.Phone = randomCard.Phone;
         request.Customer.Email = randomCard.Email;
 
-        request.Dte = FeCcfv3Helper.Create(request, invoiceLines);
+        request.Dte = FeNcv3Helper.Create(request, invoiceLines);
 
         return request;
     }
 
-    public static CreateDte03RTCommand MockRtDte()
+    public static CreateDte05RTCommand MockRtDte()
     {
         var data = new
         {
             Branches = Db.Branches.ToList(),
             Products = Db.Products.ToList(),
-            Persons = Db.Cards.Where(item => item.CardTypeId == (short)CardType.Person).ToList()
+            Persons = Db.Cards.ToList()
         };
 
         var lines = Random.Shared.Next(1, data.Products.Count);
@@ -83,7 +83,7 @@ static class Dte03
 
         var total = Math.Round(invoiceLines.Sum(item => item.Total), 2);
 
-        var request = new CreateDte03RTCommand
+        var request = new CreateDte05RTCommand
         {
             PosId = (short)Random.Shared.Next(1, data.Branches.Count),
             InvoiceNumber = Convert.ToInt64($"{DateTime.Now:MMddhhmmss}"),
@@ -106,7 +106,7 @@ static class Dte03
         request.Customer.Phone = randomPerson.Phone;
         request.Customer.Email = randomPerson.Email;
 
-        request.Dte = FeCcfv3Helper.Create(request, invoiceLines);
+        request.Dte = FeNcv3Helper.Create(request, invoiceLines);
 
         return request;
     }

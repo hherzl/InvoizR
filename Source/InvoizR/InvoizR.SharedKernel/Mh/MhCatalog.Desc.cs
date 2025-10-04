@@ -48,6 +48,17 @@ public static partial class MhCatalog
             };
     }
 
+    public static partial class Cat007
+    {
+        public static string Desc(int value)
+            => value switch
+            {
+                Fisico => "Físico",
+                Electronico => "Electrónico",
+                _ => ""
+            };
+    }
+
     public static partial class Cat016
     {
         public static string Desc(double value)
