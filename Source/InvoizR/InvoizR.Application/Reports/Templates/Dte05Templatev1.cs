@@ -5,9 +5,9 @@ using InvoizR.SharedKernel.Mh;
 
 namespace InvoizR.Application.Reports.Templates;
 
-public class Dte01Templatev1 : DteTemplatev1<Dte01TemplateModel>
+public class Dte05Templatev1 : DteTemplatev1<Dte05TemplateModel>
 {
-    public Dte01Templatev1(Dte01TemplateModel model)
+    public Dte05Templatev1(Dte05TemplateModel model)
         : base(model)
     {
     }
@@ -42,7 +42,7 @@ public class Dte01Templatev1 : DteTemplatev1<Dte01TemplateModel>
         output.AppendLine($"      <li>Modelo de facturación: {MhCatalog.Cat003.Desc(Model.Dte.Identificacion.TipoModelo)}</li>");
         output.AppendLine($"      <li>Tipo de transmisión: {MhCatalog.Cat004.Desc(Model.Dte.Identificacion.TipoOperacion)}</li>");
 
-        output.AppendLine($"      <li>Fecha y hora de generación: {Model.ProcessingDateTime:yyyy-MM-dd hh:mm:ss}</li>");
+        output.AppendLine($"      <li>Fecha y hora de generación: {AsDateTime(Model.ProcessingDateTime)}</li>");
         output.AppendLine($"      <li>Versión de JSON: {AsStrong(Model.SchemaVersion.ToString())}</li>");
         output.AppendLine($"     </ul>");
 
@@ -90,6 +90,40 @@ public class Dte01Templatev1 : DteTemplatev1<Dte01TemplateModel>
         output.AppendLine("  </tbody>");
         output.AppendLine(" </table>");
 
+        output.AppendLine(" <br>");
+        output.AppendLine(" <br>");
+
+        output.AppendLine(" <table class='referenced-documents-table'>");
+        output.AppendLine("  <caption>DOCUMENTOS RELACIONADOS</caption>");
+
+        output.AppendLine("  <thead>");
+        output.AppendLine("   <tr>");
+
+        output.AppendLine("    <th>Tipo</th>");
+        output.AppendLine("    <th>Tipo de generación</th>");
+        output.AppendLine("    <th>Número de documento</th>");
+        output.AppendLine("    <th>Fecha de emisión</th>");
+
+        output.AppendLine("   </tr>");
+        output.AppendLine("  </thead>");
+
+        output.AppendLine("  <tbody>");
+
+        foreach (var referencedDocument in Model.ReferencedDocuments)
+        {
+            output.AppendLine("   <tr class='referenced-documents-row'>");
+            output.AppendLine($"    <td class='referenced-documents-cell'>{referencedDocument.Type}</td>");
+            output.AppendLine($"    <td class='referenced-documents-cell'>{referencedDocument.GenerationType}</td>");
+            output.AppendLine($"    <td class='referenced-documents-cell'>{referencedDocument.DocumentNumber}</td>");
+            output.AppendLine($"    <td class='referenced-documents-cell'>{AsDate(referencedDocument.EmitDate)}</td>");
+            output.AppendLine("   </tr>");
+        }
+
+        output.AppendLine("  </tbody>");
+
+        output.AppendLine(" </table>");
+
+        output.AppendLine(" <br>");
         output.AppendLine(" <br>");
 
         output.AppendLine(" <table class='lines-table'>");
@@ -191,18 +225,6 @@ public class Dte01Templatev1 : DteTemplatev1<Dte01TemplateModel>
         output.AppendLine("   <tr>");
         output.AppendLine("    <td colspan='8'>&nbsp;</td>");
         output.AppendLine("   </tr>");
-
-        output.AppendLine("   <tr>");
-        output.AppendLine($"    <td colspan='8'>{AsStrong("Pagos")}</td>");
-        output.AppendLine("   </tr>");
-
-        foreach (var item in Model.Dte.Resumen.Pagos)
-        {
-            output.AppendLine("   <tr>");
-            output.AppendLine($"    <td colspan='7'>{MhCatalog.Cat017.Desc(item.Codigo)}</td>");
-            output.AppendLine($"    <td class='lines-amount'>{AsAmount(item.MontoPago)}</td>");
-            output.AppendLine("   </tr>");
-        }
 
         output.AppendLine("   <tr>");
         output.AppendLine("    <td colspan='8'>&nbsp;</td>");

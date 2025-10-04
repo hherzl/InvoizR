@@ -1,5 +1,5 @@
 title Capsule Corp Mock DTE-03
 set source=%cd%\Source\InvoizR
 cd %source%\InvoizR.Client.CapsuleCorp
-dotnet run --mock --processing-type=rt --limit=1 --invoice-type=03
+dotnet run --mock --invoice-type=03 --processing-type=rt --limit=1
 pause

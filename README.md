@@ -104,9 +104,28 @@ Para facilitar la ejecución de la solución, hay scripts BAT para poder ejecuta
 |31-Run-Mh-Firmador.bat|Ejecuta el API Mock de firma para DTE|
 |32-Run-Mh-FeSv.bat|Ejecuta el API Mock de Fe SV del MH|
 |40-Seed-CapsuleCorp.bat|Inicializa los registros de `Capsule Corp.`|
-|41-Mock-CapsuleCorp-100-Invoices.bat|Crea 100 facturas de consumidor final|
-|42-Mock-CapsuleCorp-1-Invoice.bat|Crea una factura de consumidor final (Útil para hacer debugging)|
-|50-Run-GUI.bat|Ejecuta el GUI para administración|
+
+|41-Mock-CC-DTE01-OW-1.bat|Crea 1 factura de consumidor final en procesamiento OW (útil para debug)|
+|41-Mock-CC-DTE01-OW-25.bat|Crea 25 facturas de consumidor final en procesamiento OW|
+|41-Mock-CC-DTE01-RT-1.bat|Crea 1 factura de consumidor final en procesamiento RT (útil para debug)|
+|41-Mock-CC-DTE01-RT-25.bat|Crea 25 facturas de consumidor final en procesamiento RT|
+|43-Mock-CC-DTE03-OW-1.bat|Crea 1 factura de comprobrante de crédito fiscal en procesamiento OW (útil para debug)|
+|43-Mock-CC-DTE03-OW-25.bat|Crea 25 facturas de comprobrante de crédito fiscal en procesamiento OW|
+|43-Mock-CC-DTE03-RT-1.bat|Crea 1 factura de comprobrante de crédito fiscal en procesamiento RT (útil para debug)|
+|43-Mock-CC-DTE03-RT-25.bat|Crea 25 facturas de comprobrante de crédito fiscal en procesamiento RT|
+|44-Mock-CC-DTE04-OW-1.bat|Crea 1 factura de nota de remisión en procesamiento OW (útil para debug)|
+|44-Mock-CC-DTE04-OW-25.bat|Crea 25 facturas de nota de remisión en procesamiento OW|
+|44-Mock-CC-DTE04-RT-1.bat|Crea 1 factura de nota de remisión en procesamiento RT (útil para debug)|
+|44-Mock-CC-DTE04-RT-25.bat|Crea 25 facturas de nota de remisión en procesamiento RT|
+|45-Mock-CC-DTE05-OW-1.bat|Crea 1 factura de nota de crédito en procesamiento OW (útil para debug)|
+|45-Mock-CC-DTE05-OW-25.bat|Crea 25 facturas de nota de crédito en procesamiento OW|
+|45-Mock-CC-DTE05-RT-1.bat|Crea 1 factura de nota de crédito en procesamiento RT (útil para debug)|
+|45-Mock-CC-DTE05-RT-25.bat|Crea 25 facturas de nota de crédito en procesamiento RT|
+|54-Mock-CC-DTE14-OW-1.bat|Crea 1 factura de sujeto excluido en procesamiento OW (útil para debug)|
+|54-Mock-CC-DTE14-OW-25.bat|Crea 25 facturas de sujeto excluido en procesamiento OW|
+|54-Mock-CC-DTE14-RT-1.bat|Crea 1 factura de sujeto excluido en procesamiento RT (útil para debug)|
+|54-Mock-CC-DTE14-RT-25.bat|Crea 25 facturas de sujeto excluido en procesamiento RT|
+|99-Run-GUI.bat|Ejecuta el GUI para administración|
 
 ### Integración
 

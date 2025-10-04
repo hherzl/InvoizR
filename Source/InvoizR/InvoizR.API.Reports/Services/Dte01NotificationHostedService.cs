@@ -7,19 +7,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace InvoizR.API.Reports.Services;
 
-public class Dte01NotificationHostedService : BackgroundService
+public class Dte01NotificationHostedService(ILogger<Dte01NotificationHostedService> _logger, IServiceProvider _serviceProvider, IConfiguration _configuration) : BackgroundService
 {
-    private readonly ILogger _logger;
-    private readonly IServiceProvider _serviceProvider;
-    private readonly IConfiguration _configuration;
-
-    public Dte01NotificationHostedService(ILogger<Dte01NotificationHostedService> logger, IServiceProvider serviceProvider, IConfiguration configuration)
-    {
-        _logger = logger;
-        _serviceProvider = serviceProvider;
-        _configuration = configuration;
-    }
-
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         using var scope = _serviceProvider.CreateScope();
@@ -37,17 +26,12 @@ public class Dte01NotificationHostedService : BackgroundService
         {
             try
             {
-                var filters = new
-                {
-                    FeFcv1.TypeId,
-                    ProcessingTypeId = (short)InvoiceProcessingType.OneWay,
-                    ProcessingStatuses = new short?[]
-                    {
-                        (short)InvoiceProcessingStatus.Processed
-                    }
-                };
+                var filters = new Filters(FeFcv1.TypeId)
+                    .Set(InvoiceProcessingType.OneWay)
+                    .Add(InvoiceProcessingStatus.Processed)
+                    ;
 
-                var invoices = await dbContext.GetInvoicesForProcessing(filters.TypeId, filters.ProcessingTypeId, filters.ProcessingStatuses).ToListAsync(stoppingToken);
+                var invoices = await dbContext.GetInvoicesForProcessing(filters.InvoiceTypeId, filters.ProcessingTypeId, [.. filters.ProcessingStatuses]).ToListAsync(stoppingToken);
                 if (invoices.Count == 0)
                 {
                     _logger.LogInformation($"There are no '{FeFcv1.SchemaType}' invoices to process...");

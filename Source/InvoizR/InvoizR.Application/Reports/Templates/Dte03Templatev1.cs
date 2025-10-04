@@ -34,9 +34,6 @@ public class Dte03Templatev1 : DteTemplatev1<Dte03TemplateModel>
 
         output.AppendLine($"    <td>");
 
-        string AsStrong(string value)
-            => $"<strong>{value}</strong>";
-
         output.AppendLine($"     <ul>");
         output.AppendLine($"      <li>Código de generación: {AsStrong(Model.GenerationCode)}</li>");
         output.AppendLine($"      <li>Número de control: {AsStrong(Model.ControlNumber)}</li>");
@@ -92,9 +89,6 @@ public class Dte03Templatev1 : DteTemplatev1<Dte03TemplateModel>
 
         output.AppendLine("  </tbody>");
         output.AppendLine(" </table>");
-
-        string AsAmount(double amount)
-            => $"{amount:N2}";
 
         output.AppendLine(" <br>");
 
@@ -153,7 +147,7 @@ public class Dte03Templatev1 : DteTemplatev1<Dte03TemplateModel>
             VentaNoSuj = lines.Sum(item => item.VentaNoSuj),
             VentaExenta = lines.Sum(item => item.VentaExenta),
             VentaGravada = lines.Sum(item => item.VentaGravada),
-            Total = lines.Sum(item => item.VentaGravada)
+            Total = lines.Sum(item => item.VentaNoSuj + item.VentaExenta + item.VentaGravada)
         };
 
         output.AppendLine("   <tr class='lines-totals-row'>");

@@ -1,14 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 using InvoizR.Clients.DataContracts.Common;
-using InvoizR.SharedKernel.Mh.FeFc;
+using InvoizR.SharedKernel.Mh.FeNc;
 using MediatR;
 
-namespace InvoizR.Clients.DataContracts.Dte01;
+namespace InvoizR.Clients.DataContracts.Dte05;
 
-public record CreateDte01Command : Request, IRequest<CreatedResponse<long?>>, IValidatableObject
+public record CreateDte05Command : Request, IRequest<CreatedResponse<long?>>, IValidatableObject
 {
-    public CreateDte01Command()
+    public CreateDte05Command()
     {
         Customer = new();
     }
@@ -22,34 +22,18 @@ public record CreateDte01Command : Request, IRequest<CreatedResponse<long?>>, IV
     public decimal? InvoiceTotal { get; set; }
     public int? Lines { get; set; }
 
-    public FeFcv1 Dte { get; set; }
+    public FeNcv3 Dte { get; set; }
 
     public string ToJson()
         => JsonSerializer.Serialize(this, DefaultJsonSerializerOpts);
 
-    // Comercios pedirán datos de compradores por montos superiores a $25 mil
-    // https://www.asamblea.gob.sv/node/13115
-    public const decimal MaxAmountForAnonymousCustomers = 25000;
-
-    public bool RequireCustomerData
-        => InvoiceTotal > MaxAmountForAnonymousCustomers;
-
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
-        if (PosId == null)
-            yield return new ValidationResult("PosId is required", [nameof(PosId)]);
-
-        if (InvoiceNumber == null)
-            yield return new ValidationResult("InvoiceNumber is required", [nameof(InvoiceNumber)]);
-
-        if (InvoiceDate == null)
-            yield return new ValidationResult("InvoiceDate is required", [nameof(InvoiceDate)]);
-
-        if (InvoiceTotal == null)
+        if (Customer == null)
         {
-            yield return new ValidationResult("InvoiceTotal is required", [nameof(InvoiceTotal)]);
+            yield return new ValidationResult("Customer is required", [nameof(Customer)]);
         }
-        else if (InvoiceTotal >= MaxAmountForAnonymousCustomers)
+        else
         {
             if (string.IsNullOrEmpty(Customer.Id))
                 yield return new ValidationResult("Customer ID is required", [nameof(Customer.Id)]);
@@ -75,6 +59,15 @@ public record CreateDte01Command : Request, IRequest<CreatedResponse<long?>>, IV
             if (Customer.Email == null)
                 yield return new ValidationResult("Customer email is required", [nameof(Customer.Email)]);
         }
+
+        if (InvoiceNumber == null)
+            yield return new ValidationResult("InvoiceNumber is required", [nameof(InvoiceNumber)]);
+
+        if (InvoiceDate == null)
+            yield return new ValidationResult("InvoiceDate is required", [nameof(InvoiceDate)]);
+
+        if (InvoiceTotal == null)
+            yield return new ValidationResult("InvoiceTotal is required", [nameof(InvoiceTotal)]);
 
         if (Dte == null)
             yield return new ValidationResult("DTE is required", [nameof(Dte)]);

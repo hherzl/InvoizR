@@ -35,6 +35,7 @@ try
     builder.Services.AddHostedService<Dte01HostedService>();
     builder.Services.AddHostedService<Dte03HostedService>();
     builder.Services.AddHostedService<Dte04HostedService>();
+    builder.Services.AddHostedService<Dte05HostedService>();
     builder.Services.AddHostedService<Dte14HostedService>();
 
     builder.Services.AddCors(options =>
@@ -95,6 +96,7 @@ try
     app.MapDte01();
     app.MapDte03();
     app.MapDte04();
+    app.MapDte05();
     app.MapDte14();
     app.MapDiagnostics();
 

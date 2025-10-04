@@ -60,6 +60,19 @@ table caption {
     text-align: right;
 }
 
+.referenced-documents-table {
+    border: 1px solid black;
+    font-size: 11px;
+    width: 100%;
+}
+
+.referenced-documents-row {
+}
+
+.referenced-documents-cell {
+    text-align: center;
+}
+
 .summary-row {
     text-align: right;
 }

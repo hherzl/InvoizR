@@ -19,13 +19,7 @@ public class Dte04HostedService : BackgroundService
     private readonly ISeguridadClient _seguridadClient;
     private readonly IHubContext<BillingHub> _hubContext;
 
-    public Dte04HostedService
-    (
-        ILogger<Dte04HostedService> logger,
-        IServiceProvider serviceProvider,
-        ISeguridadClient seguridadClient,
-        IHubContext<BillingHub> hubContext
-    )
+    public Dte04HostedService(ILogger<Dte04HostedService> logger, IServiceProvider serviceProvider, ISeguridadClient seguridadClient, IHubContext<BillingHub> hubContext)
     {
         _logger = logger;
         _serviceProvider = serviceProvider;
