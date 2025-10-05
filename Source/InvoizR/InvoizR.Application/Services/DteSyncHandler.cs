@@ -10,6 +10,7 @@ using InvoizR.SharedKernel.Mh.FeCcf;
 using InvoizR.SharedKernel.Mh.FeFc;
 using InvoizR.SharedKernel.Mh.FeFse;
 using InvoizR.SharedKernel.Mh.FeNc;
+using InvoizR.SharedKernel.Mh.FeNd;
 using InvoizR.SharedKernel.Mh.FeNr;
 using Microsoft.Extensions.Options;
 
@@ -57,6 +58,14 @@ public class DteSyncHandler
         else if (invoice.InvoiceTypeId == FeNcv3.TypeId)
         {
             var receivedInvoice = FeNcv3Received.DeserializeReceived(invoice.Payload);
+            receivedInvoice.SelloRecibido = invoice.ReceiptStamp;
+            receivedInvoice.FirmaElectronica = eSignature;
+
+            invoice.Payload = receivedInvoice.ToJson();
+        }
+        else if (invoice.InvoiceTypeId == FeNdv3.TypeId)
+        {
+            var receivedInvoice = FeNdv3Received.DeserializeReceived(invoice.Payload);
             receivedInvoice.SelloRecibido = invoice.ReceiptStamp;
             receivedInvoice.FirmaElectronica = eSignature;
 

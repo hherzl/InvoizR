@@ -2,32 +2,32 @@
 using InvoizR.Application.Services;
 using InvoizR.Application.Services.Models;
 using InvoizR.Clients.DataContracts.Common;
-using InvoizR.Clients.DataContracts.Dte05;
+using InvoizR.Clients.DataContracts.Dte06;
 using InvoizR.Clients.ThirdParty.Contracts;
 using InvoizR.Domain.Entities;
 using InvoizR.Domain.Enums;
 using InvoizR.Domain.Exceptions;
 using InvoizR.Domain.Notifications;
-using InvoizR.SharedKernel.Mh.FeNc;
+using InvoizR.SharedKernel.Mh.FeNd;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace InvoizR.Application.Features.Invoices;
+namespace InvoizR.Application.Features.Invoices.Commands;
 
-public sealed class CreateDte05RTCommandHandler : IRequestHandler<CreateDte05RTCommand, CreatedResponse<long?>>
+public sealed class CreateDte06RTCommandHandler : IRequestHandler<CreateDte06RTCommand, CreatedResponse<long?>>
 {
     private readonly ILogger _logger;
     private readonly IInvoizRDbContext _dbContext;
-    private readonly Dte05ProcessingStatusChanger _dteProcessingService;
+    private readonly Dte06ProcessingStatusChanger _dteProcessingService;
     private readonly ISeguridadClient _seguridadClient;
     private readonly DteSyncHandler _dteHandler;
 
-    public CreateDte05RTCommandHandler
+    public CreateDte06RTCommandHandler
     (
-        ILogger<CreateDte05RTCommandHandler> logger,
+        ILogger<CreateDte06RTCommandHandler> logger,
         IInvoizRDbContext dbContext,
-        Dte05ProcessingStatusChanger dteProcessingService,
+        Dte06ProcessingStatusChanger dteProcessingService,
         ISeguridadClient seguridadClient,
         DteSyncHandler dteHandler
     )
@@ -39,9 +39,9 @@ public sealed class CreateDte05RTCommandHandler : IRequestHandler<CreateDte05RTC
         _dteHandler = dteHandler;
     }
 
-    public async Task<CreatedResponse<long?>> Handle(CreateDte05RTCommand request, CancellationToken cancellationToken)
+    public async Task<CreatedResponse<long?>> Handle(CreateDte06RTCommand request, CancellationToken cancellationToken)
     {
-        _ = await _dbContext.GetCurrentInvoiceTypeAsync(FeNcv3.TypeId, ct: cancellationToken) ?? throw new InvalidCurrentInvoiceTypeException();
+        _ = await _dbContext.GetCurrentInvoiceTypeAsync(FeNdv3.TypeId, ct: cancellationToken) ?? throw new InvalidCurrentInvoiceTypeException();
 
         var txn = await _dbContext.Database.BeginTransactionAsync(cancellationToken);
 
@@ -63,7 +63,7 @@ public sealed class CreateDte05RTCommandHandler : IRequestHandler<CreateDte05RTC
                 CustomerPhone = request.Customer.Phone,
                 CustomerEmail = request.Customer.Email,
                 CustomerLastUpdated = DateTime.Now,
-                InvoiceTypeId = FeNcv3.TypeId,
+                InvoiceTypeId = FeNdv3.TypeId,
                 InvoiceNumber = request.InvoiceNumber,
                 InvoiceDate = request.InvoiceDate,
                 InvoiceTotal = request.InvoiceTotal,
@@ -102,7 +102,7 @@ public sealed class CreateDte05RTCommandHandler : IRequestHandler<CreateDte05RTC
             var authResponse = await _seguridadClient.AuthAsync();
             thirdPartyServicesParameters.AddJwt(pos.Branch.Company.Environment, authResponse.Body.Token);
 
-            if (await _dteHandler.HandleAsync(CreateDte05Request.Create(thirdPartyServicesParameters, invoice.Id, invoice.Payload), _dbContext, cancellationToken))
+            if (await _dteHandler.HandleAsync(CreateDte06Request.Create(thirdPartyServicesParameters, invoice.Id, invoice.Payload), _dbContext, cancellationToken))
             {
                 invoice.AddNotification(new ExportInvoiceNotification(invoice));
                 await _dbContext.DispatchNotificationsAsync(cancellationToken);
@@ -112,8 +112,8 @@ public sealed class CreateDte05RTCommandHandler : IRequestHandler<CreateDte05RTC
         }
         catch (Exception ex)
         {
+            _logger.LogCritical(ex, "There was an error on Create DTE-06 in RT processing");
             await txn.RollbackAsync(cancellationToken);
-            _logger.LogCritical(ex, "There was an error on Create DTE-05 in RT processing");
             return new();
         }
     }

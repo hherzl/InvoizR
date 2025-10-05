@@ -29,6 +29,8 @@ try
     builder.Services.AddHostedService<Dte01NotificationHostedService>();
     builder.Services.AddHostedService<Dte03NotificationHostedService>();
     builder.Services.AddHostedService<Dte04NotificationHostedService>();
+    builder.Services.AddHostedService<Dte05NotificationHostedService>();
+    builder.Services.AddHostedService<Dte06NotificationHostedService>();
     builder.Services.AddHostedService<Dte14NotificationHostedService>();
 
     builder.Services.AddApplicationServices(builder.Configuration);

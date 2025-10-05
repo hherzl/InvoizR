@@ -8,6 +8,7 @@ using InvoizR.SharedKernel.Mh.FeCcf;
 using InvoizR.SharedKernel.Mh.FeFc;
 using InvoizR.SharedKernel.Mh.FeFse;
 using InvoizR.SharedKernel.Mh.FeNc;
+using InvoizR.SharedKernel.Mh.FeNd;
 using InvoizR.SharedKernel.Mh.FeNr;
 using Microsoft.Extensions.Options;
 
@@ -161,6 +162,8 @@ if (clientArgs.Mock)
                     await MockRtDte04(client);
                 else if (clientArgs.InvoiceType == FeNcv3.SchemaType)
                     await MockRtDte05(client);
+                else if (clientArgs.InvoiceType == FeNdv3.SchemaType)
+                    await MockRtDte06(client);
                 else if (clientArgs.InvoiceType == FeFsev1.SchemaType)
                     await MockRtDte14(client);
             }
@@ -174,6 +177,8 @@ if (clientArgs.Mock)
                     await MockOwDte04(client);
                 else if (clientArgs.InvoiceType == FeNcv3.SchemaType)
                     await MockOwDte05(client);
+                else if (clientArgs.InvoiceType == FeNdv3.SchemaType)
+                    await MockOwDte06(client);
                 else if (clientArgs.InvoiceType == FeFsev1.SchemaType)
                     await MockOwDte14(client);
             }
@@ -278,6 +283,30 @@ static async Task MockOwDte05(IInvoizRClient client)
     Console.WriteLine($" Syncing invoice '{request.InvoiceNumber}', {request.InvoiceTotal:C2} in OW processing...");
 
     var response = await client.CreateDte05OWAsync(request);
+
+    Console.WriteLine($"  Generated ID: '{response.Id}'");
+    Console.WriteLine();
+}
+
+static async Task MockRtDte06(IInvoizRClient client)
+{
+    var request = Dte06.MockRtDte();
+
+    Console.WriteLine($" Syncing invoice '{request.InvoiceNumber}', {request.InvoiceTotal:C2} in RT processing...");
+
+    var response = await client.CreateDte06RTAsync(request);
+
+    Console.WriteLine($"  Generated ID: '{response.Id}'");
+    Console.WriteLine();
+}
+
+static async Task MockOwDte06(IInvoizRClient client)
+{
+    var request = Dte06.MockOwDte();
+
+    Console.WriteLine($" Syncing invoice '{request.InvoiceNumber}', {request.InvoiceTotal:C2} in OW processing...");
+
+    var response = await client.CreateDte06OWAsync(request);
 
     Console.WriteLine($"  Generated ID: '{response.Id}'");
     Console.WriteLine();

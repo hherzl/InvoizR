@@ -35,6 +35,9 @@ public static class ConfigureServices
         services.AddScoped<Dte05ProcessingStatusChanger>();
         services.AddScoped<Dte05TemplateFactory>();
 
+        services.AddScoped<Dte06ProcessingStatusChanger>();
+        services.AddScoped<Dte06TemplateFactory>();
+
         services.AddScoped<Dte14ProcessingStatusChanger>();
         services.AddScoped<Dte14TemplateFactory>();
 
