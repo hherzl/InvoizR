@@ -8,6 +8,7 @@ using InvoizR.SharedKernel.Mh.FeCcf;
 using InvoizR.SharedKernel.Mh.FeFc;
 using InvoizR.SharedKernel.Mh.FeFse;
 using InvoizR.SharedKernel.Mh.FeNc;
+using InvoizR.SharedKernel.Mh.FeNd;
 using InvoizR.SharedKernel.Mh.FeNr;
 using Microsoft.Extensions.Logging;
 
@@ -21,6 +22,7 @@ public class PdfInvoiceExportStrategy : IInvoiceExportStrategy
     private readonly Dte03TemplateFactory _dte03TemplateFactory;
     private readonly Dte04TemplateFactory _dte04TemplateFactory;
     private readonly Dte05TemplateFactory _dte05TemplateFactory;
+    private readonly Dte06TemplateFactory _dte06TemplateFactory;
     private readonly Dte14TemplateFactory _dte14TemplateFactory;
 
     public PdfInvoiceExportStrategy
@@ -31,6 +33,7 @@ public class PdfInvoiceExportStrategy : IInvoiceExportStrategy
         Dte03TemplateFactory dte03TemplateFactory,
         Dte04TemplateFactory dte04TemplateFactory,
         Dte05TemplateFactory dte05TemplateFactory,
+        Dte06TemplateFactory dte06TemplateFactory,
         Dte14TemplateFactory dte14TemplateFactory
     )
     {
@@ -40,6 +43,7 @@ public class PdfInvoiceExportStrategy : IInvoiceExportStrategy
         _dte03TemplateFactory = dte03TemplateFactory;
         _dte04TemplateFactory = dte04TemplateFactory;
         _dte05TemplateFactory = dte05TemplateFactory;
+        _dte06TemplateFactory = dte06TemplateFactory;
         _dte14TemplateFactory = dte14TemplateFactory;
     }
 
@@ -55,6 +59,8 @@ public class PdfInvoiceExportStrategy : IInvoiceExportStrategy
             objSettings = DinkToPdfHelper.CreateDteObjSettings(new Dte04Templatev1(_dte04TemplateFactory.Create(invoice)).ToString());
         else if (invoice.InvoiceTypeId == FeNcv3.TypeId)
             objSettings = DinkToPdfHelper.CreateDteObjSettings(new Dte05Templatev1(_dte05TemplateFactory.Create(invoice)).ToString());
+        else if (invoice.InvoiceTypeId == FeNdv3.TypeId)
+            objSettings = DinkToPdfHelper.CreateDteObjSettings(new Dte06Templatev1(_dte06TemplateFactory.Create(invoice)).ToString());
         else if (invoice.InvoiceTypeId == FeFsev1.TypeId)
             objSettings = DinkToPdfHelper.CreateDteObjSettings(new Dte14Templatev1(_dte14TemplateFactory.Create(invoice)).ToString());
 

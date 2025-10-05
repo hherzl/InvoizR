@@ -104,7 +104,6 @@ Para facilitar la ejecución de la solución, hay scripts BAT para poder ejecuta
 |31-Run-Mh-Firmador.bat|Ejecuta el API Mock de firma para DTE|
 |32-Run-Mh-FeSv.bat|Ejecuta el API Mock de Fe SV del MH|
 |40-Seed-CapsuleCorp.bat|Inicializa los registros de `Capsule Corp.`|
-
 |41-Mock-CC-DTE01-OW-1.bat|Crea 1 factura de consumidor final en procesamiento OW (útil para debug)|
 |41-Mock-CC-DTE01-OW-25.bat|Crea 25 facturas de consumidor final en procesamiento OW|
 |41-Mock-CC-DTE01-RT-1.bat|Crea 1 factura de consumidor final en procesamiento RT (útil para debug)|
@@ -121,6 +120,10 @@ Para facilitar la ejecución de la solución, hay scripts BAT para poder ejecuta
 |45-Mock-CC-DTE05-OW-25.bat|Crea 25 facturas de nota de crédito en procesamiento OW|
 |45-Mock-CC-DTE05-RT-1.bat|Crea 1 factura de nota de crédito en procesamiento RT (útil para debug)|
 |45-Mock-CC-DTE05-RT-25.bat|Crea 25 facturas de nota de crédito en procesamiento RT|
+|46-Mock-CC-DTE06-OW-1.bat|Crea 1 factura de nota de débito en procesamiento OW (útil para debug)|
+|46-Mock-CC-DTE06-OW-25.bat|Crea 25 facturas de nota de débito en procesamiento OW|
+|46-Mock-CC-DTE06-RT-1.bat|Crea 1 factura de nota de débito en procesamiento RT (útil para debug)|
+|46-Mock-CC-DTE06-RT-25.bat|Crea 25 facturas de nota de débito en procesamiento RT|
 |54-Mock-CC-DTE14-OW-1.bat|Crea 1 factura de sujeto excluido en procesamiento OW (útil para debug)|
 |54-Mock-CC-DTE14-OW-25.bat|Crea 25 facturas de sujeto excluido en procesamiento OW|
 |54-Mock-CC-DTE14-RT-1.bat|Crea 1 factura de sujeto excluido en procesamiento RT (útil para debug)|

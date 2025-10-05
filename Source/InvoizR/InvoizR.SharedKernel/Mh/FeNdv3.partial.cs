@@ -1,9 +1,9 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace InvoizR.SharedKernel.Mh.FeNc;
+namespace InvoizR.SharedKernel.Mh.FeNd;
 
-public partial class FeNcv3 : Dte
+public partial class FeNdv3 : Dte
 {
     public override string ToJson()
         => JsonSerializer.Serialize(this, DefaultJsonSerializerOpts);
@@ -12,19 +12,19 @@ public partial class FeNcv3 : Dte
         => 3;
 
     public static string SchemaType
-        => "05";
+        => "06";
 
     public static short TypeId
-        => 5;
+        => 6;
 
     public static string Desc
-        => "Nota de Crédito";
+        => "Nota de Débito";
 
-    public static FeNcv3 Deserialize(string json)
-        => JsonSerializer.Deserialize<FeNcv3>(json, DefaultJsonSerializerOpts);
+    public static FeNdv3 Deserialize(string json)
+        => JsonSerializer.Deserialize<FeNdv3>(json, DefaultJsonSerializerOpts);
 }
 
-public partial class FeNcv3Received : FeNcv3
+public partial class FeNdv3Received : FeNdv3
 {
     [JsonPropertyName("selloRecibido")]
     public string SelloRecibido { get; set; }
@@ -35,6 +35,6 @@ public partial class FeNcv3Received : FeNcv3
     public override string ToJson()
         => JsonSerializer.Serialize(this, DefaultJsonSerializerOpts);
 
-    public static FeNcv3Received DeserializeReceived(string json)
-        => JsonSerializer.Deserialize<FeNcv3Received>(json, DefaultJsonSerializerOpts);
+    public static FeNdv3Received DeserializeReceived(string json)
+        => JsonSerializer.Deserialize<FeNdv3Received>(json, DefaultJsonSerializerOpts);
 }

@@ -1,10 +1,12 @@
 ﻿using InvoizR.Application.Common.Contracts;
 using InvoizR.Domain.Enums;
 using InvoizR.SharedKernel;
+using InvoizR.SharedKernel.Mh;
 using InvoizR.SharedKernel.Mh.FeCcf;
 using InvoizR.SharedKernel.Mh.FeFc;
 using InvoizR.SharedKernel.Mh.FeFse;
 using InvoizR.SharedKernel.Mh.FeNc;
+using InvoizR.SharedKernel.Mh.FeNd;
 using InvoizR.SharedKernel.Mh.FeNr;
 
 namespace InvoizR.API.Billing.Services;
@@ -67,6 +69,7 @@ public class InvoizRInitializer
             _dbContext.InvoiceType.Add(new(FeNrv3.TypeId, "Nota de Remisión", FeNrv3.SchemaType, FeNrv3.Version, true));
             _dbContext.InvoiceType.Add(new(FeFsev1.TypeId, "Factura Sujeto Excluido", FeFsev1.SchemaType, FeFsev1.Version, true));
             _dbContext.InvoiceType.Add(new(FeNcv3.TypeId, "Nota de Crédito", FeNcv3.SchemaType, FeNcv3.Version, true));
+            _dbContext.InvoiceType.Add(new(FeNdv3.TypeId, "Nota de Débito", FeNdv3.SchemaType, FeNdv3.Version, true));
 
             await _dbContext.SaveChangesAsync();
         }

@@ -2,6 +2,7 @@
 using InvoizR.SharedKernel.Mh.FeFc;
 using InvoizR.SharedKernel.Mh.FeFse;
 using InvoizR.SharedKernel.Mh.FeNc;
+using InvoizR.SharedKernel.Mh.FeNd;
 using InvoizR.SharedKernel.Mh.FeNr;
 
 namespace InvoizR.Application.Helpers;
@@ -18,6 +19,8 @@ public static class DteInfoHelper
             return new(FeNrv3.TypeId, FeNrv3.SchemaType, Guid.NewGuid(), $"DTE-{FeNrv3.SchemaType}-{prefix}{branch}{pos}-{invoiceNumber:000000000000000}");
         else if (type == FeNcv3.TypeId)
             return new(FeNcv3.TypeId, FeNcv3.SchemaType, Guid.NewGuid(), $"DTE-{FeNcv3.SchemaType}-{prefix}{branch}{pos}-{invoiceNumber:000000000000000}");
+        else if (type == FeNdv3.TypeId)
+            return new(FeNdv3.TypeId, FeNdv3.SchemaType, Guid.NewGuid(), $"DTE-{FeNdv3.SchemaType}-{prefix}{branch}{pos}-{invoiceNumber:000000000000000}");
         else if (type == FeFsev1.TypeId)
             return new(FeFsev1.TypeId, FeFsev1.SchemaType, Guid.NewGuid(), $"DTE-{FeFsev1.SchemaType}-{prefix}{branch}{pos}-{invoiceNumber:000000000000000}");
 
