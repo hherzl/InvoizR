@@ -3,6 +3,7 @@ using System.Text.Json;
 using System.Web;
 using InvoizR.Clients.Contracts;
 using InvoizR.Clients.DataContracts;
+using InvoizR.Clients.DataContracts.Cancellation;
 using InvoizR.Clients.DataContracts.Common;
 using InvoizR.Clients.DataContracts.Dte01;
 using InvoizR.Clients.DataContracts.Dte03;
@@ -28,9 +29,9 @@ public class InvoizRClient : Client, IInvoizRClient
 
     public async Task<ListResponse<CompanyItemModel>> GetCompaniesAsync(GetCompaniesQuery request)
     {
-        var qs = HttpUtility.ParseQueryString(string.Empty);
+        var queryString = HttpUtility.ParseQueryString(string.Empty);
 
-        var response = await _httpClient.GetAsync($"company?{qs.ToString()}");
+        var response = await _httpClient.GetAsync($"company?{queryString.ToString()}");
         response.EnsureSuccessStatusCode();
 
         var responseContent = await response.Content.ReadAsStringAsync();
@@ -87,9 +88,9 @@ public class InvoizRClient : Client, IInvoizRClient
 
     public async Task<ListResponse<ResponsibleItemModel>> GetResponsiblesAsync(GetResponsiblesQuery request)
     {
-        var qs = HttpUtility.ParseQueryString(string.Empty);
+        var queryString = HttpUtility.ParseQueryString(string.Empty);
 
-        var response = await _httpClient.GetAsync($"responsible?{qs.ToString()}");
+        var response = await _httpClient.GetAsync($"responsible?{queryString.ToString()}");
         response.EnsureSuccessStatusCode();
 
         var responseContent = await response.Content.ReadAsStringAsync();
@@ -98,10 +99,10 @@ public class InvoizRClient : Client, IInvoizRClient
 
     public async Task<CreatedResponse<short?>> CreateResponsibleAsync(CreateResponsibleCommand request)
     {
-        var qs = HttpUtility.ParseQueryString(string.Empty);
+        var queryString = HttpUtility.ParseQueryString(string.Empty);
 
         if (request.CompanyId != null)
-            qs.Add("posId", request.CompanyId.ToString());
+            queryString.Add("posId", request.CompanyId.ToString());
 
         var response = await _httpClient.PostAsync($"responsible", ContentHelper.Create(request.ToJson()));
         response.EnsureSuccessStatusCode();
@@ -160,18 +161,18 @@ public class InvoizRClient : Client, IInvoizRClient
 
     public async Task<PagedResponse<InvoiceItemModel>> GetInvoicesAsync(GetInvoicesQuery request)
     {
-        var qs = HttpUtility.ParseQueryString(string.Empty);
+        var queryString = HttpUtility.ParseQueryString(string.Empty);
 
-        qs.Add("pageSize", request.PageSize.ToString());
-        qs.Add("pageNumber", request.PageNumber.ToString());
+        queryString.Add("pageSize", request.PageSize.ToString());
+        queryString.Add("pageNumber", request.PageNumber.ToString());
 
         if (request.PosId != null)
-            qs.Add("posId", request.PosId.ToString());
+            queryString.Add("posId", request.PosId.ToString());
 
         if (request.ProcessingStatusId != null)
-            qs.Add("processingStatusId", request.ProcessingStatusId.ToString());
+            queryString.Add("processingStatusId", request.ProcessingStatusId.ToString());
 
-        var response = await _httpClient.GetAsync($"invoice?{qs.ToString()}");
+        var response = await _httpClient.GetAsync($"invoice?{queryString.ToString()}");
         response.EnsureSuccessStatusCode();
 
         var responseContent = await response.Content.ReadAsStringAsync();
@@ -318,5 +319,15 @@ public class InvoizRClient : Client, IInvoizRClient
         response.EnsureSuccessStatusCode();
 
         return JsonSerializer.Deserialize<CreatedResponse<long?>>(responseContent, DefaultJsonSerializerOpts);
+    }
+
+    public async Task<Response> DteCancellationAsync(DteCancellationCommand request)
+    {
+        var response = await _httpClient.PostAsync($"dte-cancellation", ContentHelper.Create(request.ToJson()));
+        var responseContent = await response.Content.ReadAsStringAsync();
+
+        response.EnsureSuccessStatusCode();
+
+        return JsonSerializer.Deserialize<Response>(responseContent, DefaultJsonSerializerOpts);
     }
 }

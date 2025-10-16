@@ -26,6 +26,7 @@ public interface IInvoizRDbContext
     DbSet<InvoiceProcessingLog> InvoiceProcessingLog { get; set; }
     DbSet<InvoiceNotification> InvoiceNotification { get; set; }
     DbSet<InvoiceFile> InvoiceFile { get; set; }
+    DbSet<InvoiceCancellationLog> InvoiceCancellationLog { get; set; }
 
     DbSet<VInvoiceProcessingStatus> VInvoiceProcessingStatus { get; set; }
 
@@ -40,6 +41,8 @@ public interface IInvoizRDbContext
     Task<Branch> GetBranchAsync(short? id, bool tracking = false, bool includes = false, CancellationToken ct = default);
     Task<Pos> GetPosAsync(short? id, bool tracking = false, bool includes = false, CancellationToken ct = default);
     IQueryable<PosItemModel> GetPosBy(short? branchId = null);
+
+    Task<Responsible> GetResponsibleByCompanyIdAsync(short? companyId, bool tracking = false, bool includes = false, CancellationToken ct = default);
 
     IQueryable<BranchNotification> GetBranchNotificationsBy(short? branchId = null, short? invoiceTypeId = null);
 

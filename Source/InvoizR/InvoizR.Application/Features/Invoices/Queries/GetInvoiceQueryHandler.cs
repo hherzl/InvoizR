@@ -57,7 +57,7 @@ public class GetInvoiceQueryHandler : IRequestHandler<GetInvoiceQuery, InvoiceDe
             ProcessingStatus = processingStatuses.First(item => item.Id == entity.ProcessingStatusId).Desc,
             RetryIn = entity.RetryIn,
             SyncAttempts = entity.SyncAttempts,
-            ProcessingDateTime = entity.ProcessingDateTime,
+            EmitDateTime = entity.EmitDateTime,
             ReceiptStamp = entity.ReceiptStamp,
             ExternalUrl = entity.ExternalUrl,
             Notes = entity.Notes,

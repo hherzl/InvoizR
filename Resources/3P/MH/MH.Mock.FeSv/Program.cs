@@ -28,6 +28,7 @@ try
     app.UseHttpsRedirection();
 
     app.MapReceptionDte();
+    app.MapAnularDte();
 
     app.Run();
 }

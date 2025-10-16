@@ -19,7 +19,7 @@ public partial class ThirdPartyServiceParameter : Entity
     public short? ThirdPartyServiceId { get; set; }
     public string Category { get; set; }
     public string Name { get; set; }
-    public string Value { get; set; }
+    public string DefaultValue { get; set; }
     public bool? RequiresEncryption { get; set; }
 
     public virtual ThirdPartyService ThirdPartyService { get; set; }

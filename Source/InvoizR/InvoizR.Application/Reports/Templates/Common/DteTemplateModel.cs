@@ -21,7 +21,7 @@ public record DteTemplateModel<TDte>
 
     public string GenerationCode { get; set; }
     public string ControlNumber { get; set; }
-    public DateTime? ProcessingDateTime { get; set; }
+    public DateTime? EmitDateTime { get; set; }
     public string ReceiptStamp { get; set; }
     public string ExternalUrl { get; set; }
 

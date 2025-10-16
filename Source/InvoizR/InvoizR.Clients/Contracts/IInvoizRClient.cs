@@ -1,4 +1,5 @@
 ﻿using InvoizR.Clients.DataContracts;
+using InvoizR.Clients.DataContracts.Cancellation;
 using InvoizR.Clients.DataContracts.Common;
 using InvoizR.Clients.DataContracts.Dte01;
 using InvoizR.Clients.DataContracts.Dte03;
@@ -6,6 +7,7 @@ using InvoizR.Clients.DataContracts.Dte04;
 using InvoizR.Clients.DataContracts.Dte05;
 using InvoizR.Clients.DataContracts.Dte06;
 using InvoizR.Clients.DataContracts.Dte14;
+using InvoizR.SharedKernel.Mh;
 
 namespace InvoizR.Clients.Contracts;
 
@@ -52,4 +54,6 @@ public interface IInvoizRClient
 
     Task<CreatedResponse<long?>> CreateDte14OWAsync(CreateDte14OWCommand request);
     Task<CreatedResponse<long?>> CreateDte14RTAsync(CreateDte14RTCommand request);
+
+    Task<Response> DteCancellationAsync(DteCancellationCommand request);
 }

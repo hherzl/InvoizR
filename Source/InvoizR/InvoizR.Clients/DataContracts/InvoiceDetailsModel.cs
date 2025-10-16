@@ -33,7 +33,7 @@ public record InvoiceDetailsModel
     public string ProcessingStatus { get; set; }
     public int? RetryIn { get; set; }
     public int? SyncAttempts { get; set; }
-    public DateTime? ProcessingDateTime { get; set; }
+    public DateTime? EmitDateTime { get; set; }
     public string ReceiptStamp { get; set; }
     public string ExternalUrl { get; set; }
     public string Notes { get; set; }

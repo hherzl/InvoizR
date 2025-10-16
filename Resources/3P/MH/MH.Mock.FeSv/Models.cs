@@ -89,6 +89,36 @@ public record RecepcionDteResponse : BaseModel
         => JsonSerializer.Serialize(this, DefaultJsonSerializerOpts);
 }
 
+public record AnularDteRequest : BaseModel
+{
+    public AnularDteRequest()
+    {
+    }
+
+    public AnularDteRequest(string ambiente, string idEnvio, int version, string documento)
+    {
+        Ambiente = ambiente;
+        IdEnvio = idEnvio;
+        Version = version;
+        Documento = documento;
+    }
+
+    [JsonPropertyName("ambiente")]
+    public string Ambiente { get; set; }
+
+    [JsonPropertyName("idEnvio")]
+    public string IdEnvio { get; set; }
+
+    [JsonPropertyName("version")]
+    public int? Version { get; set; }
+
+    [JsonPropertyName("documento")]
+    public string Documento { get; set; }
+
+    public string ToJson()
+        => JsonSerializer.Serialize(this, DefaultJsonSerializerOpts);
+}
+
 public static class Tokens
 {
     public const string CodigoGeneracionExistente = "[identificacion.codigoGeneracion] YA EXISTE UN REGISTRO CON ESE VALOR";

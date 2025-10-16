@@ -11,7 +11,7 @@ public static class EntityExtensions
         {
             foreach (var serviceParameter in thirdPartyService.ThirdPartyServiceParameters)
             {
-                yield return new(thirdPartyService.EnvironmentId, thirdPartyService.Name, serviceParameter.Category, serviceParameter.Name, serviceParameter.Value);
+                yield return new(thirdPartyService.EnvironmentId, thirdPartyService.Name, serviceParameter.Category, serviceParameter.Name, serviceParameter.DefaultValue);
             }
         }
     }

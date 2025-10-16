@@ -34,6 +34,22 @@ ALTER TABLE [dbo].[ThirdPartyServiceParameter] ADD CONSTRAINT [FK_dbo_ThirdParty
 	FOREIGN KEY ([ThirdPartyServiceId]) REFERENCES [dbo].[ThirdPartyService]
 GO
 
+ALTER TABLE [dbo].[CompanyThirdPartyServiceParameter] ADD CONSTRAINT [PK_dbo_CompanyThirdPartyServiceParameter]
+	PRIMARY KEY ([Id])
+GO
+
+ALTER TABLE [dbo].[CompanyThirdPartyServiceParameter] ADD CONSTRAINT [UQ_dbo_CompanyThirdPartyServiceParameter_CompanyId_ThirdPartyServiceId_EnvironmentId_Category_Name]
+	UNIQUE ([CompanyId], [ThirdPartyServiceId], [EnvironmentId], [Category], [Name])
+GO
+
+ALTER TABLE [dbo].[CompanyThirdPartyServiceParameter] ADD CONSTRAINT [FK_dbo_CompanyThirdPartyServiceParameter_CompanyId_dbo_Company]
+	FOREIGN KEY ([CompanyId]) REFERENCES [dbo].[Company]
+GO
+
+ALTER TABLE [dbo].[CompanyThirdPartyServiceParameter] ADD CONSTRAINT [FK_dbo_CompanyThirdPartyServiceParameter_ThirdPartyServiceId_dbo_ThirdPartyService]
+	FOREIGN KEY ([ThirdPartyServiceId]) REFERENCES [dbo].[ThirdPartyService]
+GO
+
 ALTER TABLE [dbo].[Responsible] ADD CONSTRAINT [PK_dbo_Responsible]
 	PRIMARY KEY ([Id])
 GO

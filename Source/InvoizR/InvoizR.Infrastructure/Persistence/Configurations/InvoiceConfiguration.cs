@@ -187,7 +187,7 @@ internal class InvoiceConfiguration : IEntityTypeConfiguration<Invoice>
             ;
 
         builder
-            .Property(p => p.ProcessingDateTime)
+            .Property(p => p.EmitDateTime)
             .HasColumnType("datetime")
             ;
 
@@ -195,6 +195,21 @@ internal class InvoiceConfiguration : IEntityTypeConfiguration<Invoice>
             .Property(p => p.ReceiptStamp)
             .HasColumnType("nvarchar")
             .HasMaxLength(50)
+            ;
+
+        builder
+            .Property(p => p.CancellationPayload)
+            .HasColumnType("nvarchar")
+            ;
+
+        builder
+            .Property(p => p.CancellationProcessingStatusId)
+            .HasColumnType("smallint")
+            ;
+
+        builder
+            .Property(p => p.CancellationDateTime)
+            .HasColumnType("datetime")
             ;
 
         builder

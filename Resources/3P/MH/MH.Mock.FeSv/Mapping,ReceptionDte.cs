@@ -5,6 +5,7 @@ namespace MH.Mock.FeSv;
 public static partial class Mapping
 {
     public const int VersionApp = 2;
+
     public static WebApplication MapReceptionDte(this WebApplication webApplication)
     {
         webApplication.MapPost("recepciondte", async ([FromServices] ILogger logger, [FromBody] RecepcionDteRequest request) =>
@@ -24,7 +25,7 @@ public static partial class Mapping
                 Observaciones = []
             };
 
-            await Task.Delay(3000);
+            await Task.Delay(Random.Shared.Next(500, 4000));
 
             return Results.Ok(value);
         });

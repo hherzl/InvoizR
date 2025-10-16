@@ -42,7 +42,7 @@ public class Dte01Templatev1 : DteTemplatev1<Dte01TemplateModel>
         output.AppendLine($"      <li>Modelo de facturación: {MhCatalog.Cat003.Desc(Model.Dte.Identificacion.TipoModelo)}</li>");
         output.AppendLine($"      <li>Tipo de transmisión: {MhCatalog.Cat004.Desc(Model.Dte.Identificacion.TipoOperacion)}</li>");
 
-        output.AppendLine($"      <li>Fecha y hora de generación: {Model.ProcessingDateTime:yyyy-MM-dd hh:mm:ss}</li>");
+        output.AppendLine($"      <li>Fecha y hora de generación: {AsDateTime(Model.EmitDateTime)}</li>");
         output.AppendLine($"      <li>Versión de JSON: {AsStrong(Model.SchemaVersion.ToString())}</li>");
         output.AppendLine($"     </ul>");
 
