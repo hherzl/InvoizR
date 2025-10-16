@@ -9,6 +9,6 @@ public enum InvoiceProcessingStatus : short
     Requested = 1000,
     Declined = 2000,
     Processed = 3000,
-    Notified = 4000,
-    Cancelled = 4500
+    Cancelled = 3500,
+    Notified = 4000
 }

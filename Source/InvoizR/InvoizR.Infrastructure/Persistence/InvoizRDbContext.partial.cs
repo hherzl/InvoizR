@@ -112,6 +112,16 @@ public partial class InvoizRDbContext
         return query;
     }
 
+    public async Task<Responsible> GetResponsibleByCompanyIdAsync(short? companyId, bool tracking = false, bool includes = false, CancellationToken ct = default)
+    {
+        var query = Responsible.Specify(new GetResponsibleByCompanyIdSpec(companyId));
+
+        if (!tracking)
+            query = query.AsNoTracking();
+
+        return await query.FirstOrDefaultAsync(ct);
+    }
+
     public IQueryable<BranchNotification> GetBranchNotificationsBy(short? branchId = null, short? invoiceTypeId = null)
         => BranchNotification.Where(item => item.BranchId == branchId && item.InvoiceTypeId == invoiceTypeId);
 

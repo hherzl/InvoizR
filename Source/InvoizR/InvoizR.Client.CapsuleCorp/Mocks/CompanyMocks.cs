@@ -1,6 +1,4 @@
 ﻿using InvoizR.Clients.DataContracts;
-using InvoizR.SharedKernel;
-using InvoizR.SharedKernel.Mh;
 
 namespace InvoizR.Client.CapsuleCorp.Mocks;
 

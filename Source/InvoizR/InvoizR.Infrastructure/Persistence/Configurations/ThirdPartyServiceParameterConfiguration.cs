@@ -45,7 +45,7 @@ internal class ThirdPartyServiceParameterConfiguration : IEntityTypeConfiguratio
             ;
 
         builder
-            .Property(p => p.Value)
+            .Property(p => p.DefaultValue)
             .HasColumnType("nvarchar")
             .HasMaxLength(100)
             .IsRequired()

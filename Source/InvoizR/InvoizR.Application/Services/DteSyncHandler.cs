@@ -90,7 +90,7 @@ public class DteSyncHandler
 
         _firmadorClient.ClientSettings = request.ThirdPartyClientParameters.GetByService(_firmadorClient.ServiceName).ToFirmadorClientSettings();
 
-        var firmarDocumentoRequest = new FirmarDocumentoRequest<TDte>(request.GetUser(), true, request.GetPrivateKey(), request.Dte);
+        var firmarDocumentoRequest = new FirmarDocumentoRequest<TDte>(request.ThirdPartyClientParameters.GetUser(), true, request.ThirdPartyClientParameters.GetPrivateKey(), request.Dte);
 
         await File.WriteAllTextAsync(_processingSettings.GetFirmaRequestJsonPath(invoice.ControlNumber), firmarDocumentoRequest.ToJson(), cancellationToken);
 
@@ -104,7 +104,7 @@ public class DteSyncHandler
         var recepcionRequest = new RecepcionDteRequest(invoice.Pos.Branch.Company.Environment, invoice.SchemaVersion, invoice.SchemaType, invoice.GenerationCode, firmarDocumentoResponse.Body);
         await File.WriteAllTextAsync(_processingSettings.GetRecepcionRequestJsonPath(invoice.ControlNumber), recepcionRequest.ToJson(), cancellationToken);
 
-        _fesvClient.Jwt = request.GetToken();
+        _fesvClient.Jwt = request.ThirdPartyClientParameters.GetToken();
 
         var recepcionResponse = await _fesvClient.RecepcionDteAsync(recepcionRequest);
 
@@ -117,9 +117,9 @@ public class DteSyncHandler
             );
 
             invoice.ProcessingStatusId = (short)InvoiceProcessingStatus.Processed;
-            invoice.ProcessingDateTime = DateTime.Now;
+            invoice.EmitDateTime = DateTime.Now;
             invoice.ReceiptStamp = recepcionResponse.SelloRecibido;
-            invoice.ExternalUrl = request.GetPublicQuery()
+            invoice.ExternalUrl = request.ThirdPartyClientParameters.GetPublicQuery()
                 .Replace("env", invoice.Pos.Branch.Company.Environment)
                 .Replace("genCode", invoice.GenerationCode)
                 .Replace("emitDate", invoice.InvoiceDate?.ToString("yyyy-MM-dd"))

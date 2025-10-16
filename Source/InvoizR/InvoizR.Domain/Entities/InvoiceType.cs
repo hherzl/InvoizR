@@ -19,6 +19,7 @@ public partial class InvoiceType : Entity
     public string SchemaType { get; set; }
     public short? SchemaVersion { get; set; }
     public bool? Current { get; set; }
+    public short? CancellationPeriodInDays { get; set; }
 
     public virtual Collection<BranchNotification> BranchNotifications { get; set; }
 }

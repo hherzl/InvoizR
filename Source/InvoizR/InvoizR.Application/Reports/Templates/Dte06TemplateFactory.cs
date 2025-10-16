@@ -53,7 +53,7 @@ public class Dte06TemplateFactory : DteTemplateFactory
             SchemaVersion = invoice.SchemaVersion,
             GenerationCode = invoice.GenerationCode,
             ControlNumber = invoice.ControlNumber,
-            ProcessingDateTime = invoice.ProcessingDateTime,
+            EmitDateTime = invoice.EmitDateTime,
             ReceiptStamp = invoice.ReceiptStamp,
             ExternalUrl = invoice.ExternalUrl
         };

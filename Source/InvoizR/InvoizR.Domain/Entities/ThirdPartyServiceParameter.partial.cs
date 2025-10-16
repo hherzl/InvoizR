@@ -2,11 +2,11 @@
 
 public partial class ThirdPartyServiceParameter
 {
-    public ThirdPartyServiceParameter(string category, string name, string value)
+    public ThirdPartyServiceParameter(string category, string name, string defaultValue)
     {
         Category = category;
         Name = name;
-        Value = value;
+        DefaultValue = defaultValue;
         RequiresEncryption = false;
     }
 }

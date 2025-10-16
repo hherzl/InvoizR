@@ -56,10 +56,7 @@ if (clientArgs.ShowCatalog)
     return;
 }
 
-InvoizRClient client = new(Options.Create(new InvoizRClientSettings
-{
-    Endpoint = clientArgs.BillingEndpoint
-}));
+InvoizRClient client = new(Options.Create(new InvoizRClientSettings { Endpoint = clientArgs.BillingEndpoint }));
 
 if (clientArgs.Seed)
 {
@@ -166,6 +163,8 @@ if (clientArgs.Mock)
                     await MockRtDte06(client);
                 else if (clientArgs.InvoiceType == FeFsev1.SchemaType)
                     await MockRtDte14(client);
+                else if (clientArgs.InvoiceType == "cancellation")
+                    await MockCancelationAsync(client);
             }
             else
             {
@@ -334,4 +333,18 @@ static async Task MockOwDte14(IInvoizRClient client)
 
     Console.WriteLine($"  Generated ID: '{response.Id}'");
     Console.WriteLine();
+}
+
+static async Task MockCancelationAsync(IInvoizRClient client)
+{
+    Console.WriteLine($" Enter invoice ID:");
+
+    if (int.TryParse(Console.ReadLine(), out int invoiceId))
+    {
+        var request = Cancellation.MockCancellation(invoiceId);
+
+        Console.WriteLine($"  Cancelling invoice '{request.InvoiceId}' in RT processing...");
+
+        var response = await client.DteCancellationAsync(request);
+    }
 }

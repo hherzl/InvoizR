@@ -5,6 +5,18 @@ namespace InvoizR.Clients.ThirdParty.DataContracts;
 
 public class AnularDteRequest : BaseModel
 {
+    public AnularDteRequest()
+    {
+    }
+
+    public AnularDteRequest(string ambiente, string documento)
+    {
+        Ambiente = ambiente;
+        IdEnvio = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
+        Version = 1;
+        Documento = documento;
+    }
+
     [JsonPropertyName("ambiente")]
     public string Ambiente { get; set; }
 

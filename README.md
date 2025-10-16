@@ -128,6 +128,7 @@ Para facilitar la ejecución de la solución, hay scripts BAT para poder ejecuta
 |54-Mock-CC-DTE14-OW-25.bat|Crea 25 facturas de sujeto excluido en procesamiento OW|
 |54-Mock-CC-DTE14-RT-1.bat|Crea 1 factura de sujeto excluido en procesamiento RT (útil para debug)|
 |54-Mock-CC-DTE14-RT-25.bat|Crea 25 facturas de sujeto excluido en procesamiento RT|
+|60-Mock-CC-Cancellation-RT-1.bat|Crea 1 invalidación para factura electrónica en procesamiento RT (útil para debug)|
 |99-Run-GUI.bat|Ejecuta el GUI para administración|
 
 ### Integración

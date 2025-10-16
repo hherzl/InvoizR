@@ -213,7 +213,8 @@ var invoiceType = db
         Name = "",
         SchemaType = "",
         SchemaVersion = (short)0,
-        Current = false
+        Current = false,
+        CancellationPeriodInDays = (short)0
     })
     .SetNaming("InvoiceType")
     .SetColumnFor(e => e.Name, 100)
@@ -336,8 +337,11 @@ var invoice = db
         ProcessingStatusId = (short)0,
         RetryIn = 0,
         SyncAttempts = 0,
-        ProcessingDateTime = now,
+        EmitDateTime = now,
         ReceiptStamp = "",
+        CancellationPayload = "",
+        CancellationProcessingStatusId = (short)0,
+        CancellationDateTime = now,
         ExternalUrl = "",
         Notes = ""
     })
@@ -362,8 +366,11 @@ var invoice = db
     .SetColumnFor(e => e.Payload, nullable: true)
     .SetColumnFor(e => e.RetryIn, true)
     .SetColumnFor(e => e.SyncAttempts, true)
-    .SetColumnFor(e => e.ProcessingDateTime, true)
+    .SetColumnFor(e => e.EmitDateTime, true)
     .SetColumnFor(e => e.ReceiptStamp, 50, true)
+    .SetColumnFor(e => e.CancellationPayload, nullable: true)
+    .SetColumnFor(e => e.CancellationProcessingStatusId, true)
+    .SetColumnFor(e => e.CancellationDateTime, true)
     .SetColumnFor(e => e.ExternalUrl, 125, true)
     .SetColumnFor(e => e.Notes, nullable: true)
     .SetIdentity(e => e.Id)
@@ -472,6 +479,7 @@ var invoiceCancellationLog = db
     {
         Id = (long)0,
         InvoiceId = (long)0,
+        ProcessingStatusId = (short)0,
         CreatedAt = now,
         LogType = "",
         ContentType = "",

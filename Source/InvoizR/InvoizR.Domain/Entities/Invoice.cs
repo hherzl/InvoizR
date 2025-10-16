@@ -48,8 +48,11 @@ public partial class Invoice : Entity
     public short? ProcessingStatusId { get; set; }
     public int? RetryIn { get; set; }
     public int? SyncAttempts { get; set; }
-    public DateTime? ProcessingDateTime { get; set; }
+    public DateTime? EmitDateTime { get; set; }
     public string ReceiptStamp { get; set; }
+    public string CancellationPayload { get; set; }
+    public short? CancellationProcessingStatusId { get; set; }
+    public DateTime? CancellationDateTime { get; set; }
     public string ExternalUrl { get; set; }
     public string Notes { get; set; }
 
@@ -58,4 +61,5 @@ public partial class Invoice : Entity
     public virtual Collection<InvoiceProcessingLog> InvoiceProcessingLogs { get; set; }
     public virtual Collection<InvoiceFile> InvoiceFiles { get; set; }
     public virtual Collection<InvoiceNotification> InvoiceNotifications { get; set; }
+    public virtual Collection<InvoiceCancellationLog> InvoiceCancellationLogs { get; set; }
 }

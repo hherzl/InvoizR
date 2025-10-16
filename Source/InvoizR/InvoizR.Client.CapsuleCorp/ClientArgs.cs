@@ -2,8 +2,6 @@
 
 public record ClientArgs
 {
-    private readonly int DefaultLimit = 25;
-
     public ClientArgs(params string[] args)
     {
         foreach (var item in args)
@@ -27,15 +25,6 @@ public record ClientArgs
             {
                 if (int.TryParse(item.Replace("--limit=", ""), out var limit))
                     Limit = limit;
-
-                //try
-                //{
-                //    Limit = Convert.ToInt32(item.Replace("--limit=", ""));
-                //}
-                //catch
-                //{
-                //    Limit = DefaultLimit;
-                //}
             }
         }
     }

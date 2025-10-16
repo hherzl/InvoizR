@@ -22,6 +22,7 @@ public static class ConfigureServices
 
         services.AddScoped<DteSyncHandler>();
         services.AddScoped<DteExporter>();
+        services.AddScoped<DteCancellationHandler>();
 
         services.AddScoped<Dte01ProcessingStatusChanger>();
         services.AddScoped<Dte01TemplateFactory>();

@@ -58,6 +58,10 @@ IF OBJECT_ID('dbo.Responsible') IS NOT NULL
 	DROP TABLE [dbo].[Responsible]
 GO
 
+IF OBJECT_ID('dbo.CompanyThirdPartyServiceParameter') IS NOT NULL
+	DROP TABLE [dbo].[CompanyThirdPartyServiceParameter]
+GO
+
 IF OBJECT_ID('dbo.ThirdPartyServiceParameter') IS NOT NULL
 	DROP TABLE [dbo].[ThirdPartyServiceParameter]
 GO
@@ -118,8 +122,20 @@ CREATE TABLE [dbo].[ThirdPartyServiceParameter]
 	[ThirdPartyServiceId] SMALLINT NOT NULL,
 	[Category] NVARCHAR(25) NOT NULL,
 	[Name] NVARCHAR(25) NOT NULL,
-	[Value] NVARCHAR(100) NOT NULL,
+	[DefaultValue] NVARCHAR(100) NOT NULL,
 	[RequiresEncryption] BIT NULL
+)
+GO
+
+CREATE TABLE [dbo].[CompanyThirdPartyServiceParameter]
+(
+	[Id] SMALLINT NOT NULL IDENTITY(1, 1),
+	[CompanyId] SMALLINT NOT NULL,
+	[ThirdPartyServiceId] SMALLINT NOT NULL,
+	[EnvironmentId] NVARCHAR(2) NOT NULL,
+	[Category] NVARCHAR(25) NOT NULL,
+	[Name] NVARCHAR(25) NOT NULL,
+	[Value] NVARCHAR(100) NOT NULL
 )
 GO
 
@@ -171,7 +187,8 @@ CREATE TABLE [dbo].[InvoiceType]
 	[Name] NVARCHAR(100) NOT NULL,
 	[SchemaType] NVARCHAR(2) NOT NULL,
 	[SchemaVersion] SMALLINT NOT NULL,
-	[Current] BIT NOT NULL
+	[Current] BIT NOT NULL,
+	[CancellationPeriodInDays] SMALLINT NOT NULL
 )
 GO
 
@@ -253,8 +270,11 @@ CREATE TABLE [dbo].[Invoice]
 	[ProcessingStatusId] SMALLINT NOT NULL,
 	[RetryIn] INT NULL,
 	[SyncAttempts] INT NULL,
-	[ProcessingDateTime] DATETIME NULL,
+	[EmitDateTime] DATETIME NULL,
 	[ReceiptStamp] NVARCHAR(50) NULL,
+	[CancellationPayload] NVARCHAR(MAX) NULL,
+	[CancellationProcessingStatusId] SMALLINT NULL,
+	[CancellationDateTime] DATETIME NULL,
 	[ExternalUrl] NVARCHAR(125) NULL,
 	[Notes] NVARCHAR(MAX) NULL
 )
@@ -322,6 +342,7 @@ CREATE TABLE [dbo].[InvoiceCancellationLog]
 (
 	[Id] BIGINT NOT NULL IDENTITY(1, 1),
 	[InvoiceId] BIGINT NOT NULL,
+	[ProcessingStatusId] SMALLINT NOT NULL,
 	[CreatedAt] DATETIME NOT NULL,
 	[LogType] NVARCHAR(25) NOT NULL,
 	[ContentType] NVARCHAR(100) NOT NULL,

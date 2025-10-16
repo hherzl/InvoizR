@@ -42,10 +42,16 @@ internal class InvoiceTypeConfiguration : IEntityTypeConfiguration<InvoiceType>
             ;
 
         builder
-                .Property(p => p.Current)
-                .HasColumnType("bit")
-                .IsRequired()
-                ;
+            .Property(p => p.Current)
+            .HasColumnType("bit")
+            .IsRequired()
+            ;
+
+        builder
+            .Property(p => p.CancellationPeriodInDays)
+            .HasColumnType("smallint")
+            .IsRequired()
+            ;
 
         // Add configuration for uniques
 
