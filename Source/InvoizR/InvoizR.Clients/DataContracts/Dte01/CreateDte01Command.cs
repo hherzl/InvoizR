@@ -31,9 +31,6 @@ public record CreateDte01Command : Request, IRequest<CreatedResponse<long?>>, IV
     // https://www.asamblea.gob.sv/node/13115
     public const decimal MaxAmountForAnonymousCustomers = 25000;
 
-    public bool RequireCustomerData
-        => InvoiceTotal > MaxAmountForAnonymousCustomers;
-
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
         if (PosId == null)

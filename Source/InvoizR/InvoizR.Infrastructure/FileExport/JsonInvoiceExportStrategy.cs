@@ -14,14 +14,14 @@ public class JsonInvoiceExportStrategy : IInvoiceExportStrategy
         _logger = logger;
     }
 
-    public async Task<byte[]> ExportAsync(Invoice invoice, string path = "", CancellationToken cancellationToken = default)
+    public async Task<byte[]> ExportAsync(Invoice invoice, string path = "", CancellationToken ct = default)
     {
         var array = Encoding.UTF8.GetBytes(invoice.Payload);
 
         if (!string.IsNullOrEmpty(path))
         {
             _logger.LogInformation($"Creating JSON file for invoice '{invoice.InvoiceTypeId}-{invoice.InvoiceNumber}', path: '{path}'...");
-            await File.WriteAllBytesAsync(path, array, cancellationToken);
+            await File.WriteAllBytesAsync(path, array, ct);
         }
 
         return array;

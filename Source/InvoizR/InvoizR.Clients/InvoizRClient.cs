@@ -11,6 +11,7 @@ using InvoizR.Clients.DataContracts.Dte04;
 using InvoizR.Clients.DataContracts.Dte05;
 using InvoizR.Clients.DataContracts.Dte06;
 using InvoizR.Clients.DataContracts.Dte14;
+using InvoizR.Clients.DataContracts.Fallback;
 using Microsoft.Extensions.Options;
 
 namespace InvoizR.Clients;
@@ -329,5 +330,51 @@ public class InvoizRClient : Client, IInvoizRClient
         response.EnsureSuccessStatusCode();
 
         return JsonSerializer.Deserialize<Response>(responseContent, DefaultJsonSerializerOpts);
+    }
+
+    public async Task<PagedResponse<FallbackItemModel>> GetFallbacksAsync(GetFallbacksQuery request)
+    {
+        var queryString = HttpUtility.ParseQueryString(string.Empty);
+
+        queryString.Add("pageSize", request.PageSize.ToString());
+        queryString.Add("pageNumber", request.PageNumber.ToString());
+
+        var response = await _httpClient.GetAsync($"fallback?{queryString.ToString()}");
+        response.EnsureSuccessStatusCode();
+
+        var responseContent = await response.Content.ReadAsStringAsync();
+        return JsonSerializer.Deserialize<PagedResponse<FallbackItemModel>>(responseContent, DefaultJsonSerializerOpts);
+    }
+
+    public async Task<SingleResponse<FallbackDetailsModel>> GetFallbackAsync(short? id)
+    {
+        var response = await _httpClient.GetAsync($"fallback/{id}");
+        if (response.StatusCode == HttpStatusCode.NotFound)
+            return null;
+
+        response.EnsureSuccessStatusCode();
+
+        var responseContent = await response.Content.ReadAsStringAsync();
+        return JsonSerializer.Deserialize<SingleResponse<FallbackDetailsModel>>(responseContent, DefaultJsonSerializerOpts);
+    }
+
+    public async Task<CreatedResponse<short?>> CreateFallbackAsync(CreateFallbackCommand request)
+    {
+        var response = await _httpClient.PostAsync($"fallback", ContentHelper.Create(request.ToJson()));
+        var responseContent = await response.Content.ReadAsStringAsync();
+
+        response.EnsureSuccessStatusCode();
+
+        return JsonSerializer.Deserialize<CreatedResponse<short?>>(responseContent, DefaultJsonSerializerOpts);
+    }
+
+    public async Task<Response> ProcessFallbackAsync(short id)
+    {
+        var response = await _httpClient.PutAsync($"fallback/{id}/process", ContentHelper.CreateEmpty());
+        var responseContent = await response.Content.ReadAsStringAsync();
+
+        response.EnsureSuccessStatusCode();
+
+        return JsonSerializer.Deserialize<CreatedResponse<short?>>(responseContent, DefaultJsonSerializerOpts);
     }
 }

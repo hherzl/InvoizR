@@ -1,30 +1,31 @@
 ﻿using InvoizR.Application.Helpers;
 using InvoizR.Domain.Entities;
-using InvoizR.SharedKernel.Mh.FeFse;
+using InvoizR.SharedKernel.Mh.FeFc;
 using Microsoft.Extensions.Logging;
 
 namespace InvoizR.Application.Services;
 
-public sealed class Dte14ProcessingStatusChanger : DteProcessingStatusChanger
+public sealed class Dte01SyncStatusChanger : InvoiceSyncStatusChanger
 {
-    private readonly ILogger logger;
+    private readonly ILogger _logger;
 
-    public Dte14ProcessingStatusChanger(ILogger<Dte14ProcessingStatusChanger> logger)
+    public Dte01SyncStatusChanger(ILogger<Dte01SyncStatusChanger> logger)
         : base(logger)
     {
+        _logger = logger;
     }
 
     protected override bool Init(Invoice invoice)
     {
-        FeFsev1 dte;
+        FeFcv1 dte;
 
         try
         {
-            dte = FeFsev1.Deserialize(invoice.Payload);
+            dte = FeFcv1.Deserialize(invoice.Payload);
         }
         catch (Exception ex)
         {
-            logger.LogCritical(ex, $"There was an error deserializing {invoice.InvoiceNumber} invoice");
+            _logger.LogCritical(ex, $"There was an error deserializing {invoice.InvoiceNumber} invoice");
             return false;
         }
 

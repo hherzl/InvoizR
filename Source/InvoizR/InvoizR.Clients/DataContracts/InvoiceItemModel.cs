@@ -8,6 +8,7 @@ public record InvoiceItemModel
     public short? BranchId { get; set; }
     public string Branch { get; set; }
     public string Company { get; set; }
+    public short? CompanyId { get; set; }
     public string Environment { get; set; }
     public string CustomerName { get; set; }
     public string CustomerEmail { get; set; }

@@ -1,0 +1,55 @@
+﻿@page "/fallback"
+
+@using InvoizR.Clients.Contracts
+@using InvoizR.Clients.DataContracts
+@using InvoizR.Clients.DataContracts.Common
+@using InvoizR.Clients.DataContracts.Fallback
+
+@inject IInvoizRClient invoizRClient
+
+<h3>Fallbacks</h3>
+
+<MudTable Items="@Response?.Model">
+    <HeaderContent>
+        <MudTh>Company</MudTh>
+        <MudTh>Name</MudTh>
+        <MudTh>Start Date time</MudTh>
+        <MudTh>End Date time</MudTh>
+        <MudTh>Enable</MudTh>
+        <MudTh></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Company">@context.Company</MudTd>
+        <MudTd DataLabel="Name">@context.Name</MudTd>
+        <MudTd DataLabel="Start Date time">@context.StartDateTime</MudTd>
+        <MudTd DataLabel="End Date time">@context.EndDateTime</MudTd>
+        <MudTd DataLabel="Enable">@(context.Enable == true ? "Yes" : "No")</MudTd>
+        <MudTd DataLabel="Details">
+            <a href="@($"/fallback/{@context.Id}")">
+                <MudIcon Icon="@Icons.Material.Filled.Details" Title="Details" />
+            </a>
+        </MudTd>
+    </RowTemplate>
+</MudTable>
+
+@code {
+    GetFallbacksQuery Request { get; set; }
+    PagedResponse<FallbackItemModel> Response { get; set; }
+
+    protected async Task LoadAsync()
+    {
+        Request = new();
+
+        Response = await invoizRClient.GetFallbacksAsync(Request);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAsync();
+    }
+
+    private async Task Load_Click()
+    {
+        await LoadAsync();
+    }
+}

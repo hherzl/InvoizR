@@ -23,7 +23,7 @@ public static partial class Mapping
                 Observaciones = []
             };
 
-            await Task.Delay(Random.Shared.Next(500, 4000));
+            await Task.Delay(Random.Shared.Next(500, 5000));
 
             return Results.Ok(value);
         });

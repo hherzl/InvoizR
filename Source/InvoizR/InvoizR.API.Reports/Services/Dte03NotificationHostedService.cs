@@ -1,27 +1,26 @@
 ﻿using InvoizR.Application.Common;
+using InvoizR.Application.Common.Contracts;
 using InvoizR.Application.Services;
 using InvoizR.Domain.Enums;
-using InvoizR.Infrastructure.Persistence;
 using InvoizR.SharedKernel.Mh.FeCcf;
 using Microsoft.EntityFrameworkCore;
 
 namespace InvoizR.API.Reports.Services;
 
-public class Dte03NotificationHostedService(ILogger<Dte03NotificationHostedService> _logger, IServiceProvider _serviceProvider, IConfiguration _configuration) : BackgroundService
+public sealed class Dte03NotificationHostedService(ILogger<Dte03NotificationHostedService> logger, IServiceProvider serviceProvider, IConfiguration configuration)
+    : BackgroundService
 {
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        using var scope = _serviceProvider.CreateScope();
+        using var scope = serviceProvider.CreateScope();
 
-        using var dbContext = scope.ServiceProvider.GetRequiredService<InvoizRDbContext>();
-
-        var dteExporter = scope.ServiceProvider.GetRequiredService<DteExporter>();
+        using var dbContext = scope.ServiceProvider.GetRequiredService<IInvoizRDbContext>();
+        var invoiceExporter = scope.ServiceProvider.GetRequiredService<InvoiceExporter>();
 
         var processingSettings = new ProcessingSettings();
-        _configuration.Bind("ProcessingSettings", processingSettings);
+        configuration.Bind("ProcessingSettings", processingSettings);
 
         var timer = new PeriodicTimer(TimeSpan.FromMinutes(1));
-
         while (await timer.WaitForNextTickAsync(stoppingToken))
         {
             try
@@ -34,20 +33,20 @@ public class Dte03NotificationHostedService(ILogger<Dte03NotificationHostedServi
                 var invoices = await dbContext.GetInvoicesForProcessing(filters.InvoiceTypeId, filters.ProcessingTypeId, [.. filters.ProcessingStatuses]).ToListAsync(stoppingToken);
                 if (invoices.Count == 0)
                 {
-                    _logger.LogInformation($"There are no '{FeCcfv3.SchemaType}' invoices to process...");
+                    logger.LogInformation($"There are no '{FeCcfv3.SchemaType}' invoices to process...");
                     continue;
                 }
 
-                _logger.LogInformation($"Exporting '{invoices.Count}' invoices ...");
+                logger.LogInformation($"Exporting '{invoices.Count}' invoices ...");
 
                 foreach (var item in invoices)
                 {
-                    await dteExporter.ExportAsync(item.Id, stoppingToken);
+                    await invoiceExporter.ExportAsync(item.Id, stoppingToken);
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogCritical(ex, $"There was on error exporting DTE-03 invoices");
+                logger.LogCritical(ex, $"There was on error exporting DTE-03 invoices");
             }
         }
     }

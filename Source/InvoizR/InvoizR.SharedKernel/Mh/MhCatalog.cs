@@ -1,6 +1,4 @@
-﻿using System.Data;
-
-namespace InvoizR.SharedKernel.Mh;
+﻿namespace InvoizR.SharedKernel.Mh;
 
 public static partial class MhCatalog
 {
@@ -20,10 +18,10 @@ public static partial class MhCatalog
     {
         public const string Factura = "01";
         public const string CreditoFiscal = "03";
-        public const string Exportacion = "11";
         public const string NotaCredito = "05";
         public const string NotaDebito = "06";
         public const string NotaRemision = "04";
+        public const string Exportacion = "11";
         public const string SujetoExcluido = "14";
     }
 
@@ -43,6 +41,18 @@ public static partial class MhCatalog
     {
         public const int Normal = 1;
         public const int Contingencia = 2;
+    }
+
+    /// <summary>
+    /// CAT-005 Tipo de Contingencia
+    /// </summary>
+    public static partial class Cat005
+    {
+        public const int NoDisponibilidadSistemaMH = 1;
+        public const int NoDisponibilidadSistemaEmisor = 2;
+        public const int FallaSuministroServicioInternetEmisor = 3;
+        public const int FallaSuministroServicioEnergiaElectricaEmisor = 4;
+        public const int Otro = 5;
     }
 
     /// <summary>

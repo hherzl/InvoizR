@@ -29,7 +29,7 @@ public class GetResponsiblesQueryHandler : IRequestHandler<GetResponsiblesQuery,
                 IdType = responsible.IdType,
                 IdNumber = responsible.IdNumber,
                 AuthorizeCancellation = responsible.AuthorizeCancellation,
-                AuthorizeContingency = responsible.AuthorizeContingency
+                AuthorizeFallback = responsible.AuthorizeFallback
             };
 
         return new(await query.ToListAsync(cancellationToken));

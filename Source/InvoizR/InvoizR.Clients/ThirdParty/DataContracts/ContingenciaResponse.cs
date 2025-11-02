@@ -21,7 +21,7 @@ public class ContingenciaResponse : BaseModel
     public List<string> Observaciones { get; set; }
 
     public bool IsSuccessful
-        => Estado == "RECIBIDO";
+        => Estado == "PROCESADO";
 
     public string ToJson()
         => JsonSerializer.Serialize(this, DefaultJsonSerializerOpts);

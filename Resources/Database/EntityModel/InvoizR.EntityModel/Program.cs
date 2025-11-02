@@ -137,7 +137,7 @@ var responsible = db
         IdType = "",
         IdNumber = "",
         AuthorizeCancellation = false,
-        AuthorizeContingency = false
+        AuthorizeFallback = false
     })
     .SetNaming("Responsible")
     .SetColumnFor(e => e.Name, 100)
@@ -147,7 +147,7 @@ var responsible = db
     .SetColumnFor(e => e.IdNumber, 25)
     .SetIdentity(e => e.Id)
     .SetPrimaryKey(e => e.Id)
-    .AddUnique(e => e.Email)
+    .AddUnique(e => new { e.CompanyId, e.Email })
     .AddForeignKey(e => e.CompanyId, company.Table)
     ;
 
@@ -241,75 +241,84 @@ var branchNotification = db
     .AddUnique(e => new { e.BranchId, e.InvoiceTypeId, e.Email })
     ;
 
-var contingencyReason = db
+var fallback = db
     .DefineEntity(new
     {
         Id = (short)0,
-        Name = "",
-        RequireDesc = false
-    })
-    .SetNaming("ContingencyReason")
-    .SetColumnFor(e => e.Name, 200)
-    .SetIdentity(e => e.Id)
-    .SetPrimaryKey(e => e.Id)
-    .AddUnique(e => e.Name)
-    ;
-
-var contingency = db
-    .DefineEntity(new
-    {
-        Id = (short)0,
-        BranchId = (short)0,
+        CompanyId = (short)0,
         Name = "",
         StartDateTime = now,
         EndDateTime = now,
         Enable = false,
-        GenerationCode = "",
+        FallbackGuid = "",
         SyncStatusId = (short)0,
-        TransmisionDateTime = now,
-        ContingencyResponsibleId = (short)0,
-        ContingencyReasonId = (short)0,
-        ContingencyReasonDesc = ""
+        Payload = "",
+        RetryIn = 0,
+        SyncAttempts = 0,
+        EmitDateTime = now,
+        ReceiptStamp = ""
     })
-    .SetNaming("Contingency")
-    .SetColumnFor(e => e.BranchId, true)
+    .SetNaming("Fallback")
+    .SetColumnFor(e => e.CompanyId, true)
     .SetColumnFor(e => e.Name, 100)
-    .SetColumnFor(e => e.GenerationCode, 50, true)
+    .SetColumnFor(e => e.FallbackGuid, 50, true)
     .SetColumnFor(e => e.EndDateTime, true)
-    .SetColumnFor(e => e.TransmisionDateTime, true)
-    .SetColumnFor(e => e.ContingencyReasonDesc, 500, true)
+    .SetColumnFor(e => e.EmitDateTime, true)
+    .SetColumnFor(e => e.ReceiptStamp, 50, true)
     .SetIdentity(e => e.Id)
     .SetPrimaryKey(e => e.Id)
-    .AddUnique(e => e.Name)
-    .AddForeignKey(e => e.BranchId, branch.Table)
-    .AddForeignKey(e => e.ContingencyResponsibleId, responsible.Table)
-    .AddForeignKey(e => e.ContingencyReasonId, contingencyReason.Table)
+    .AddUnique(e => new { e.CompanyId, e.Name })
+    .AddForeignKey(e => e.CompanyId, company.Table)
     ;
 
-var contingencyProcessingLog = db
+var fallbackProcessingLog = db
     .DefineEntity(new
     {
         Id = 0,
-        ContingencyId = (short)0,
+        FallbackId = (short)0,
         CreatedAt = now,
         SyncStatusId = (short)0,
         LogType = "",
         ContentType = "",
         Content = ""
     })
-    .SetNaming("ContingencyProcessingLog")
+    .SetNaming("FallbackProcessingLog")
     .SetColumnFor(e => e.LogType, 25)
     .SetColumnFor(e => e.ContentType, 100)
     .SetIdentity(e => e.Id)
     .SetPrimaryKey(e => e.Id)
-    .AddForeignKey(e => e.ContingencyId, contingency.Table)
+    .AddForeignKey(e => e.FallbackId, fallback.Table)
+    ;
+
+var fallbackFile = db
+    .DefineEntity(new
+    {
+        Id = (long)0,
+        FallbackId = (short)0,
+        Size = (long)0,
+        MimeType = "",
+        FileType = "",
+        FileName = "",
+        ExternalUrl = "",
+        CreatedAt = now,
+        File = Array.Empty<byte>()
+    })
+    .SetNaming("FallbackFile")
+    .SetColumnFor(e => e.MimeType, 100)
+    .SetColumnFor(e => e.FileType, 100)
+    .SetColumnFor(e => e.FileName, 100)
+    .SetColumnFor(e => e.ExternalUrl, 200, true)
+    .SetIdentity(e => e.Id)
+    .SetPrimaryKey(e => e.Id)
+    .AddUnique(e => new { e.FallbackId, e.FileName })
+    .AddForeignKey(e => e.FallbackId, fallback.Table)
     ;
 
 var invoice = db
     .DefineEntity(new
     {
         Id = (long)0,
-        ContingencyId = (short)0,
+        FallbackId = (short)0,
         PosId = (short)0,
         CustomerId = "",
         CustomerDocumentTypeId = "",
@@ -346,7 +355,7 @@ var invoice = db
         Notes = ""
     })
     .SetNaming("Invoice")
-    .SetColumnFor(e => e.ContingencyId, true)
+    .SetColumnFor(e => e.FallbackId, true)
     .SetColumnFor(e => e.CustomerId, 30, true)
     .SetColumnFor(e => e.CustomerDocumentTypeId, 2, true)
     .SetColumnFor(e => e.CustomerDocumentNumber, 25, true)
@@ -376,7 +385,7 @@ var invoice = db
     .SetIdentity(e => e.Id)
     .SetPrimaryKey(e => e.Id)
     .AddUnique(e => new { e.InvoiceTypeId, e.InvoiceNumber })
-    .AddForeignKey(e => e.ContingencyId, contingency.Table)
+    .AddForeignKey(e => e.FallbackId, fallback.Table)
     .AddForeignKey(e => e.PosId, pos.Table)
     ;
 

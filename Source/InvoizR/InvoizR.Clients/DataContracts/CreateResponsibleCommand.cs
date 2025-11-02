@@ -14,7 +14,7 @@ public record CreateResponsibleCommand : BaseCommand, IRequest<CreatedResponse<s
     public string IdType { get; set; }
     public string IdNumber { get; set; }
     public bool? AuthorizeCancellation { get; set; }
-    public bool? AuthorizeContingency { get; set; }
+    public bool? AuthorizeFallback { get; set; }
 
     public string ToJson()
         => JsonSerializer.Serialize(this, DefaultJsonSerializerOpts);
@@ -42,7 +42,7 @@ public record CreateResponsibleCommand : BaseCommand, IRequest<CreatedResponse<s
         if (AuthorizeCancellation == null)
             yield return new ValidationResult("AuthorizeCancellation is required", [nameof(AuthorizeCancellation)]);
 
-        if (AuthorizeContingency == null)
-            yield return new ValidationResult("AuthorizeContingency is required", [nameof(AuthorizeContingency)]);
+        if (AuthorizeFallback == null)
+            yield return new ValidationResult("AuthorizeContingency is required", [nameof(AuthorizeFallback)]);
     }
 }

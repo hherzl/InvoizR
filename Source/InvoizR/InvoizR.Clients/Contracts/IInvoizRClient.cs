@@ -7,7 +7,7 @@ using InvoizR.Clients.DataContracts.Dte04;
 using InvoizR.Clients.DataContracts.Dte05;
 using InvoizR.Clients.DataContracts.Dte06;
 using InvoizR.Clients.DataContracts.Dte14;
-using InvoizR.SharedKernel.Mh;
+using InvoizR.Clients.DataContracts.Fallback;
 
 namespace InvoizR.Clients.Contracts;
 
@@ -56,4 +56,9 @@ public interface IInvoizRClient
     Task<CreatedResponse<long?>> CreateDte14RTAsync(CreateDte14RTCommand request);
 
     Task<Response> DteCancellationAsync(DteCancellationCommand request);
+
+    Task<PagedResponse<FallbackItemModel>> GetFallbacksAsync(GetFallbacksQuery request);
+    Task<SingleResponse<FallbackDetailsModel>> GetFallbackAsync(short? id);
+    Task<CreatedResponse<short?>> CreateFallbackAsync(CreateFallbackCommand request);
+    Task<Response> ProcessFallbackAsync(short id);
 }

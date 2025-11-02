@@ -100,6 +100,7 @@ try
     app.MapDte05();
     app.MapDte06();
     app.MapDte14();
+    app.MapFallback();
     app.MapDteCancellation();
     app.MapDiagnostics();
 

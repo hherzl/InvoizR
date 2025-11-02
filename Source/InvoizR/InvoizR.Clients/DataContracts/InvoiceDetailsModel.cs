@@ -3,7 +3,7 @@
 public record InvoiceDetailsModel
 {
     public long? Id { get; set; }
-    public short? ContingencyId { get; set; }
+    public short? FallbackId { get; set; }
     public short? PosId { get; set; }
     public string Pos { get; set; }
 

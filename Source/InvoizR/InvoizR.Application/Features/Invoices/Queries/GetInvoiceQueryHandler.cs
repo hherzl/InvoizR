@@ -31,7 +31,7 @@ public class GetInvoiceQueryHandler : IRequestHandler<GetInvoiceQuery, InvoiceDe
         var model = new InvoiceDetailsModel
         {
             Id = entity.Id,
-            ContingencyId = entity.ContingencyId,
+            FallbackId = entity.FallbackId,
             PosId = entity.PosId,
             CustomerId = entity.CustomerId,
             CustomerWtId = entity.CustomerWtId,

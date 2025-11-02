@@ -1,35 +1,38 @@
 ﻿using InvoizR.Application.Common.Contracts;
+using InvoizR.Application.Services;
 using InvoizR.Clients.DataContracts.Common;
 using InvoizR.Clients.DataContracts.Dte01;
+using InvoizR.Clients.ThirdParty.Contracts;
 using InvoizR.Domain.Entities;
 using InvoizR.Domain.Enums;
 using InvoizR.Domain.Exceptions;
+using InvoizR.Domain.Notifications;
+using InvoizR.SharedKernel.Mh;
 using InvoizR.SharedKernel.Mh.FeFc;
 using MediatR;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace InvoizR.Application.Features.Invoices.Commands;
 
-public sealed class CreateDte01OWCommandHandler : IRequestHandler<CreateDte01OWCommand, CreatedResponse<long?>>
+public sealed class CreateDte01OWCommandHandler(ILogger<CreateDte01OWCommandHandler> logger, IServiceProvider serviceProvider)
+    : IRequestHandler<CreateDte01OWCommand, CreatedResponse<long?>>
 {
-    private readonly ILogger _logger;
-    private readonly IInvoizRDbContext _dbContext;
-
-    public CreateDte01OWCommandHandler(ILogger<CreateDte01OWCommandHandler> logger, IInvoizRDbContext dbContext)
+    public async Task<CreatedResponse<long?>> Handle(CreateDte01OWCommand request, CancellationToken st)
     {
-        _logger = logger;
-        _dbContext = dbContext;
-    }
+        using var scope = serviceProvider.CreateScope();
 
-    public async Task<CreatedResponse<long?>> Handle(CreateDte01OWCommand request, CancellationToken cancellationToken)
-    {
-        _ = await _dbContext.GetCurrentInvoiceTypeAsync(FeFcv1.TypeId, ct: cancellationToken) ?? throw new InvalidCurrentInvoiceTypeException();
+        using var dbContext = scope.ServiceProvider.GetRequiredService<IInvoizRDbContext>();
+        var dteSyncStatusChanger = scope.ServiceProvider.GetRequiredService<Dte01SyncStatusChanger>();
+        var seguridadClient = scope.ServiceProvider.GetRequiredService<ISeguridadClient>();
 
-        var txn = await _dbContext.Database.BeginTransactionAsync(cancellationToken);
+        _ = await dbContext.GetCurrentInvoiceTypeAsync(FeFcv1.TypeId, ct: st) ?? throw new InvalidCurrentInvoiceTypeException();
+
+        var txn = await dbContext.Database.BeginTransactionAsync(st);
 
         try
         {
-            var pos = await _dbContext.GetPosAsync(request.PosId, ct: cancellationToken);
+            var pos = await dbContext.GetPosAsync(request.PosId, includes: true, ct: st);
 
             var invoice = new Invoice
             {
@@ -55,22 +58,45 @@ public sealed class CreateDte01OWCommandHandler : IRequestHandler<CreateDte01OWC
                 ProcessingStatusId = (short)InvoiceProcessingStatus.Created
             };
 
-            _dbContext.Invoice.Add(invoice);
+            dbContext.Invoice.Add(invoice);
 
-            await _dbContext.SaveChangesAsync(cancellationToken);
+            await dbContext.SaveChangesAsync(st);
 
-            _dbContext.InvoiceProcessingStatusLog.Add(new(invoice.Id, invoice.ProcessingStatusId));
+            dbContext.InvoiceProcessingStatusLog.Add(new(invoice.Id, invoice.ProcessingStatusId));
 
-            await _dbContext.SaveChangesAsync(cancellationToken);
+            await dbContext.SaveChangesAsync(st);
 
-            await txn.CommitAsync(cancellationToken);
+            await txn.CommitAsync(st);
+
+            var fallback = await dbContext.GetCurrentFallbackAsync(pos.Branch.Company.Id, ct: st);
+            if (fallback?.Enable == true)
+            {
+                logger.LogInformation($"Processing '{invoice.InvoiceNumber}' invoice, changing status from '{InvoiceProcessingStatus.Created}'...");
+
+                await dteSyncStatusChanger.SetInvoiceAsInitializedAsync(invoice.Id, dbContext, st);
+
+                var dte = FeFcv1.Deserialize(invoice.Payload);
+                dte.Identificacion.TipoModelo = MhCatalog.Cat003.Contingencia;
+                dte.Identificacion.TipoOperacion = MhCatalog.Cat004.Contingencia;
+
+                invoice.Payload = dte.ToJson();
+
+                logger.LogInformation($"Processing '{invoice.InvoiceNumber}' invoice, changing status from '{InvoiceProcessingStatus.Initialized}'...");
+
+                invoice.FallbackId = fallback.Id;
+
+                await dteSyncStatusChanger.SetInvoiceAsFallbackAsync(invoice.Id, dbContext, st);
+
+                invoice.AddNotification(new ExportFallbackInvoiceNotification(invoice));
+                await dbContext.DispatchNotificationsAsync(st);
+            }
 
             return new(invoice.Id);
         }
         catch (Exception ex)
         {
-            await txn.RollbackAsync(cancellationToken);
-            _logger.LogCritical(ex, "There was an error on Create DTE-01 in OW processing");
+            await txn.RollbackAsync(st);
+            logger.LogCritical(ex, "There was an error on Create DTE-01 in OW processing");
             return new();
         }
     }

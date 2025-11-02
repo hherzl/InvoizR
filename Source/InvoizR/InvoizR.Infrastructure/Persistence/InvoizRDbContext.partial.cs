@@ -1,5 +1,8 @@
-﻿using InvoizR.Application.Specifications;
+﻿using System;
+using System.ComponentModel.Design;
+using InvoizR.Application.Specifications;
 using InvoizR.Clients.DataContracts;
+using InvoizR.Clients.DataContracts.Fallback;
 using InvoizR.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -48,6 +51,105 @@ public partial class InvoizRDbContext
             query = query.AsNoTracking();
 
         return await query.SingleOrDefaultAsync(ct);
+    }
+
+    public async Task<Fallback> GetCurrentFallbackAsync(short? companyId, bool tracking = false, bool includes = false, CancellationToken ct = default)
+    {
+        var query = Fallback.Specify(new GetCurrentFallbackQuerySpec(companyId));
+
+        if (!tracking)
+            query = query.AsNoTracking();
+
+        if (includes)
+            query = query.Include(entity => entity.Company);
+
+        return await query.SingleOrDefaultAsync(ct);
+    }
+
+    public async Task<Fallback> GetFallbackAsync(short? id, bool tracking = false, bool includes = false, CancellationToken ct = default)
+    {
+        var query = Fallback.Specify(new GetFallbackQuerySpec(id));
+
+        if (!tracking)
+            query = query.AsNoTracking();
+
+        if (includes)
+            query = query.Include(entity => entity.Company);
+
+        return await query.SingleOrDefaultAsync(ct);
+    }
+
+    public async Task<Fallback> GetFallbackByCompanyAndNameAsync(short? companyId, string name, bool tracking = false, bool includes = false, CancellationToken ct = default)
+    {
+        var query = Fallback.Where(item => item.CompanyId == companyId && item.Name == name);
+
+        if (!tracking)
+            query = query.AsNoTracking();
+
+        if (includes)
+            query = query.Include(entity => entity.Company);
+
+        return await query.SingleOrDefaultAsync(ct);
+    }
+
+    public IQueryable<FallbackInvoiceItemModel> GetInvoicesByFallback(short? fallbackId)
+    {
+        var query =
+            from invoice in Invoice
+            join invoiceType in InvoiceType on invoice.InvoiceTypeId equals invoiceType.Id
+            join pos in Pos on invoice.PosId equals pos.Id
+            join branch in Branch on pos.BranchId equals branch.Id
+            join company in Company on branch.CompanyId equals company.Id
+            where invoice.FallbackId == fallbackId
+            select new FallbackInvoiceItemModel
+            {
+                Id = invoice.Id,
+                InvoiceTypeId = invoice.InvoiceTypeId,
+                InvoiceType = invoiceType.Name,
+                GenerationCode = invoice.GenerationCode,
+                ControlNumber = invoice.ControlNumber
+            };
+
+        return query;
+    }
+
+    public IQueryable<FallbackProcessingLogItemModel> GetFallbackProcessingLogs(short? fallbackId)
+    {
+        var query =
+           from fallbackProcessingLog in FallbackProcessingLog
+           join vProcessingStatus in VInvoiceProcessingStatus on fallbackProcessingLog.SyncStatusId equals vProcessingStatus.Id
+           where fallbackProcessingLog.FallbackId == fallbackId
+           orderby fallbackProcessingLog.CreatedAt descending
+           select new FallbackProcessingLogItemModel
+           {
+               CreatedAt = fallbackProcessingLog.CreatedAt,
+               ProcessingStatusId = fallbackProcessingLog.SyncStatusId,
+               ProcessingStatus = vProcessingStatus.Desc,
+               LogType = fallbackProcessingLog.LogType,
+               ContentType = fallbackProcessingLog.ContentType,
+               Content = fallbackProcessingLog.Content
+           };
+
+        return query;
+    }
+
+    public IQueryable<FallbackFileItemModel> GetFallbackFiles(short? fallbackId)
+    {
+        var query =
+            from fallbackFile in FallbackFile
+            where fallbackFile.FallbackId == fallbackId
+            select new FallbackFileItemModel
+            {
+                Size = fallbackFile.Size,
+                MimeType = fallbackFile.MimeType,
+                FileType = fallbackFile.FileType,
+                FileName = fallbackFile.FileName,
+                ExternalUrl = fallbackFile.ExternalUrl,
+                CreatedAt = fallbackFile.CreatedAt,
+                File = fallbackFile.File
+            };
+
+        return query;
     }
 
     public IQueryable<BranchItemModel> GetBranchesBy(short? companyId = null)
@@ -137,6 +239,7 @@ public partial class InvoizRDbContext
             {
                 Id = inv.Id,
                 PosId = inv.PosId,
+                CompanyId = company.Id,
                 Environment = company.Environment,
                 CustomerName = inv.CustomerName,
                 InvoiceTypeId = inv.InvoiceTypeId,
@@ -162,6 +265,11 @@ public partial class InvoizRDbContext
             query = query.Include(e => e.Pos).ThenInclude(e => e.Branch).ThenInclude(e => e.Company);
 
         return await query.SingleOrDefaultAsync(ct);
+    }
+
+    public IQueryable<Invoice> GetInvoicesBy(short? fallbackId)
+    {
+        return Invoice.Include(entity => entity.Pos).ThenInclude(entity => entity.Branch).ThenInclude(entity => entity.Company).Where(entity => entity.FallbackId == fallbackId);
     }
 
     public IQueryable<InvoiceProcessingStatusLogItemModel> GetInvoiceProcessingStatusLogs(long? invoiceId)

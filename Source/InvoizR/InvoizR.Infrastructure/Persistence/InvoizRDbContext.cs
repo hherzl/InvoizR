@@ -19,6 +19,9 @@ public partial class InvoizRDbContext : DbContext, IInvoizRDbContext
     public DbSet<ThirdPartyService> ThirdPartyService { get; set; }
     public DbSet<ThirdPartyServiceParameter> ThirdPartyServiceParameter { get; set; }
     public DbSet<EnumDescription> EnumDescription { get; set; }
+    public DbSet<Fallback> Fallback { get; set; }
+    public DbSet<FallbackProcessingLog> FallbackProcessingLog { get; set; }
+    public DbSet<FallbackFile> FallbackFile { get; set; }
     public DbSet<Responsible> Responsible { get; set; }
     public DbSet<Company> Company { get; set; }
     public DbSet<Branch> Branch { get; set; }

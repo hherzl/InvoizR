@@ -26,16 +26,16 @@ IF OBJECT_ID('dbo.Invoice') IS NOT NULL
 	DROP TABLE [dbo].[Invoice]
 GO
 
-IF OBJECT_ID('dbo.ContingencyProcessingLog') IS NOT NULL
-	DROP TABLE [dbo].[ContingencyProcessingLog]
+IF OBJECT_ID('dbo.FallbackFile') IS NOT NULL
+	DROP TABLE [dbo].[FallbackFile]
 GO
 
-IF OBJECT_ID('dbo.Contingency') IS NOT NULL
-	DROP TABLE [dbo].[Contingency]
+IF OBJECT_ID('dbo.FallbackProcessingLog') IS NOT NULL
+	DROP TABLE [dbo].[FallbackProcessingLog]
 GO
 
-IF OBJECT_ID('dbo.ContingencyReason') IS NOT NULL
-	DROP TABLE [dbo].[ContingencyReason]
+IF OBJECT_ID('dbo.Fallback') IS NOT NULL
+	DROP TABLE [dbo].[Fallback]
 GO
 
 IF OBJECT_ID('dbo.BranchNotification') IS NOT NULL
@@ -149,7 +149,7 @@ CREATE TABLE [dbo].[Responsible]
 	[IdType] NVARCHAR(2) NOT NULL,
 	[IdNumber] NVARCHAR(25) NOT NULL,
 	[AuthorizeCancellation] BIT NOT NULL,
-	[AuthorizeContingency] BIT NOT NULL
+	[AuthorizeFallback] BIT NOT NULL
 )
 GO
 
@@ -202,35 +202,28 @@ CREATE TABLE [dbo].[BranchNotification]
 )
 GO
 
-CREATE TABLE [dbo].[ContingencyReason]
+CREATE TABLE [dbo].[Fallback]
 (
 	[Id] SMALLINT NOT NULL IDENTITY(1, 1),
-	[Name] NVARCHAR(200) NOT NULL,
-	[RequireDesc] BIT NOT NULL
-)
-GO
-
-CREATE TABLE [dbo].[Contingency]
-(
-	[Id] SMALLINT NOT NULL IDENTITY(1, 1),
-	[BranchId] SMALLINT NULL,
+	[CompanyId] SMALLINT NULL,
 	[Name] NVARCHAR(100) NOT NULL,
 	[StartDateTime] DATETIME NOT NULL,
 	[EndDateTime] DATETIME NULL,
 	[Enable] BIT NOT NULL,
-	[GenerationCode] NVARCHAR(50) NULL,
+	[FallbackGuid] NVARCHAR(50) NULL,
 	[SyncStatusId] SMALLINT NOT NULL,
-	[TransmisionDateTime] DATETIME NULL,
-	[ContingencyResponsibleId] SMALLINT NOT NULL,
-	[ContingencyReasonId] SMALLINT NOT NULL,
-	[ContingencyReasonDesc] NVARCHAR(500) NULL
+	[Payload] NVARCHAR(MAX) NOT NULL,
+	[RetryIn] INT NOT NULL,
+	[SyncAttempts] INT NOT NULL,
+	[EmitDateTime] DATETIME NULL,
+	[ReceiptStamp] NVARCHAR(50) NULL
 )
 GO
 
-CREATE TABLE [dbo].[ContingencyProcessingLog]
+CREATE TABLE [dbo].[FallbackProcessingLog]
 (
 	[Id] INT NOT NULL IDENTITY(1, 1),
-	[ContingencyId] SMALLINT NOT NULL,
+	[FallbackId] SMALLINT NOT NULL,
 	[CreatedAt] DATETIME NOT NULL,
 	[SyncStatusId] SMALLINT NOT NULL,
 	[LogType] NVARCHAR(25) NOT NULL,
@@ -239,10 +232,24 @@ CREATE TABLE [dbo].[ContingencyProcessingLog]
 )
 GO
 
+CREATE TABLE [dbo].[FallbackFile]
+(
+	[Id] BIGINT NOT NULL IDENTITY(1, 1),
+	[FallbackId] SMALLINT NOT NULL,
+	[Size] BIGINT NOT NULL,
+	[MimeType] NVARCHAR(100) NOT NULL,
+	[FileType] NVARCHAR(100) NOT NULL,
+	[FileName] NVARCHAR(100) NOT NULL,
+	[ExternalUrl] NVARCHAR(200) NULL,
+	[CreatedAt] DATETIME NOT NULL,
+	[File] VARBINARY(MAX) NOT NULL
+)
+GO
+
 CREATE TABLE [dbo].[Invoice]
 (
 	[Id] BIGINT NOT NULL IDENTITY(1, 1),
-	[ContingencyId] SMALLINT NULL,
+	[FallbackId] SMALLINT NULL,
 	[PosId] SMALLINT NOT NULL,
 	[CustomerId] NVARCHAR(30) NULL,
 	[CustomerDocumentTypeId] NVARCHAR(2) NULL,

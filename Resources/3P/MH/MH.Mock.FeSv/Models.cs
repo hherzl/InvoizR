@@ -4,6 +4,47 @@ using MH.SharedKernel;
 
 namespace MH.Mock.FeSv;
 
+public record ContingenciaRequest : BaseModel
+{
+    [JsonPropertyName("nit")]
+    public string Nit { get; set; }
+
+    [JsonPropertyName("documento")]
+    public string Documento { get; set; }
+
+    public string ToJson()
+        => JsonSerializer.Serialize(this, DefaultJsonSerializerOpts);
+}
+
+public record ContingenciaResponse : BaseModel
+{
+    public ContingenciaResponse()
+    {
+        Observaciones = [];
+    }
+
+    [JsonPropertyName("estado")]
+    public string Estado { get; set; }
+
+    [JsonPropertyName("fechaHora")]
+    public string FechaHora { get; set; }
+
+    [JsonPropertyName("mensaje")]
+    public string Mensaje { get; set; }
+
+    [JsonPropertyName("selloRecibido")]
+    public string SelloRecibido { get; set; }
+
+    [JsonPropertyName("observaciones")]
+    public List<string> Observaciones { get; set; }
+
+    public bool IsSuccessful
+        => Estado == "RECIBIDO";
+
+    public string ToJson()
+        => JsonSerializer.Serialize(this, DefaultJsonSerializerOpts);
+}
+
 public record RecepcionDteRequest : BaseModel
 {
     [JsonPropertyName("ambiente")]
@@ -124,4 +165,5 @@ public static class Tokens
     public const string CodigoGeneracionExistente = "[identificacion.codigoGeneracion] YA EXISTE UN REGISTRO CON ESE VALOR";
     public const string NumeroControlExistente = "[identificacion.numeroControl] YA EXISTE UN REGISTRO CON ESE VALOR";
     public const string Procesado = "PROCESADO";
+    public const string Rechazado = "RECHAZADO";
 }

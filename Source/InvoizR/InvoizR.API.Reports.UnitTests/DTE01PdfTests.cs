@@ -22,7 +22,7 @@ public class DTE01PdfTests : ReportsTest
             GlobalSettings = DinkToPdfHelper.CreateDteGlobalSettings(pdfPath),
             Objects =
             {
-                DinkToPdfHelper.CreateDteObjSettings(new Dte01Templatev1(new Dte01TemplateFactory(_qrCodeGenerator).Create(invoice)).ToString())
+                DinkToPdfHelper.CreateDteObjSettings(new Dte01Templatev1(new Dte01TemplateFactory(_qrCodeGenerator).Create(invoice)).ToString(), ReportsPathHelper.GetDteCssPath())
             }
         };
 
@@ -41,7 +41,7 @@ public class DTE01PdfTests : ReportsTest
             GlobalSettings = DinkToPdfHelper.CreateDteGlobalSettings(pdfPath),
             Objects =
             {
-                DinkToPdfHelper.CreateDteObjSettings(new Dte03Templatev1(new Dte03TemplateFactory(_qrCodeGenerator).Create(invoice)).ToString())
+                DinkToPdfHelper.CreateDteObjSettings(new Dte03Templatev1(new Dte03TemplateFactory(_qrCodeGenerator).Create(invoice)).ToString(), ReportsPathHelper.GetDteCssPath())
             }
         };
 

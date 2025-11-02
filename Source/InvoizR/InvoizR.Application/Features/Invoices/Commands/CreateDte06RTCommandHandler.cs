@@ -8,48 +8,39 @@ using InvoizR.Domain.Entities;
 using InvoizR.Domain.Enums;
 using InvoizR.Domain.Exceptions;
 using InvoizR.Domain.Notifications;
+using InvoizR.SharedKernel.Mh;
 using InvoizR.SharedKernel.Mh.FeNd;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace InvoizR.Application.Features.Invoices.Commands;
 
-public sealed class CreateDte06RTCommandHandler : IRequestHandler<CreateDte06RTCommand, CreatedResponse<long?>>
+public sealed class CreateDte06RTCommandHandler(ILogger<CreateDte06RTCommandHandler> logger, IServiceProvider serviceProvider)
+    : IRequestHandler<CreateDte06RTCommand, CreatedResponse<long?>>
 {
-    private readonly ILogger _logger;
-    private readonly IInvoizRDbContext _dbContext;
-    private readonly Dte06ProcessingStatusChanger _dteProcessingService;
-    private readonly ISeguridadClient _seguridadClient;
-    private readonly DteSyncHandler _dteHandler;
-
-    public CreateDte06RTCommandHandler
-    (
-        ILogger<CreateDte06RTCommandHandler> logger,
-        IInvoizRDbContext dbContext,
-        Dte06ProcessingStatusChanger dteProcessingService,
-        ISeguridadClient seguridadClient,
-        DteSyncHandler dteHandler
-    )
+    public async Task<CreatedResponse<long?>> Handle(CreateDte06RTCommand request, CancellationToken ct)
     {
-        _logger = logger;
-        _dbContext = dbContext;
-        _dteProcessingService = dteProcessingService;
-        _seguridadClient = seguridadClient;
-        _dteHandler = dteHandler;
-    }
+        using var scope = serviceProvider.CreateScope();
 
-    public async Task<CreatedResponse<long?>> Handle(CreateDte06RTCommand request, CancellationToken cancellationToken)
-    {
-        _ = await _dbContext.GetCurrentInvoiceTypeAsync(FeNdv3.TypeId, ct: cancellationToken) ?? throw new InvalidCurrentInvoiceTypeException();
+        using var dbContext = scope.ServiceProvider.GetRequiredService<IInvoizRDbContext>();
+        var dteSyncStatusChanger = scope.ServiceProvider.GetRequiredService<Dte06SyncStatusChanger>();
+        var seguridadClient = scope.ServiceProvider.GetRequiredService<ISeguridadClient>();
+        var dteSyncHandler = scope.ServiceProvider.GetRequiredService<DteSyncHandler>();
 
-        var txn = await _dbContext.Database.BeginTransactionAsync(cancellationToken);
+        _ = await dbContext.GetCurrentInvoiceTypeAsync(FeNdv3.TypeId, ct: ct) ?? throw new InvalidCurrentInvoiceTypeException();
+
+        var txn = await dbContext.Database.BeginTransactionAsync(ct);
+
+        Domain.Entities.Pos pos;
+        Invoice invoice;
 
         try
         {
-            var pos = await _dbContext.GetPosAsync(request.PosId, includes: true, ct: cancellationToken);
+            pos = await dbContext.GetPosAsync(request.PosId, includes: true, ct: ct);
 
-            var invoice = new Invoice
+            invoice = new Invoice
             {
                 PosId = pos.Id,
                 CustomerId = request.Customer.Id,
@@ -73,48 +64,68 @@ public sealed class CreateDte06RTCommandHandler : IRequestHandler<CreateDte06RTC
                 ProcessingStatusId = (short)InvoiceProcessingStatus.Created
             };
 
-            _dbContext.Invoice.Add(invoice);
+            dbContext.Invoice.Add(invoice);
 
-            await _dbContext.SaveChangesAsync(cancellationToken);
+            await dbContext.SaveChangesAsync(ct);
 
-            _dbContext.InvoiceProcessingStatusLog.Add(new(invoice.Id, invoice.ProcessingStatusId));
+            dbContext.InvoiceProcessingStatusLog.Add(new(invoice.Id, invoice.ProcessingStatusId));
 
-            await _dbContext.SaveChangesAsync(cancellationToken);
+            await dbContext.SaveChangesAsync(ct);
 
-            await txn.CommitAsync(cancellationToken);
+            await txn.CommitAsync(ct);
+        }
+        catch (Exception ex)
+        {
+            logger.LogCritical(ex, "There was an error on Create DTE-06 in RT processing");
+            await txn.RollbackAsync(ct);
+            return new();
+        }
 
-            _logger.LogInformation($"Processing '{invoice.InvoiceNumber}' invoice, changing status from '{InvoiceProcessingStatus.Created}'...");
+        logger.LogInformation($"Processing '{invoice.InvoiceNumber}' invoice, changing status from '{InvoiceProcessingStatus.Created}'...");
 
-            await _dteProcessingService.SetInvoiceAsInitializedAsync(invoice.Id, _dbContext, cancellationToken);
+        await dteSyncStatusChanger.SetInvoiceAsInitializedAsync(invoice.Id, dbContext, ct);
 
-            _logger.LogInformation($"Processing '{invoice.InvoiceNumber}' invoice, changing status from '{InvoiceProcessingStatus.Initialized}'...");
+        var fallback = await dbContext.GetCurrentFallbackAsync(pos.Branch.Company.Id, ct: ct);
+        if (fallback?.Enable == true)
+        {
+            var dte = FeNdv3.Deserialize(invoice.Payload);
+            dte.Identificacion.TipoModelo = MhCatalog.Cat003.Contingencia;
+            dte.Identificacion.TipoOperacion = MhCatalog.Cat004.Contingencia;
 
-            await _dteProcessingService.SetInvoiceAsRequestedAsync(invoice.Id, _dbContext, cancellationToken);
+            invoice.Payload = dte.ToJson();
 
-            _logger.LogInformation($"Processing '{invoice.InvoiceNumber}' invoice, changing status from '{InvoiceProcessingStatus.Requested}'...");
+            logger.LogInformation($"Processing '{invoice.InvoiceNumber}' invoice, changing status from '{InvoiceProcessingStatus.Initialized}'...");
 
-            var thirdPartyServices = await _dbContext.ThirdPartyServices(pos.Branch.Company.Environment, includes: true).ToListAsync(cancellationToken);
+            invoice.FallbackId = fallback.Id;
+            await dteSyncStatusChanger.SetInvoiceAsFallbackAsync(invoice.Id, dbContext, ct);
+
+            invoice.AddNotification(new ExportFallbackInvoiceNotification(invoice));
+            await dbContext.DispatchNotificationsAsync(ct);
+        }
+        else
+        {
+            logger.LogInformation($"Processing '{invoice.InvoiceNumber}' invoice, changing status from '{InvoiceProcessingStatus.Initialized}'...");
+
+            await dteSyncStatusChanger.SetInvoiceAsRequestedAsync(invoice.Id, dbContext, ct);
+
+            logger.LogInformation($"Processing '{invoice.InvoiceNumber}' invoice, changing status from '{InvoiceProcessingStatus.Requested}'...");
+
+            var thirdPartyServices = await dbContext.ThirdPartyServices(pos.Branch.Company.Environment, includes: true).ToListAsync(ct);
             if (thirdPartyServices.Count == 0)
                 throw new NoThirdPartyServicesException(pos.Branch.Company.Name, pos.Branch.Company.Environment);
 
             var thirdPartyServicesParameters = thirdPartyServices.GetThirdPartyClientParameters().ToList();
-            _seguridadClient.ClientSettings = thirdPartyServicesParameters.GetByService(_seguridadClient.ServiceName).ToSeguridadClientSettings();
-            var authResponse = await _seguridadClient.AuthAsync();
+            seguridadClient.ClientSettings = thirdPartyServicesParameters.GetByService(seguridadClient.ServiceName).ToSeguridadClientSettings();
+            var authResponse = await seguridadClient.AuthAsync();
             thirdPartyServicesParameters.AddJwt(pos.Branch.Company.Environment, authResponse.Body.Token);
 
-            if (await _dteHandler.HandleAsync(CreateDte06Request.Create(thirdPartyServicesParameters, invoice.Id, invoice.Payload), _dbContext, cancellationToken))
+            if (await dteSyncHandler.HandleAsync(CreateDte06Request.Create(thirdPartyServicesParameters, invoice.Id, invoice.Payload), dbContext, ct))
             {
                 invoice.AddNotification(new ExportInvoiceNotification(invoice));
-                await _dbContext.DispatchNotificationsAsync(cancellationToken);
+                await dbContext.DispatchNotificationsAsync(ct);
             }
+        }
 
-            return new(invoice.Id);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogCritical(ex, "There was an error on Create DTE-06 in RT processing");
-            await txn.RollbackAsync(cancellationToken);
-            return new();
-        }
+        return new(invoice.Id);
     }
 }

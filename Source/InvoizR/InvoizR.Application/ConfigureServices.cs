@@ -21,26 +21,34 @@ public static class ConfigureServices
         });
 
         services.AddScoped<DteSyncHandler>();
-        services.AddScoped<DteExporter>();
-        services.AddScoped<DteCancellationHandler>();
 
-        services.AddScoped<Dte01ProcessingStatusChanger>();
+        services.AddScoped<Dte01SyncStatusChanger>();
         services.AddScoped<Dte01TemplateFactory>();
 
         services.AddScoped<Dte03TemplateFactory>();
-        services.AddScoped<Dte03ProcessingStatusChanger>();
+        services.AddScoped<Dte03SyncStatusChanger>();
 
-        services.AddScoped<Dte04ProcessingStatusChanger>();
+        services.AddScoped<Dte04SyncStatusChanger>();
         services.AddScoped<Dte04TemplateFactory>();
 
-        services.AddScoped<Dte05ProcessingStatusChanger>();
+        services.AddScoped<Dte05SyncStatusChanger>();
         services.AddScoped<Dte05TemplateFactory>();
 
-        services.AddScoped<Dte06ProcessingStatusChanger>();
+        services.AddScoped<Dte06SyncStatusChanger>();
         services.AddScoped<Dte06TemplateFactory>();
 
-        services.AddScoped<Dte14ProcessingStatusChanger>();
+        services.AddScoped<Dte14SyncStatusChanger>();
         services.AddScoped<Dte14TemplateFactory>();
+
+        services.AddScoped<FallbackTemplateFactory>();
+
+        services.AddScoped<DteCancellationHandler>();
+
+        services.AddScoped<InvoiceExporter>();
+        services.AddScoped<FallbackInvoiceExporter>();
+
+        services.AddScoped<FallbackExporter>();
+        services.AddScoped<FallbackSyncHandler>();
 
         return services;
     }

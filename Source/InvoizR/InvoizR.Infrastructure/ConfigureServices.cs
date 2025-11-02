@@ -53,6 +53,12 @@ public static class ConfigureServices
         services.AddScoped<JsonInvoiceExportStrategy>();
         services.AddScoped<PdfInvoiceExportStrategy>();
 
+        services.AddScoped<IFallbackExportStrategy, JsonFallbackExportStrategy>();
+        services.AddScoped<IFallbackExportStrategy, PdfFallbackExportStrategy>();
+
+        services.AddScoped<JsonFallbackExportStrategy>();
+        services.AddScoped<PdfFallbackExportStrategy>();
+
         return services;
     }
 }
