@@ -1,0 +1,161 @@
+﻿@page "/fallback/{Id:int?}"
+
+@using System.Text
+@using InvoizR.Clients.Contracts
+@using InvoizR.Clients.DataContracts
+@using InvoizR.Clients.DataContracts.Common
+@using InvoizR.Clients.DataContracts.Fallback
+
+@inject IInvoizRClient invoizRClient
+@inject IDialogService dialogService
+
+<PageTitle>Fallback Details - @Id</PageTitle>
+
+<h3>Fallback Details</h3>
+<h4>@Id</h4>
+
+<br />
+
+@if (DetailsResponse != null)
+{
+    <MudCard>
+        <MudCardHeader>
+            <CardHeaderContent>
+                <MudText Typo="Typo.h6">Fallback</MudText>
+            </CardHeaderContent>
+            <CardHeaderActions>
+                <MudIconButton Icon="@Icons.Material.Filled.Emergency" Color="Color.Default" />
+            </CardHeaderActions>
+        </MudCardHeader>
+        <MudCardContent>
+            <MudText Typo="Typo.body2">Company: <strong>@DetailsResponse?.Model.Company</strong></MudText>
+            <MudText Typo="Typo.body2">Name: <strong>@DetailsResponse?.Model.Name</strong></MudText>
+            <MudText Typo="Typo.body2">Start date time: <strong>@DetailsResponse?.Model.StartDateTime</strong></MudText>
+            <MudText Typo="Typo.body2">End date time: <strong>@DetailsResponse?.Model.EndDateTime</strong></MudText>
+            <MudText Typo="Typo.body2">GUID: <strong>@DetailsResponse?.Model.FallbackGuid</strong></MudText>
+            <MudText Typo="Typo.body2">Sync status: <strong>@DetailsResponse?.Model.SyncStatus</strong></MudText>
+            <MudText Typo="Typo.body2">Emit date timee: <strong>@DetailsResponse?.Model.EmitDateTime</strong></MudText>
+            <MudText Typo="Typo.body2">Receipt stamp: <strong>@DetailsResponse?.Model.ReceiptStamp</strong></MudText>
+        </MudCardContent>
+    </MudCard>
+
+    @if (DetailsResponse?.Model.SyncStatusId == (short)InvoiceSyncStatus.Created)
+    {
+        <br />
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="ProcessAsync">Process</MudButton>
+        <br />
+        <MudProgressCircular Color="Color.Primary" Indeterminate="Loading" />
+    }
+
+    <br />
+
+    <MudExpansionPanels>
+        <MudExpansionPanel Text="@($"Invoices ({DetailsResponse?.Model.Invoices.Count})")" Expanded="false">
+            <MudTable Items="DetailsResponse?.Model.Invoices">
+                <HeaderContent>
+                    <MudTh>Invoice type</MudTh>
+                    <MudTh>Generation code</MudTh>
+                    <MudTh>Control number</MudTh>
+                    <MudTh></MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel="Invoice type">@context.InvoiceType</MudTd>
+                    <MudTd DataLabel="Generation code">@context.GenerationCode</MudTd>
+                    <MudTd DataLabel="Control number">@context.ControlNumber</MudTd>
+                    <MudTd>
+                        <a href="@($"/invoice/{@context.Id}")" target="_blank">
+                            <MudIcon Icon="@Icons.Material.Filled.Details" Title="Details" />
+                        </a>
+                    </MudTd>
+                </RowTemplate>
+            </MudTable>
+        </MudExpansionPanel>
+    </MudExpansionPanels>
+
+    <br />
+
+    @if (DetailsResponse.Model.ProcessingLogs?.Count > 0)
+    {
+        <h4>Processing Logs</h4>
+
+        <br />
+
+        <MudExpansionPanels>
+            @foreach (var processingLog in DetailsResponse.Model.ProcessingLogs)
+            {
+                <MudExpansionPanel Text="@processingLog.LogType" Expanded="false">
+                    <MudText Typo="Typo.body2">Processing status: <strong>@processingLog.ProcessingStatus</strong></MudText>
+                    <MudText Typo="Typo.body2">Created at: <strong>@processingLog.CreatedAt</strong></MudText>
+                    <MudText Typo="Typo.body2">Content type: <strong>@processingLog.ContentType</strong></MudText>
+                    <div style="overflow-x: auto; white-space: pre-wrap; width: 100%;">
+                        <pre>@processingLog.Content</pre>
+                    </div>
+                </MudExpansionPanel>
+            }
+        </MudExpansionPanels>
+    }
+
+    <br />
+
+    @if (DetailsResponse.Model.Files?.Count > 0)
+    {
+        <h4>Files</h4>
+
+        <br />
+
+        <MudExpansionPanels>
+
+            @foreach (var file in DetailsResponse.Model.Files)
+            {
+                if (file.IsJson)
+                {
+                    <MudExpansionPanel Text="JSON" Expanded="false">
+                        <MudText Typo="Typo.subtitle2">
+                            <div style="overflow-x: auto; white-space: pre-wrap; width: 100%;">
+                                <pre>@file.GetJson()</pre>
+                            </div>
+                        </MudText>
+                    </MudExpansionPanel>
+                }
+                else if (file.IsPdf)
+                {
+                    <MudExpansionPanel Text="PDF" Expanded="false">
+                        <embed style="width: 100%; height: 90vh;" type="application/pdf" src="data:application/pdf;base64,@file.GetPdf()" />
+                    </MudExpansionPanel>
+                }
+            }
+
+        </MudExpansionPanels>
+
+        <br />
+    }
+
+    <br />
+}
+
+<a href="@("/fallback")">
+    <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.ArrowBack" />
+</a>
+
+@code {
+    [Parameter] public int? Id { get; set; }
+    private bool Loading { get; set; }
+    private SingleResponse<FallbackDetailsModel> DetailsResponse { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Loading = true;
+        DetailsResponse = await invoizRClient.GetFallbackAsync((short)Id);
+
+        Loading = false;
+    }
+
+    async Task ProcessAsync()
+    {
+        Loading = true;
+        await invoizRClient.ProcessFallbackAsync((short)Id);
+        DetailsResponse = await invoizRClient.GetFallbackAsync((short)Id);
+
+        Loading = false;
+    }
+}

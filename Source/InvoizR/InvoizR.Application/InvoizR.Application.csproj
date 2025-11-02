@@ -8,10 +8,14 @@
 
   <ItemGroup>
     <None Remove="Assets\css\dte.css" />
+    <None Remove="Assets\css\fallback.css" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="Assets\css\dte.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\css\fallback.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

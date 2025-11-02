@@ -30,7 +30,7 @@ public class Dte14Templatev1 : DteTemplatev1<Dte14TemplateModel>
         output.AppendLine(" <table class='header-table'>");
         output.AppendLine("  <tbody>");
         output.AppendLine("   <tr>");
-        output.AppendLine($"    <td><img alt='Código QR Consulta Pública' src='data:image/png;base64, {Model.Emitter.Logo}' class='logo'></td>");
+        output.AppendLine($"    <td><img alt='Logo' src='data:image/png;base64, {Model.Emitter.Logo}' class='logo'></td>");
 
         output.AppendLine($"    <td>");
 
@@ -38,10 +38,8 @@ public class Dte14Templatev1 : DteTemplatev1<Dte14TemplateModel>
         output.AppendLine($"      <li>Código de generación: {AsStrong(Model.GenerationCode)}</li>");
         output.AppendLine($"      <li>Número de control: {AsStrong(Model.ControlNumber)}</li>");
         output.AppendLine($"      <li>Sello de recepción: {AsStrong(Model.ReceiptStamp)}</li>");
-
         output.AppendLine($"      <li>Modelo de facturación: {MhCatalog.Cat003.Desc(Model.Dte.Identificacion.TipoModelo)}</li>");
-        output.AppendLine($"      <li>Tipo de transmisión: {MhCatalog.Cat004.Desc((int)Model.Dte.Identificacion.TipoOperacion)}</li>");
-
+        output.AppendLine($"      <li>Tipo de transmisión: {MhCatalog.Cat004.Desc(Model.Dte.Identificacion.TipoOperacion)}</li>");
         output.AppendLine($"      <li>Fecha y hora de generación: {AsDateTime(Model.EmitDateTime)}</li>");
         output.AppendLine($"      <li>Versión de JSON: {AsStrong(Model.SchemaVersion.ToString())}</li>");
         output.AppendLine($"     </ul>");

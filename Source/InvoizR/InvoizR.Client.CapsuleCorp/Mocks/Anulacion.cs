@@ -4,9 +4,9 @@ using InvoizR.SharedKernel.Mh.Anulacion;
 
 namespace InvoizR.Client.CapsuleCorp.Mocks;
 
-static class Cancellation
+static class Anulacion
 {
-    public static DteCancellationCommand MockCancellation(long? invoiceId)
+    public static DteCancellationCommand MockAnulacion(long? invoiceId)
     {
         var dte = new Anulacionv2();
 

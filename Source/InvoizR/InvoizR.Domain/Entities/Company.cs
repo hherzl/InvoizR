@@ -32,5 +32,6 @@ public partial class Company : Entity
     public int? Headquarters { get; set; }
     public string NonCustomerEmail { get; set; }
 
-    public Collection<Branch> Branches { get; set; }
+    public virtual Collection<Branch> Branches { get; set; }
+    public virtual Collection<Fallback> Fallbacks { get; set; }
 }

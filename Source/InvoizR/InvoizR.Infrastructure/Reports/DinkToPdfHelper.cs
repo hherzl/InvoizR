@@ -23,7 +23,7 @@ public class DinkToPdfHelper
         return obj;
     }
 
-    public static ObjectSettings CreateDteObjSettings(string htmlContent, string footerTitle = "Capsule Corp.")
+    public static ObjectSettings CreateDteObjSettings(string htmlContent, string cssPath, string footerTitle = "Capsule Corp.")
        => new()
        {
            PagesCount = true,
@@ -31,7 +31,7 @@ public class DinkToPdfHelper
            WebSettings =
            {
                 DefaultEncoding = "utf-8",
-                UserStyleSheet = ReportsPathHelper.GetDteCssPath()
+                UserStyleSheet = cssPath
            },
            HeaderSettings =
            {

@@ -4,6 +4,7 @@ using InvoizR.Client.CapsuleCorp.Mocks;
 using InvoizR.Clients;
 using InvoizR.Clients.Contracts;
 using InvoizR.Clients.DataContracts;
+using InvoizR.Clients.DataContracts.Fallback;
 using InvoizR.SharedKernel.Mh.FeCcf;
 using InvoizR.SharedKernel.Mh.FeFc;
 using InvoizR.SharedKernel.Mh.FeFse;
@@ -130,7 +131,7 @@ if (clientArgs.Seed)
             IdType = item.IdType,
             IdNumber = item.IdNumber,
             AuthorizeCancellation = item.AuthorizeCancellation,
-            AuthorizeContingency = item.AuthorizeContingency
+            AuthorizeFallback = item.AuthorizeFallback
         };
 
         var createResponsibleResponse = await client.CreateResponsibleAsync(responsible);
@@ -188,6 +189,30 @@ if (clientArgs.Mock)
         }
 
         await Task.Delay(ClientArgs.MockDelay);
+    }
+}
+
+if (clientArgs.Fallback)
+{
+    Console.WriteLine("Fallback mode...");
+
+    if (clientArgs.FallbackProcess)
+    {
+        Console.WriteLine(" Processing...");
+        _ = short.TryParse(Console.ReadLine(), out short fallbackId);
+        await client.ProcessFallbackAsync(fallbackId);
+    }
+    else
+    {
+        var request = new CreateFallbackCommand
+        {
+            CompanyId = 1,
+            Name = $"Contingencia ({DateTime.Now:yyyyMMdd hhmm})",
+            StartDateTime = DateTime.Now,
+            Contingencia = Contingencia.MockContingencia()
+        };
+
+        await client.CreateFallbackAsync(request);
     }
 }
 
@@ -341,7 +366,7 @@ static async Task MockCancelationAsync(IInvoizRClient client)
 
     if (int.TryParse(Console.ReadLine(), out int invoiceId))
     {
-        var request = Cancellation.MockCancellation(invoiceId);
+        var request = Anulacion.MockAnulacion(invoiceId);
 
         Console.WriteLine($"  Cancelling invoice '{request.InvoiceId}' in RT processing...");
 

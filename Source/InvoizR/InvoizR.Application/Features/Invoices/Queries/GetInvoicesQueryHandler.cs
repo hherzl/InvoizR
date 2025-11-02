@@ -34,6 +34,7 @@ public class GetInvoicesQueryHandler : IRequestHandler<GetInvoicesQuery, PagedRe
                 Pos = branchPos.Name,
                 BranchId = branchPos.BranchId,
                 Branch = branch.Name,
+                CompanyId = company.Id,
                 Company = company.Name,
                 Environment = company.Environment,
                 CustomerName = inv.CustomerName,

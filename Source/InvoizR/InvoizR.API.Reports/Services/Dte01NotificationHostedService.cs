@@ -7,21 +7,21 @@ using Microsoft.EntityFrameworkCore;
 
 namespace InvoizR.API.Reports.Services;
 
-public class Dte01NotificationHostedService(ILogger<Dte01NotificationHostedService> _logger, IServiceProvider _serviceProvider, IConfiguration _configuration) : BackgroundService
+public sealed class Dte01NotificationHostedService(ILogger<Dte01NotificationHostedService> logger, IServiceProvider serviceProvider, IConfiguration configuration)
+    : BackgroundService
 {
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        using var scope = _serviceProvider.CreateScope();
+        using var scope = serviceProvider.CreateScope();
 
         using var dbContext = scope.ServiceProvider.GetRequiredService<InvoizRDbContext>();
 
-        var dteExporter = scope.ServiceProvider.GetRequiredService<DteExporter>();
+        var invoiceExporter = scope.ServiceProvider.GetRequiredService<InvoiceExporter>();
 
         var processingSettings = new ProcessingSettings();
-        _configuration.Bind("ProcessingSettings", processingSettings);
+        configuration.Bind("ProcessingSettings", processingSettings);
 
         var timer = new PeriodicTimer(TimeSpan.FromMinutes(1));
-
         while (await timer.WaitForNextTickAsync(stoppingToken))
         {
             try
@@ -34,20 +34,20 @@ public class Dte01NotificationHostedService(ILogger<Dte01NotificationHostedServi
                 var invoices = await dbContext.GetInvoicesForProcessing(filters.InvoiceTypeId, filters.ProcessingTypeId, [.. filters.ProcessingStatuses]).ToListAsync(stoppingToken);
                 if (invoices.Count == 0)
                 {
-                    _logger.LogInformation($"There are no '{FeFcv1.SchemaType}' invoices to process...");
+                    logger.LogInformation($"There are no '{FeFcv1.SchemaType}' invoices to process...");
                     continue;
                 }
 
-                _logger.LogInformation($"Exporting '{invoices.Count}' invoices ...");
+                logger.LogInformation($"Exporting '{invoices.Count}' invoices ...");
 
                 foreach (var item in invoices)
                 {
-                    await dteExporter.ExportAsync(item.Id, stoppingToken);
+                    await invoiceExporter.ExportAsync(item.Id, stoppingToken);
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogCritical(ex, $"There was on error exporting DTE-01 invoices");
+                logger.LogCritical(ex, $"There was on error exporting DTE-01 invoices");
             }
         }
     }

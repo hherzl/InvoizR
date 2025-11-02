@@ -26,7 +26,7 @@ public class CreateResponsibleCommandHandler : IRequestHandler<CreateResponsible
             IdType = request.IdType,
             IdNumber = request.IdNumber,
             AuthorizeCancellation = request.AuthorizeCancellation,
-            AuthorizeContingency = request.AuthorizeContingency
+            AuthorizeFallback = request.AuthorizeFallback
         };
 
         _dbContext.Responsible.Add(entity);

@@ -6,9 +6,10 @@ public enum InvoiceProcessingStatus : short
     InvalidSchema = 100,
     InvalidData = 200,
     Initialized = 500,
+    Fallback = 600,
     Requested = 1000,
     Declined = 2000,
     Processed = 3000,
-    Cancelled = 3500,
-    Notified = 4000
+    Notified = 4000,
+    Cancelled = 5000,
 }

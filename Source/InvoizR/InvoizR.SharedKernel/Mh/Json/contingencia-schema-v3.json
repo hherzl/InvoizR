@@ -1,0 +1,243 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "description": "The root schema comprises the entire JSON document.",
+    "required": [
+        "identificacion",
+        "emisor",
+        "detalleDTE",
+        "motivo"
+    ],
+    "title": "Reporte de contingencia",
+    "type": "object",
+    "properties": {
+        "identificacion": {
+            "description": "An explanation about the purpose of this instance.",
+            "required": [
+                "version",
+                "ambiente",
+                "codigoGeneracion",
+                "fTransmision",
+                "hTransmision"
+            ],
+            "type": "object",
+            "properties": {
+                "version": {
+                    "type": "integer",
+                    "description": "Version del esquema del DTE",
+                    "const": 3
+                },
+                "ambiente": {
+                    "type": "string",
+                    "description": "Ambiente de destino: 00 - Pruebas, 01 - Produccion",
+                    "enum": ["00","01"]
+                },
+                "codigoGeneracion": {
+                    "description": "Debe cumplir con el estandar del UUID v4, el cual Debe ser unico por evento de contingencia (el cual no debe repetirse) longitud de 36 digitos sin guiones codigo de generacion consiste en un numero identificador inico, aleatorio y universal.",
+                    "pattern": "^[A-F0-9]{8}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{12}$",
+                    "type": "string",
+                    "maxLength": 36,
+                    "minLength": 36
+                },
+                "fTransmision": {
+                    "type": "string",
+                    "description": "Fecha de emision (formato yyyy-mm-dd)",
+                    "format": "date"
+                },
+                "hTransmision": {
+                    "type": "string",
+                    "description": "Hora de emision",
+                    "pattern": "^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]?$"
+                }
+            },
+            "additionalProperties": false
+        },
+        "emisor": {
+            "description": "Informacion del emisor.",
+            "required": [
+                "nit",
+                "nombre",
+                "nombreResponsable",
+                "tipoDocResponsable",
+                "numeroDocResponsable",
+                "tipoEstablecimiento",
+                "telefono",
+                "correo"
+            ],
+            "type": "object",
+            "properties": {
+                "nit": {
+                    "description": "NIT, sin guiones",
+                    "type": "string",
+                    "pattern" : "^([0-9]{14}|[0-9]{9})$"
+                },
+                "nombre": {
+                    "description": "Nombre, denominación o  razón social del contribuyente (EMISOR)",
+                    "type": "string",
+                    "maxLength": 250,
+                    "minLength": 5
+                },
+                "nombreResponsable": {
+                    "description": "NOMBRE DEL RESPONSABLE DEL ESTABLECIMIENTO.",
+                    "type": "string",
+                    "maxLength": 100,
+                    "minLength": 5
+                },
+                "tipoDocResponsable": {
+                    "type": "string",
+                    "description" : "Tipo documento de identificación del responsable CAT-22: 36 - NIT, 13 - DUI, 02 - Carnet de residente, 03 - PASAPORTE, 37 - OTRO",
+                    "enum" : [ "36", "13", "02", "03", "37" ]
+                },
+                "numeroDocResponsable": {
+                    "description": "NUMERO DE DOCUMENTO DE IDENTIFICACION DEL RESPONSABLE.",
+                    "type": "string",
+                    "maxLength": 25,
+                    "minLength": 5
+                },
+                "tipoEstablecimiento": {
+                    "description": "TIPO DE ESTABLECIMIENTO (EMISOR) (QUE HA ENTRADO EN CONTINGENCIA)",
+                    "type": "string",
+                    "enum": [
+                        "01",
+                        "02",
+                        "04",
+                        "07",
+                        "20"
+                    ]
+                },
+                "codEstableMH" : {
+                    "description" : "Codigo, Numero o Identificador de establecimiento por MH",
+                    "type" : [
+                        "string",
+                        "null"
+                    ],
+                    "maxLength" : 4,
+                    "minLength" : 4
+                },
+                "codPuntoVenta" : {
+                    "description" : "Codigo, Numero o Identificador de punto de venta por Contribuyente",
+                    "type" : [
+                        "string",
+                        "null"
+                    ],
+                    "maxLength" : 15,
+                    "minLength" : 1
+                },
+                "telefono" : {
+                    "type" : "string",
+                    "description" : "Numero de telefono del emisor",
+                    "minLength" : 8,
+                    "maxLength" : 30
+                },
+                "correo" : {
+                    "type" : "string",
+                    "description" : "Correo electronico del emisor",
+                    "format" : "email",
+                    "maxLength" : 100,
+                    "minLength" : 3
+                }
+            },
+            "additionalProperties": false
+        },
+        "detalleDTE": {
+            "description": "Detalle de los documentos que se enviaran en contingencia.",
+            "type": "array",
+            "items": {
+                "required": [
+                    "noItem","codigoGeneracion","tipoDoc"
+                ],
+                "type": "object",
+                "properties": {
+                    "noItem": {
+                        "description": "Numero correlativo.",
+                        "maxLength" : 4,
+                        "type": "integer"
+                    },
+                    "codigoGeneracion": {
+                        "description": "Codigo de generacion del documento reportado.",
+                        "type": "string",
+                        "pattern": "^[A-F0-9]{8}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{12}$"
+                    },
+                    "tipoDoc": {
+                        "description": "Tipo de Documento Tributario Electronico",
+                        "pattern": "^0[1-9]|1[0-5]$",
+                        "type": "string"
+                    }
+                },
+                "additionalProperties": false
+            },
+            "maxItems": 1000,
+            "minItems":1
+        },
+        "motivo": {
+            "description": "Motivo de la contingenia.",
+            "required": [
+                "fInicio",
+                "fFin",
+                "hInicio",
+                "hFin",
+                "tipoContingencia",
+                "motivoContingencia"
+            ],
+            "type": "object",
+            "properties": {
+                "fInicio": {
+                    "description": "Fecha inicio de la contingencia",
+                    "type": "string",
+                    "format": "date"
+                },
+                "fFin": {
+                    "description": "Fecha de finalizacion de la contingencia",
+                    "type": "string",
+                    "format": "date"
+                },
+                "hInicio": {
+                    "description": "Hora inicio de la contingencia.",
+                    "type": "string",
+                    "pattern": "^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]?$"
+                },
+                "hFin": {
+                    "description": "Hora fin de la contingencia.",
+                    "type": "string",
+                    "pattern": "^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]?$"
+                },
+                "tipoContingencia": {
+                    "description": "Debe seleccional del Catalogo de la Contingencias cualquiera de las 5 opciones que aplique segun el motivo.",
+                    "enum": [
+                        1,
+                        2,
+                        3,
+                        4,
+                        5
+                    ],
+                    "type": "integer"
+                },
+                "motivoContingencia": {
+                    "description": "Descripcion del motivo de la contingencia.",
+                    "type": ["string","null"],
+                    "maxLength" : 500
+                }
+            },
+            "allOf" : [
+                {
+                    "if" : {
+                        "properties" : {
+                            "tipoContingencia" : {
+                                "const" : 5
+                            }
+                        }
+                    },
+                    "then" : {
+                        "properties" : {
+                            "motivoContingencia" : {
+                                "type" : "string",
+                                "minLength" : 1
+                            }
+                        }
+                    }
+                }
+            ],
+            "additionalProperties": false
+        }
+    },
+    "additionalProperties": false
+}

@@ -5,6 +5,16 @@ namespace InvoizR.Clients.ThirdParty.DataContracts;
 
 public class ContingenciaRequest : BaseModel
 {
+    public ContingenciaRequest()
+    {
+    }
+
+    public ContingenciaRequest(string nit, string documento)
+    {
+        Nit = nit;
+        Documento = documento;
+    }
+
     [JsonPropertyName("nit")]
     public string Nit { get; set; }
 

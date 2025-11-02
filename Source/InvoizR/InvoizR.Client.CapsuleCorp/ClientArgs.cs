@@ -26,6 +26,12 @@ public record ClientArgs
                 if (int.TryParse(item.Replace("--limit=", ""), out var limit))
                     Limit = limit;
             }
+
+            if (item == "--fallback")
+                Fallback = true;
+
+            if (Fallback && item == "--process")
+                FallbackProcess = true;
         }
     }
 
@@ -41,6 +47,9 @@ public record ClientArgs
 
     public bool IsRt
         => string.Compare(ProcessingType, "rt", true) == 0;
+
+    public bool Fallback { get; set; }
+    public bool FallbackProcess { get; set; }
 
     public static int MockDelay
         => 3000;

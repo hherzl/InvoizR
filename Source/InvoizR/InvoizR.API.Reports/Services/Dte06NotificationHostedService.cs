@@ -1,27 +1,26 @@
 ﻿using InvoizR.Application.Common;
+using InvoizR.Application.Common.Contracts;
 using InvoizR.Application.Services;
 using InvoizR.Domain.Enums;
-using InvoizR.Infrastructure.Persistence;
 using InvoizR.SharedKernel.Mh.FeNd;
 using Microsoft.EntityFrameworkCore;
 
 namespace InvoizR.API.Reports.Services;
 
-public class Dte06NotificationHostedService(ILogger<Dte06NotificationHostedService> logger, IServiceProvider serviceProvider, IConfiguration configuration) : BackgroundService
+public sealed class Dte06NotificationHostedService(ILogger<Dte06NotificationHostedService> logger, IServiceProvider serviceProvider, IConfiguration configuration)
+    : BackgroundService
 {
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         using var scope = serviceProvider.CreateScope();
 
-        using var dbContext = scope.ServiceProvider.GetRequiredService<InvoizRDbContext>();
-
-        var dteExporter = scope.ServiceProvider.GetRequiredService<DteExporter>();
+        using var dbContext = scope.ServiceProvider.GetRequiredService<IInvoizRDbContext>();
+        var invoiceExporter = scope.ServiceProvider.GetRequiredService<InvoiceExporter>();
 
         var processingSettings = new ProcessingSettings();
         configuration.Bind("ProcessingSettings", processingSettings);
 
         var timer = new PeriodicTimer(TimeSpan.FromMinutes(1));
-
         while (await timer.WaitForNextTickAsync(stoppingToken))
         {
             try
@@ -42,7 +41,7 @@ public class Dte06NotificationHostedService(ILogger<Dte06NotificationHostedServi
 
                 foreach (var item in invoices)
                 {
-                    await dteExporter.ExportAsync(item.Id, stoppingToken);
+                    await invoiceExporter.ExportAsync(item.Id, stoppingToken);
                 }
             }
             catch (Exception ex)

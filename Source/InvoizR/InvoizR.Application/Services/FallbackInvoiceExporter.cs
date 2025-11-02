@@ -1,17 +1,15 @@
 ﻿using InvoizR.Application.Common;
 using InvoizR.Application.Common.Contracts;
-using InvoizR.Application.Features.Invoices.Notifications;
 using InvoizR.Application.Helpers;
 using InvoizR.Application.Reports.Templates.Common;
 using InvoizR.Clients.Contracts;
-using InvoizR.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace InvoizR.Application.Services;
 
-public class DteExporter
+public sealed class FallbackInvoiceExporter
 {
     private readonly ILogger _logger;
     private readonly IEnumerable<IInvoiceExportStrategy> _invoiceExportStrategies;
@@ -19,14 +17,7 @@ public class DteExporter
     private readonly IInvoizRDbContext _dbContext;
     private readonly ISmtpClient _smtpClient;
 
-    public DteExporter
-    (
-        ILogger<ExportInvoiceNotificationHandler> logger,
-        IInvoizRDbContext dbContext,
-        IConfiguration configuration,
-        IEnumerable<IInvoiceExportStrategy> invoiceExportStrategies,
-        ISmtpClient smtpClient
-    )
+    public FallbackInvoiceExporter(ILogger<FallbackInvoiceExporter> logger, IInvoizRDbContext dbContext, IConfiguration configuration, IEnumerable<IInvoiceExportStrategy> invoiceExportStrategies, ISmtpClient smtpClient)
     {
         _logger = logger;
         _dbContext = dbContext;
@@ -51,7 +42,7 @@ public class DteExporter
 
             _logger.LogInformation($" Adding '{item.FileExtension}' as bytes...");
 
-            _dbContext.InvoiceFile.Add(InvoiceFileHelper.Create(invoice, bytes, item.ContentType, item.FileExtension));
+            _dbContext.InvoiceFile.Add(new(invoice, bytes, item.ContentType, item.FileExtension));
         }
 
         var notificationTemplate = new DteNotificationTemplatev1(new(invoice.Pos.Branch, invoiceType, invoice));
@@ -80,10 +71,6 @@ public class DteExporter
         _logger.LogInformation($"Sending notification for invoice '{invoice.InvoiceTypeId}-{invoice.InvoiceNumber}'; customer '{invoice.CustomerName}', email: '{invoice.CustomerEmail}'...");
 
         _smtpClient.Send(notificationTemplate.ToMailMessage());
-
-        invoice.ProcessingStatusId = (short)InvoiceProcessingStatus.Notified;
-
-        _dbContext.InvoiceProcessingStatusLog.Add(new(invoice.Id, invoice.ProcessingStatusId));
 
         await _dbContext.SaveChangesAsync(cancellationToken);
     }

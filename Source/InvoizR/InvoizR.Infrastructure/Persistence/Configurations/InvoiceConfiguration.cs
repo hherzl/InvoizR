@@ -1,5 +1,4 @@
 ﻿using InvoizR.Domain.Entities;
-using InvoizR.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -26,7 +25,7 @@ internal class InvoiceConfiguration : IEntityTypeConfiguration<Invoice>
             ;
 
         builder
-            .Property(p => p.ContingencyId)
+            .Property(p => p.FallbackId)
             .HasColumnType("smallint")
             ;
 

@@ -14,7 +14,7 @@ public partial class Responsible
         IdType = idType;
         IdNumber = idNumber;
         AuthorizeCancellation = true;
-        AuthorizeContingency = true;
+        AuthorizeFallback = true;
     }
 
     public string Name { get; set; }
@@ -23,5 +23,5 @@ public partial class Responsible
     public string IdType { get; set; }
     public string IdNumber { get; set; }
     public bool? AuthorizeCancellation { get; set; }
-    public bool? AuthorizeContingency { get; set; }
+    public bool? AuthorizeFallback { get; set; }
 }

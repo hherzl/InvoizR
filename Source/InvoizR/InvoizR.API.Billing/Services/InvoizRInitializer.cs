@@ -66,9 +66,9 @@ public class InvoizRInitializer
             _dbContext.InvoiceType.Add(new(FeFcv1.TypeId, "Consumidor Final", FeFcv1.SchemaType, FeFcv1.Version, true, 90));
             _dbContext.InvoiceType.Add(new(FeCcfv3.TypeId, "Comprobante de Crédito Fiscal", FeCcfv3.SchemaType, FeCcfv3.Version, true, 1));
             _dbContext.InvoiceType.Add(new(FeNrv3.TypeId, "Nota de Remisión", FeNrv3.SchemaType, FeNrv3.Version, true, 90));
-            _dbContext.InvoiceType.Add(new(FeFsev1.TypeId, "Factura Sujeto Excluido", FeFsev1.SchemaType, FeFsev1.Version, true, 90));
             _dbContext.InvoiceType.Add(new(FeNcv3.TypeId, "Nota de Crédito", FeNcv3.SchemaType, FeNcv3.Version, true, 90));
             _dbContext.InvoiceType.Add(new(FeNdv3.TypeId, "Nota de Débito", FeNdv3.SchemaType, FeNdv3.Version, true, 90));
+            _dbContext.InvoiceType.Add(new(FeFsev1.TypeId, "Factura Sujeto Excluido", FeFsev1.SchemaType, FeFsev1.Version, true, 90));
 
             await _dbContext.SaveChangesAsync();
         }
@@ -79,6 +79,7 @@ public class InvoizRInitializer
             _dbContext.EnumDescription.Add(new((short)InvoiceProcessingStatus.InvalidSchema, "Esquema inválido", typeof(InvoiceProcessingStatus).FullName));
             _dbContext.EnumDescription.Add(new((short)InvoiceProcessingStatus.InvalidData, "Datos inválidos", typeof(InvoiceProcessingStatus).FullName));
             _dbContext.EnumDescription.Add(new((short)InvoiceProcessingStatus.Initialized, "Inicializada", typeof(InvoiceProcessingStatus).FullName));
+            _dbContext.EnumDescription.Add(new((short)InvoiceProcessingStatus.Fallback, "Contingencia", typeof(InvoiceProcessingStatus).FullName));
             _dbContext.EnumDescription.Add(new((short)InvoiceProcessingStatus.Requested, "Solicitada", typeof(InvoiceProcessingStatus).FullName));
             _dbContext.EnumDescription.Add(new((short)InvoiceProcessingStatus.Declined, "Rechazada", typeof(InvoiceProcessingStatus).FullName));
             _dbContext.EnumDescription.Add(new((short)InvoiceProcessingStatus.Processed, "Procesada", typeof(InvoiceProcessingStatus).FullName));

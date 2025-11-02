@@ -54,8 +54,8 @@ ALTER TABLE [dbo].[Responsible] ADD CONSTRAINT [PK_dbo_Responsible]
 	PRIMARY KEY ([Id])
 GO
 
-ALTER TABLE [dbo].[Responsible] ADD CONSTRAINT [UQ_dbo_Responsible_Email]
-	UNIQUE ([Email])
+ALTER TABLE [dbo].[Responsible] ADD CONSTRAINT [UQ_dbo_Responsible_CompanyId_Email]
+	UNIQUE ([CompanyId], [Email])
 GO
 
 ALTER TABLE [dbo].[Responsible] ADD CONSTRAINT [FK_dbo_Responsible_CompanyId_dbo_Company]
@@ -114,40 +114,36 @@ ALTER TABLE [dbo].[BranchNotification] ADD CONSTRAINT [FK_dbo_BranchNotification
 	FOREIGN KEY ([InvoiceTypeId]) REFERENCES [dbo].[InvoiceType]
 GO
 
-ALTER TABLE [dbo].[ContingencyReason] ADD CONSTRAINT [PK_dbo_ContingencyReason]
+ALTER TABLE [dbo].[Fallback] ADD CONSTRAINT [PK_dbo_Fallback]
 	PRIMARY KEY ([Id])
 GO
 
-ALTER TABLE [dbo].[ContingencyReason] ADD CONSTRAINT [UQ_dbo_ContingencyReason_Name]
-	UNIQUE ([Name])
+ALTER TABLE [dbo].[Fallback] ADD CONSTRAINT [UQ_dbo_Fallback_CompanyId_Name]
+	UNIQUE ([CompanyId], [Name])
 GO
 
-ALTER TABLE [dbo].[Contingency] ADD CONSTRAINT [PK_dbo_Contingency]
+ALTER TABLE [dbo].[Fallback] ADD CONSTRAINT [FK_dbo_Fallback_CompanyId_dbo_Company]
+	FOREIGN KEY ([CompanyId]) REFERENCES [dbo].[Company]
+GO
+
+ALTER TABLE [dbo].[FallbackProcessingLog] ADD CONSTRAINT [PK_dbo_FallbackProcessingLog]
 	PRIMARY KEY ([Id])
 GO
 
-ALTER TABLE [dbo].[Contingency] ADD CONSTRAINT [UQ_dbo_Contingency_Name]
-	UNIQUE ([Name])
+ALTER TABLE [dbo].[FallbackProcessingLog] ADD CONSTRAINT [FK_dbo_FallbackProcessingLog_FallbackId_dbo_Fallback]
+	FOREIGN KEY ([FallbackId]) REFERENCES [dbo].[Fallback]
 GO
 
-ALTER TABLE [dbo].[Contingency] ADD CONSTRAINT [FK_dbo_Contingency_BranchId_dbo_Branch]
-	FOREIGN KEY ([BranchId]) REFERENCES [dbo].[Branch]
-GO
-
-ALTER TABLE [dbo].[Contingency] ADD CONSTRAINT [FK_dbo_Contingency_ContingencyResponsibleId_dbo_Responsible]
-	FOREIGN KEY ([ContingencyResponsibleId]) REFERENCES [dbo].[Responsible]
-GO
-
-ALTER TABLE [dbo].[Contingency] ADD CONSTRAINT [FK_dbo_Contingency_ContingencyReasonId_dbo_ContingencyReason]
-	FOREIGN KEY ([ContingencyReasonId]) REFERENCES [dbo].[ContingencyReason]
-GO
-
-ALTER TABLE [dbo].[ContingencyProcessingLog] ADD CONSTRAINT [PK_dbo_ContingencyProcessingLog]
+ALTER TABLE [dbo].[FallbackFile] ADD CONSTRAINT [PK_dbo_FallbackFile]
 	PRIMARY KEY ([Id])
 GO
 
-ALTER TABLE [dbo].[ContingencyProcessingLog] ADD CONSTRAINT [FK_dbo_ContingencyProcessingLog_ContingencyId_dbo_Contingency]
-	FOREIGN KEY ([ContingencyId]) REFERENCES [dbo].[Contingency]
+ALTER TABLE [dbo].[FallbackFile] ADD CONSTRAINT [UQ_dbo_FallbackFile_FallbackId_FileName]
+	UNIQUE ([FallbackId], [FileName])
+GO
+
+ALTER TABLE [dbo].[FallbackFile] ADD CONSTRAINT [FK_dbo_FallbackFile_FallbackId_dbo_Fallback]
+	FOREIGN KEY ([FallbackId]) REFERENCES [dbo].[Fallback]
 GO
 
 ALTER TABLE [dbo].[Invoice] ADD CONSTRAINT [PK_dbo_Invoice]
@@ -158,8 +154,8 @@ ALTER TABLE [dbo].[Invoice] ADD CONSTRAINT [UQ_dbo_Invoice_InvoiceTypeId_Invoice
 	UNIQUE ([InvoiceTypeId], [InvoiceNumber])
 GO
 
-ALTER TABLE [dbo].[Invoice] ADD CONSTRAINT [FK_dbo_Invoice_ContingencyId_dbo_Contingency]
-	FOREIGN KEY ([ContingencyId]) REFERENCES [dbo].[Contingency]
+ALTER TABLE [dbo].[Invoice] ADD CONSTRAINT [FK_dbo_Invoice_FallbackId_dbo_Fallback]
+	FOREIGN KEY ([FallbackId]) REFERENCES [dbo].[Fallback]
 GO
 
 ALTER TABLE [dbo].[Invoice] ADD CONSTRAINT [FK_dbo_Invoice_PosId_dbo_Pos]

@@ -7,4 +7,7 @@ public static class ReportsPathHelper
 
     public static string GetDteCssPath()
         => Path.Combine(AppContext.BaseDirectory, Assets, Css, "dte.css");
+
+    public static string GetFallbackCssPath()
+        => Path.Combine(AppContext.BaseDirectory, Assets, Css, "fallback.css");
 }

@@ -21,6 +21,9 @@ public static partial class MhCatalog
                 Factura => "Factura",
                 CreditoFiscal => "Comprobante de Crédito Fiscal",
                 NotaRemision => "Nota de Remisión",
+                NotaCredito => "Nota de Crédito",
+                NotaDebito => "Nota de Débito",
+                Exportacion => "Nota de Exportación",
                 SujetoExcluido => "Factura de Sujeto Excluido",
                 _ => ""
             };
@@ -44,6 +47,20 @@ public static partial class MhCatalog
             {
                 Normal => "Normal",
                 Contingencia => "Contingencia",
+                _ => ""
+            };
+    }
+
+    public static partial class Cat005
+    {
+        public static string Desc(int value)
+            => value switch
+            {
+                NoDisponibilidadSistemaMH => "No Disponibilidad del Sistema del MH",
+                NoDisponibilidadSistemaEmisor => "No Disponibilidad del Sistema del Emisor",
+                FallaSuministroServicioInternetEmisor => "Falla en Suministro de Servicio de Internet del Emisor",
+                FallaSuministroServicioEnergiaElectricaEmisor => "Falla en Suministro de Servicio de Energia Eléctrica del Emisor",
+                Otro => "Otro",
                 _ => ""
             };
     }

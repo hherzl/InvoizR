@@ -11,7 +11,7 @@ public record ResponsibleItemModel
     public string IdType { get; set; }
     public string IdNumber { get; set; }
     public bool? AuthorizeCancellation { get; set; }
-    public bool? AuthorizeContingency { get; set; }
+    public bool? AuthorizeFallback { get; set; }
 
     public string IdTypeDesc
         => MhCatalog.Cat022.Desc(IdType);

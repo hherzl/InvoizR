@@ -10,14 +10,20 @@ public class DteTemplatev1<TDte>
     public TDte Model { get; }
 
     protected string AsStrong(string value)
-            => $"<strong>{value}</strong>";
+        => $"<strong>{value}</strong>";
+
+    protected string AsItalic(string value)
+        => $"<i>{value}</i>";
 
     protected string AsDate(DateTime? value)
+        => $"{value:yyyy-MM-dd}";
+
+    protected string AsDate(DateTimeOffset value)
         => $"{value:yyyy-MM-dd}";
 
     protected string AsDateTime(DateTime? value)
         => $"{value:yyyy-MM-dd hh:mm:ss}";
 
     protected string AsAmount(double amount)
-            => $"{amount:N2}";
+        => $"{amount:N2}";
 }

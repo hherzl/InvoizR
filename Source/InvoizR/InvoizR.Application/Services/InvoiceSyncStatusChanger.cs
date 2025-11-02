@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace InvoizR.Application.Services;
 
-public abstract class DteProcessingStatusChanger(ILogger logger)
+public abstract class InvoiceSyncStatusChanger(ILogger logger)
 {
     protected abstract bool Init(Invoice invoice);
 
@@ -22,6 +22,20 @@ public abstract class DteProcessingStatusChanger(ILogger logger)
         invoice.GenerationCode = dteInfo.GenerationCode;
         invoice.ControlNumber = dteInfo.ControlNumber;
         invoice.ProcessingStatusId = (short)InvoiceProcessingStatus.Initialized;
+
+        dbContext.InvoiceProcessingStatusLog.Add(new(invoice.Id, invoice.ProcessingStatusId));
+
+        logger.LogInformation($" Updating '{invoice.InvoiceNumber}' invoice: '{invoice.SchemaType}{invoice.SchemaVersion}', '{invoice.GenerationCode}', '{invoice.ControlNumber}'...");
+
+        await dbContext.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task SetInvoiceAsFallbackAsync(long? invoiceId, IInvoizRDbContext dbContext, CancellationToken cancellationToken = default)
+    {
+        var invoice = await dbContext.GetInvoiceAsync(invoiceId, tracking: true, ct: cancellationToken);
+
+        invoice.ProcessingTypeId = (short)InvoiceProcessingType.OneWay;
+        invoice.ProcessingStatusId = (short)InvoiceProcessingStatus.Fallback;
 
         dbContext.InvoiceProcessingStatusLog.Add(new(invoice.Id, invoice.ProcessingStatusId));
 

@@ -71,7 +71,7 @@ internal class ResponsibleConfiguration : IEntityTypeConfiguration<Responsible>
             ;
 
         builder
-            .Property(p => p.AuthorizeContingency)
+            .Property(p => p.AuthorizeFallback)
             .HasColumnType("bit")
             .IsRequired()
             ;

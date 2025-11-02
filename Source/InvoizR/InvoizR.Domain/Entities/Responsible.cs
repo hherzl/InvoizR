@@ -21,7 +21,7 @@ public partial class Responsible
     public string IdType { get; set; }
     public string IdNumber { get; set; }
     public bool? AuthorizeCancellation { get; set; }
-    public bool? AuthorizeContingency { get; set; }
+    public bool? AuthorizeFallback { get; set; }
 
     public virtual Collection<Branch> Branches { get; set; }
 }
