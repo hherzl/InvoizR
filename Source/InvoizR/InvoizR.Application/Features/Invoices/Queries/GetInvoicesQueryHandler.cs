@@ -38,7 +38,7 @@ public sealed class GetInvoicesQueryHandler(IInvoizRDbContext dbContext) : IRequ
                 InvoiceNumber = invoice.InvoiceNumber,
                 InvoiceDate = invoice.InvoiceDate,
                 InvoiceTotal = invoice.InvoiceTotal,
-                ControlNumber = invoice.ControlNumber,
+                AuditNumber = invoice.AuditNumber,
                 ProcessingTypeId = invoice.ProcessingTypeId,
                 ProcessingType = vProcessingType.Desc,
                 SyncStatusId = invoice.ProcessingStatusId,

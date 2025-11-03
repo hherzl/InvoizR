@@ -17,7 +17,7 @@ public record InvoiceItemModel
     public long? InvoiceNumber { get; set; }
     public DateTime? InvoiceDate { get; set; }
     public decimal? InvoiceTotal { get; set; }
-    public string ControlNumber { get; set; }
+    public string AuditNumber { get; set; }
     public short? ProcessingTypeId { get; set; }
     public string ProcessingType { get; set; }
     public short? SyncStatusId { get; set; }

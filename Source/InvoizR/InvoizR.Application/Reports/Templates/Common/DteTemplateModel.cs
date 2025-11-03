@@ -20,7 +20,7 @@ public record DteTemplateModel<TDte>
     public short? SchemaVersion { get; set; }
 
     public string GenerationCode { get; set; }
-    public string ControlNumber { get; set; }
+    public string AuditNumber { get; set; }
     public DateTime? EmitDateTime { get; set; }
     public string ReceiptStamp { get; set; }
     public string ExternalUrl { get; set; }

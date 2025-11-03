@@ -55,13 +55,13 @@
                 <HeaderContent>
                     <MudTh>Invoice type</MudTh>
                     <MudTh>Generation code</MudTh>
-                    <MudTh>Control number</MudTh>
+                    <MudTh>Audit number</MudTh>
                     <MudTh></MudTh>
                 </HeaderContent>
                 <RowTemplate>
                     <MudTd DataLabel="Invoice type">@context.InvoiceType</MudTd>
                     <MudTd DataLabel="Generation code">@context.GenerationCode</MudTd>
-                    <MudTd DataLabel="Control number">@context.ControlNumber</MudTd>
+                    <MudTd DataLabel="Control number">@context.AuditNumber</MudTd>
                     <MudTd>
                         <a href="@($"/invoice/{@context.Id}")" target="_blank">
                             <MudIcon Icon="@Icons.Material.Filled.Details" Title="Details" />

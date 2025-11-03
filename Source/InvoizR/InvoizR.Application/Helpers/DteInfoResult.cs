@@ -6,21 +6,21 @@ public record DteInfoResult
     {
     }
 
-    public DteInfoResult(short version, string type, Guid generationCode, string controlNumber)
+    public DteInfoResult(short version, string type, Guid generationCode, string auditNumber)
     {
         Version = version;
         Type = type;
         GenerationCode = generationCode.ToString().ToUpper();
-        ControlNumber = controlNumber;
+        AuditNumber = auditNumber;
     }
 
     public short Version { get; }
     public string Type { get; }
     public string GenerationCode { get; }
-    public string ControlNumber { get; }
+    public string AuditNumber { get; }
 
-    public bool HasControlNumber
-        => !string.IsNullOrEmpty(ControlNumber);
+    public bool HasAuditNumber
+        => !string.IsNullOrEmpty(AuditNumber);
 
     public static DteInfoResult Empty()
         => new();

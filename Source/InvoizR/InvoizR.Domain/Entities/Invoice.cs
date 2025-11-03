@@ -42,7 +42,7 @@ public partial class Invoice : Entity
     public string SchemaType { get; set; }
     public short? SchemaVersion { get; set; }
     public string GenerationCode { get; set; }
-    public string ControlNumber { get; set; }
+    public string AuditNumber { get; set; }
     public string Payload { get; set; }
     public short? ProcessingTypeId { get; set; }
     public short? ProcessingStatusId { get; set; }
