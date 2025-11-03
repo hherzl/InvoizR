@@ -54,13 +54,13 @@
             <MudTable Items="DetailsResponse?.Model.Invoices">
                 <HeaderContent>
                     <MudTh>Invoice type</MudTh>
-                    <MudTh>Generation code</MudTh>
+                    <MudTh>GUID</MudTh>
                     <MudTh>Audit number</MudTh>
                     <MudTh></MudTh>
                 </HeaderContent>
                 <RowTemplate>
                     <MudTd DataLabel="Invoice type">@context.InvoiceType</MudTd>
-                    <MudTd DataLabel="Generation code">@context.GenerationCode</MudTd>
+                    <MudTd DataLabel="GUID">@context.InvoiceGuid</MudTd>
                     <MudTd DataLabel="Control number">@context.AuditNumber</MudTd>
                     <MudTd>
                         <a href="@($"/invoice/{@context.Id}")" target="_blank">

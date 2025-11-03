@@ -101,7 +101,7 @@ public class DteSyncHandler
             InvoiceProcessingLog.CreateRequest(invoice.Id, InvoiceProcessingStatus.Requested, firmarDocumentoResponse.ToJson())
         );
 
-        var recepcionRequest = new RecepcionDteRequest(invoice.Pos.Branch.Company.Environment, invoice.SchemaVersion, invoice.SchemaType, invoice.GenerationCode, firmarDocumentoResponse.Body);
+        var recepcionRequest = new RecepcionDteRequest(invoice.Pos.Branch.Company.Environment, invoice.SchemaVersion, invoice.SchemaType, invoice.InvoiceGuid, firmarDocumentoResponse.Body);
         await File.WriteAllTextAsync(_processingSettings.GetRecepcionRequestJsonPath(invoice.AuditNumber), recepcionRequest.ToJson(), cancellationToken);
 
         _fesvClient.Jwt = request.ThirdPartyClientParameters.GetToken();
@@ -121,7 +121,7 @@ public class DteSyncHandler
             invoice.ReceiptStamp = recepcionResponse.SelloRecibido;
             invoice.ExternalUrl = request.ThirdPartyClientParameters.GetPublicQuery()
                 .Replace("env", invoice.Pos.Branch.Company.Environment)
-                .Replace("genCode", invoice.GenerationCode)
+                .Replace("guid", invoice.InvoiceGuid)
                 .Replace("emitDate", invoice.InvoiceDate?.ToString("yyyy-MM-dd"))
                 ;
 

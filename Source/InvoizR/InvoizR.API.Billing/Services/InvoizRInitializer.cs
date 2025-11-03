@@ -54,7 +54,7 @@ public class InvoizRInitializer
                 [
                     new(ThirdPatyClientParameterTypes.Url, "Endpoint", "https://localhost:7220"),
                     new(ThirdPatyClientParameterTypes.Header, "User-Agent", "InvoizR FE SV client"),
-                    new(ThirdPatyClientParameterTypes.Url, "PublicQuery", "https://admin.factura.gob.sv/consultaPublica?ambiente=env&codGen=genCode&fechaEmi=emitDate")
+                    new(ThirdPatyClientParameterTypes.Url, "PublicQuery", "https://admin.factura.gob.sv/consultaPublica?ambiente=env&codGen=guid&fechaEmi=emitDate")
                 ]
             });
 

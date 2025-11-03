@@ -30,7 +30,7 @@ public class FallbackTemplateFactory
                 Logo = Convert.ToBase64String(logo)
             },
             SchemaVersion = Contingenciav3.Version,
-            GenerationCode = invoice.FallbackGuid,
+            InvoiceGuid = invoice.FallbackGuid,
             EmitDateTime = invoice.EmitDateTime,
             ReceiptStamp = invoice.ReceiptStamp
         };

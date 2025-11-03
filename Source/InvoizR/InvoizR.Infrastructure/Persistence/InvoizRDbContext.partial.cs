@@ -104,7 +104,7 @@ public partial class InvoizRDbContext
                 Id = invoice.Id,
                 InvoiceTypeId = invoice.InvoiceTypeId,
                 InvoiceType = invoiceType.Name,
-                GenerationCode = invoice.GenerationCode,
+                InvoiceGuid = invoice.InvoiceGuid,
                 AuditNumber = invoice.AuditNumber
             };
 

@@ -342,7 +342,7 @@ var invoice = db
         Lines = 0,
         SchemaType = "",
         SchemaVersion = (short)0,
-        GenerationCode = "",
+        InvoiceGuid = "",
         AuditNumber = "",
         Payload = "",
         ProcessingTypeId = (short)0,
@@ -373,7 +373,7 @@ var invoice = db
     .SetColumnFor(e => e.InvoiceTotal, 14, 6)
     .SetColumnFor(e => e.SchemaType, 2, true)
     .SetColumnFor(e => e.SchemaVersion, true)
-    .SetColumnFor(e => e.GenerationCode, 50, true)
+    .SetColumnFor(e => e.InvoiceGuid, 50, true)
     .SetColumnFor(e => e.AuditNumber, 50, true)
     .SetColumnFor(e => e.Payload, nullable: true)
     .SetColumnFor(e => e.RetryIn, true)
@@ -390,6 +390,7 @@ var invoice = db
     .AddUnique(e => new { e.InvoiceTypeId, e.InvoiceNumber })
     .AddForeignKey(e => e.FallbackId, fallback.Table)
     .AddForeignKey(e => e.PosId, pos.Table)
+    .AddForeignKey(e => e.InvoiceTypeId, invoiceType.Table)
     ;
 
 var invoiceValidation = db

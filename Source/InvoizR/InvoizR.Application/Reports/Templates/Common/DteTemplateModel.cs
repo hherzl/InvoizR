@@ -19,7 +19,7 @@ public record DteTemplateModel<TDte>
     public string SchemaType { get; set; }
     public short? SchemaVersion { get; set; }
 
-    public string GenerationCode { get; set; }
+    public string InvoiceGuid { get; set; }
     public string AuditNumber { get; set; }
     public DateTime? EmitDateTime { get; set; }
     public string ReceiptStamp { get; set; }

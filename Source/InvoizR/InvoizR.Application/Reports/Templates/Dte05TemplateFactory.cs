@@ -51,7 +51,7 @@ public class Dte05TemplateFactory : DteTemplateFactory
             },
             SchemaType = invoice.SchemaType,
             SchemaVersion = invoice.SchemaVersion,
-            GenerationCode = invoice.GenerationCode,
+            InvoiceGuid = invoice.InvoiceGuid,
             AuditNumber = invoice.AuditNumber,
             EmitDateTime = invoice.EmitDateTime,
             ReceiptStamp = invoice.ReceiptStamp,

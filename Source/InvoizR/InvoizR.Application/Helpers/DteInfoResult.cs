@@ -6,17 +6,17 @@ public record DteInfoResult
     {
     }
 
-    public DteInfoResult(short version, string type, Guid generationCode, string auditNumber)
+    public DteInfoResult(short version, string type, Guid invoiceGuid, string auditNumber)
     {
         Version = version;
         Type = type;
-        GenerationCode = generationCode.ToString().ToUpper();
+        InvoiceGuid = invoiceGuid.ToString().ToUpper();
         AuditNumber = auditNumber;
     }
 
     public short Version { get; }
     public string Type { get; }
-    public string GenerationCode { get; }
+    public string InvoiceGuid { get; }
     public string AuditNumber { get; }
 
     public bool HasAuditNumber

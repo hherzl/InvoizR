@@ -25,7 +25,7 @@ static class Anulacion
 
         //dte.Documento.TipoDte = request.ReferenceDocument.SchemaType;
         //dte.Documento.NumeroControl = request.ReferenceDocument.AuditNumber;
-        //dte.Documento.CodigoGeneracion = request.ReferenceDocument.GenerationCode;
+        //dte.Documento.CodigoGeneracion = request.ReferenceDocument.InvoiceGuid;
         //dte.Documento.SelloRecibido = request.ReferenceDocument.ReceiptStamp;
 
         //dte.Documento.FecEmi = new DateTimeOffset(request.ReferenceDocument.DocDate.Value);
