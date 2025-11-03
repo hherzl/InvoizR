@@ -28,7 +28,6 @@ public class GetBranchQueryHandler : IRequestHandler<GetBranchQuery, SingleRespo
             Id = entity.Id,
             CompanyId = entity.CompanyId,
             Name = entity.Name,
-            EstablishmentPrefix = entity.EstablishmentPrefix,
             TaxAuthId = entity.TaxAuthId,
             Address = entity.Address,
             Phone = entity.Phone,

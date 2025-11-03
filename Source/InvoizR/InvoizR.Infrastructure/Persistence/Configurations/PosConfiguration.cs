@@ -45,7 +45,7 @@ internal class PosConfiguration : IEntityTypeConfiguration<Pos>
             ;
 
         builder
-            .Property(p => p.TaxAuthPos)
+            .Property(p => p.TaxAuthId)
             .HasColumnType("nvarchar")
             .HasMaxLength(4)
             ;

@@ -81,7 +81,6 @@ if (clientArgs.Seed)
         {
             CompanyId = createCompanyResponse.Id,
             Name = item.Name,
-            EstablishmentPrefix = item.EstablishmentPrefix,
             TaxAuthId = item.TaxAuthId,
             Address = item.Address,
             Phone = item.Phone,
@@ -108,7 +107,7 @@ if (clientArgs.Seed)
             BranchId = createBranchResponse.Id,
             Name = "POS 1",
             Code = "POS1",
-            TaxAuthPos = "01",
+            TaxAuthId = "P001",
             Description = "POS 1"
         };
 

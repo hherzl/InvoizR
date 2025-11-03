@@ -13,14 +13,14 @@ public static class Db
     {
         _branches = new()
         {
-            new Branch("CC. Central Branch", "ES", "01", "1 Capsule Corp Drive, West City", "+1-800-555-0001", "central@capsulecorp.com"),
-            new Branch("CC. East Branch", "ES", "02", "12 Dragon Street, East City", "+1-800-555-0002", "east@capsulecorp.com"),
-            new Branch("CC. North Branch", "ES", "03", "99 Ice Lane, North City", "+1-800-555-0003", "north@capsulecorp.com"),
-            new Branch("CC. South Branch", "ES", "04", "77 Ocean Avenue, South City", "+1-800-555-0004", "south@capsulecorp.com"),
-            new Branch("CC. Satan City Branch", "ES", "05", "21 Hercule Boulevard, Satan City", "+1-800-555-0005", "satan@capsulecorp.com"),
-            new Branch("CC. Ginger Town Branch", "ES", "06", "5 Meadow Road, Ginger Town", "+1-800-555-0006", "gingertown@capsulecorp.com"),
-            new Branch("CC. Orange Star Branch", "ES", "07", "17 Gohan Way, Orange Star City", "+1-800-555-0007", "orangestar@capsulecorp.com"),
-            new Branch("CC. Penguin Village Branch", "ES", "08", "3 Arale Lane, Penguin Village", "+1-800-555-0008", "penguin@capsulecorp.com")
+            new Branch("CC. Central Branch", "S001", "1 Capsule Corp Drive, West City", "+1-800-555-0001", "central@capsulecorp.com"),
+            new Branch("CC. East Branch", "S002", "12 Dragon Street, East City", "+1-800-555-0002", "east@capsulecorp.com"),
+            new Branch("CC. North Branch", "S003", "99 Ice Lane, North City", "+1-800-555-0003", "north@capsulecorp.com"),
+            new Branch("CC. South Branch", "S004", "77 Ocean Avenue, South City", "+1-800-555-0004", "south@capsulecorp.com"),
+            new Branch("CC. Satan City Branch", "S005", "21 Hercule Boulevard, Satan City", "+1-800-555-0005", "satan@capsulecorp.com"),
+            new Branch("CC. Ginger Town Branch", "S006", "5 Meadow Road, Ginger Town", "+1-800-555-0006", "gingertown@capsulecorp.com"),
+            new Branch("CC. Orange Star Branch", "S007", "17 Gohan Way, Orange Star City", "+1-800-555-0007", "orangestar@capsulecorp.com"),
+            new Branch("CC. Penguin Village Branch", "S008", "3 Arale Lane, Penguin Village", "+1-800-555-0008", "penguin@capsulecorp.com")
         };
 
         _responsibles = new()

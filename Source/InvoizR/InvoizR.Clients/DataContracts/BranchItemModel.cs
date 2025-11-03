@@ -6,6 +6,5 @@ public record BranchItemModel
     public short? CompanyId { get; set; }
     public string Company { get; set; }
     public string Name { get; set; }
-    public string EstablishmentPrefix { get; set; }
     public string TaxAuthId { get; set; }
 }

@@ -27,7 +27,6 @@
     </MudCardHeader>
     <MudCardContent>
         <MudText>Name: @response?.Model.Name</MudText>
-        <MudText>Establishment Prefix: @response?.Model.EstablishmentPrefix</MudText>
         <MudText>Tax Auth ID: @response?.Model.TaxAuthId</MudText>
         <MudText>Address: @response?.Model.Address</MudText>
         <MudText>Phone: @response?.Model.Phone</MudText>
@@ -45,12 +44,12 @@
     <HeaderContent>
         <MudTh>Name</MudTh>
         <MudTh>Code</MudTh>
-        <MudTh>Tax Auth POS</MudTh>
+        <MudTh>Tax Auth ID</MudTh>
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="Name">@context.Name</MudTd>
-        <MudTd DataLabel="Name">@context.Code</MudTd>
-        <MudTd DataLabel="Name">@context.TaxAuthPos</MudTd>
+        <MudTd DataLabel="Code">@context.Code</MudTd>
+        <MudTd DataLabel="Tax Auth ID">@context.TaxAuthId</MudTd>
     </RowTemplate>
 </MudTable>
 

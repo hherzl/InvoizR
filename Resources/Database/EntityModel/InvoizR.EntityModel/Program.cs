@@ -160,7 +160,6 @@ var branch = db
         Id = (short)0,
         CompanyId = (short)0,
         Name = "",
-        EstablishmentPrefix = "",
         TaxAuthId = "",
         Address = "",
         Phone = "",
@@ -172,7 +171,6 @@ var branch = db
     })
     .SetNaming("Branch")
     .SetColumnFor(e => e.Name, 100)
-    .SetColumnFor(e => e.EstablishmentPrefix, 5)
     .SetColumnFor(e => e.TaxAuthId, 4, true)
     .SetColumnFor(e => e.Address, 100)
     .SetColumnFor(e => e.Phone, 25)
@@ -195,17 +193,18 @@ var pos = db
         BranchId = (short)0,
         Name = "",
         Code = "",
-        TaxAuthPos = "",
+        TaxAuthId = "",
         Description = ""
     })
     .SetNaming("Pos")
     .SetColumnFor(e => e.Name, 25)
     .SetColumnFor(e => e.Code, 5)
-    .SetColumnFor(e => e.TaxAuthPos, 4, true)
+    .SetColumnFor(e => e.TaxAuthId, 4, true)
     .SetColumnFor(e => e.Description, nullable: true)
     .SetIdentity(e => e.Id)
     .SetPrimaryKey(e => e.Id)
     .AddUnique(e => new { e.BranchId, e.Name })
+    .AddUnique(e => new { e.BranchId, e.TaxAuthId })
     .AddForeignKey(e => e.BranchId, branch.Table)
     ;
 
