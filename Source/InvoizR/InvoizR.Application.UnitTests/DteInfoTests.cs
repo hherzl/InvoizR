@@ -1,4 +1,4 @@
-﻿using InvoizR.Application.Helpers;
+﻿using InvoizR.Application.Services;
 
 namespace InvoizR.Application.UnitTests;
 
@@ -13,7 +13,7 @@ public class DteInfoTests
         var pos = "POS01";
         var invoiceNumber = 12345;
 
-        var result = DteInfoHelper.Get(type, prefix, branch, pos, invoiceNumber);
+        var result = new InvoiceCodeGenerator().Generate(type, prefix, branch, pos, invoiceNumber);
 
         Assert.Equal("DTE-01-ES01POS01-000000000012345", result.AuditNumber);
     }
@@ -27,7 +27,7 @@ public class DteInfoTests
         var pos = "";
         var invoiceNumber = 0;
 
-        var result = DteInfoHelper.Get(type, prefix, branch, pos, invoiceNumber);
+        var result = new InvoiceCodeGenerator().Generate(type, prefix, branch, pos, invoiceNumber);
 
         Assert.Null(result.AuditNumber);
     }

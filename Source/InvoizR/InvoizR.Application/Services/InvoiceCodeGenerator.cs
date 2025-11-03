@@ -1,15 +1,16 @@
-﻿using InvoizR.SharedKernel.Mh.FeCcf;
+﻿using InvoizR.Application.Services.Models;
+using InvoizR.SharedKernel.Mh.FeCcf;
 using InvoizR.SharedKernel.Mh.FeFc;
 using InvoizR.SharedKernel.Mh.FeFse;
 using InvoizR.SharedKernel.Mh.FeNc;
 using InvoizR.SharedKernel.Mh.FeNd;
 using InvoizR.SharedKernel.Mh.FeNr;
 
-namespace InvoizR.Application.Helpers;
+namespace InvoizR.Application.Services;
 
-public static class DteInfoHelper
+public sealed class InvoiceCodeGenerator
 {
-    public static DteInfoResult Get(short? type, string prefix, string branch, string pos, long? invoiceNumber)
+    public InvoiceCodeResult Generate(short? type, string prefix, string branch, string pos, long? invoiceNumber)
     {
         if (type == FeFcv1.TypeId)
             return new(FeFcv1.TypeId, FeFcv1.SchemaType, Guid.NewGuid(), $"DTE-{FeFcv1.SchemaType}-{prefix}{branch}{pos}-{invoiceNumber:000000000000000}");
@@ -24,6 +25,6 @@ public static class DteInfoHelper
         else if (type == FeFsev1.TypeId)
             return new(FeFsev1.TypeId, FeFsev1.SchemaType, Guid.NewGuid(), $"DTE-{FeFsev1.SchemaType}-{prefix}{branch}{pos}-{invoiceNumber:000000000000000}");
 
-        return DteInfoResult.Empty();
+        return InvoiceCodeResult.Empty();
     }
 }

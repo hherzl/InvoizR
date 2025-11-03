@@ -1,12 +1,12 @@
-﻿namespace InvoizR.Application.Helpers;
+﻿namespace InvoizR.Application.Services.Models;
 
-public record DteInfoResult
+public record InvoiceCodeResult
 {
-    public DteInfoResult()
+    public InvoiceCodeResult()
     {
     }
 
-    public DteInfoResult(short version, string type, Guid invoiceGuid, string auditNumber)
+    public InvoiceCodeResult(short version, string type, Guid invoiceGuid, string auditNumber)
     {
         Version = version;
         Type = type;
@@ -22,6 +22,6 @@ public record DteInfoResult
     public bool HasAuditNumber
         => !string.IsNullOrEmpty(AuditNumber);
 
-    public static DteInfoResult Empty()
+    public static InvoiceCodeResult Empty()
         => new();
 }

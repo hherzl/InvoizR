@@ -1,5 +1,4 @@
 ﻿using InvoizR.Application.Common.Contracts;
-using InvoizR.Application.Helpers;
 using InvoizR.Domain.Entities;
 using InvoizR.Domain.Enums;
 using Microsoft.Extensions.Logging;
@@ -15,12 +14,12 @@ public abstract class InvoiceSyncStatusChanger(ILogger logger)
         var invoice = await dbContext.GetInvoiceAsync(invoiceId, includes: true, tracking: true, ct: cancellationToken);
         var invoiceType = await dbContext.GetInvoiceTypeAsync(invoice.InvoiceTypeId, ct: cancellationToken);
 
-        var dteInfo = DteInfoHelper.Get(invoiceType.Id, invoice.Pos.Branch.EstablishmentPrefix, invoice.Pos.Branch.TaxAuthId, invoice.Pos.Code, invoice.InvoiceNumber);
+        var invoiceCodes = new InvoiceCodeGenerator().Generate(invoiceType.Id, invoice.Pos.Branch.EstablishmentPrefix, invoice.Pos.Branch.TaxAuthId, invoice.Pos.Code, invoice.InvoiceNumber);
 
         invoice.SchemaType = invoiceType.SchemaType;
         invoice.SchemaVersion = invoiceType.SchemaVersion;
-        invoice.InvoiceGuid = dteInfo.InvoiceGuid;
-        invoice.AuditNumber = dteInfo.AuditNumber;
+        invoice.InvoiceGuid = invoiceCodes.InvoiceGuid;
+        invoice.AuditNumber = invoiceCodes.AuditNumber;
         invoice.ProcessingStatusId = (short)InvoiceProcessingStatus.Initialized;
 
         dbContext.InvoiceProcessingStatusLog.Add(new(invoice.Id, invoice.ProcessingStatusId));
