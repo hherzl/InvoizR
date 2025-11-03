@@ -27,26 +27,26 @@ public sealed class DteCancellationHandler
     {
         var invoice = await dbContext.GetInvoiceAsync(request.InvoiceId, true, true, st);
 
-        if (!Directory.Exists(_processingSettings.GetLogsPath(invoice.ControlNumber)))
-            Directory.CreateDirectory(_processingSettings.GetLogsPath(invoice.ControlNumber));
+        if (!Directory.Exists(_processingSettings.GetLogsPath(invoice.AuditNumber)))
+            Directory.CreateDirectory(_processingSettings.GetLogsPath(invoice.AuditNumber));
 
         _firmadorClient.ClientSettings = request.ThirdPartyClientParameters.GetByService(_firmadorClient.ServiceName).ToFirmadorClientSettings();
 
         var firmarDocumentoRequest = new FirmarDocumentoRequest<Anulacionv2>(request.ThirdPartyClientParameters.GetUser(), true, request.ThirdPartyClientParameters.GetPrivateKey(), request.Anulacion);
-        await File.WriteAllTextAsync(_processingSettings.GetDteCancellationFirmaRequestJsonPath(invoice.ControlNumber), firmarDocumentoRequest.ToJson(), st);
+        await File.WriteAllTextAsync(_processingSettings.GetDteCancellationFirmaRequestJsonPath(invoice.AuditNumber), firmarDocumentoRequest.ToJson(), st);
 
         var firmarDocumentoResponse = await _firmadorClient.FirmarDocumentoAsync(firmarDocumentoRequest);
-        await File.WriteAllTextAsync(_processingSettings.GetDteCancellationFirmaResponseJsonPath(invoice.ControlNumber), firmarDocumentoResponse.ToJson(), st);
+        await File.WriteAllTextAsync(_processingSettings.GetDteCancellationFirmaResponseJsonPath(invoice.AuditNumber), firmarDocumentoResponse.ToJson(), st);
 
         dbContext.InvoiceCancellationLog.Add(InvoiceCancellationLog.CreateRequest(invoice.Id, firmarDocumentoResponse.ToJson()));
 
         var anularDteRequest = new AnularDteRequest(invoice.Pos.Branch.Company.Environment, firmarDocumentoResponse.Body);
-        await File.WriteAllTextAsync(_processingSettings.GetDteCancellationRequestJsonPath(invoice.ControlNumber), anularDteRequest.ToJson(), st);
+        await File.WriteAllTextAsync(_processingSettings.GetDteCancellationRequestJsonPath(invoice.AuditNumber), anularDteRequest.ToJson(), st);
 
         _fesvClient.Jwt = request.ThirdPartyClientParameters.GetToken();
 
         var anularDteResponse = await _fesvClient.AnularDteAsync(anularDteRequest);
-        await File.WriteAllTextAsync(_processingSettings.GetDteCancellationResponseJsonPath(invoice.ControlNumber), anularDteResponse.ToJson(), st);
+        await File.WriteAllTextAsync(_processingSettings.GetDteCancellationResponseJsonPath(invoice.AuditNumber), anularDteResponse.ToJson(), st);
 
         if (anularDteResponse.IsSuccessful)
         {

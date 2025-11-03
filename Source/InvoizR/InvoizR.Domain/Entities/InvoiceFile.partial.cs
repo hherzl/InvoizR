@@ -8,7 +8,7 @@ public partial class InvoiceFile
         Size = fileBytes.Length;
         MimeType = mimeType;
         FileType = fileType;
-        FileName = $"{invoice.ControlNumber}.{fileType.ToLower()}";
+        FileName = $"{invoice.AuditNumber}.{fileType.ToLower()}";
         CreatedAt = DateTime.Now;
         File = fileBytes;
     }

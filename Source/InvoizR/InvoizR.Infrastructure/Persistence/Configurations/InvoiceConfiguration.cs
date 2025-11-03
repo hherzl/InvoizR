@@ -153,7 +153,7 @@ internal class InvoiceConfiguration : IEntityTypeConfiguration<Invoice>
             ;
 
         builder
-            .Property(p => p.ControlNumber)
+            .Property(p => p.AuditNumber)
             .HasColumnType("nvarchar")
             .HasMaxLength(50)
             ;

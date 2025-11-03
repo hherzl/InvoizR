@@ -38,7 +38,7 @@ public sealed class FallbackInvoiceExporter
         foreach (var item in _invoiceExportStrategies)
         {
             _logger.LogInformation($"Exporting '{invoice.InvoiceTypeId}-{invoice.InvoiceNumber}' invoice as '{item.FileExtension}'...");
-            var bytes = await item.ExportAsync(invoice, processingSettings.GetDtePath(invoice.ControlNumber, item.FileExtension), cancellationToken);
+            var bytes = await item.ExportAsync(invoice, processingSettings.GetDtePath(invoice.AuditNumber, item.FileExtension), cancellationToken);
 
             _logger.LogInformation($" Adding '{item.FileExtension}' as bytes...");
 
@@ -46,7 +46,7 @@ public sealed class FallbackInvoiceExporter
         }
 
         var notificationTemplate = new DteNotificationTemplatev1(new(invoice.Pos.Branch, invoiceType, invoice));
-        var notificationPath = processingSettings.GetDteNotificationPath(invoice.ControlNumber);
+        var notificationPath = processingSettings.GetDteNotificationPath(invoice.AuditNumber);
 
         _logger.LogInformation($"Creating notification file for invoice '{invoice.InvoiceTypeId}-{invoice.InvoiceNumber}', path: '{notificationPath}'...");
 

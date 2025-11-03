@@ -16,7 +16,7 @@ public class DTE01PdfTests : ReportsTest
     public async Task GenerateDTE01Pdf()
     {
         var invoice = await _dbContext.GetInvoiceAsync(1, includes: true);
-        var pdfPath = _processingSettings.GetDtePdfPath(invoice.ControlNumber);
+        var pdfPath = _processingSettings.GetDtePdfPath(invoice.AuditNumber);
         var pdf = new HtmlToPdfDocument
         {
             GlobalSettings = DinkToPdfHelper.CreateDteGlobalSettings(pdfPath),
@@ -35,7 +35,7 @@ public class DTE01PdfTests : ReportsTest
     public async Task GenerateDTE03Pdf()
     {
         var invoice = await _dbContext.GetInvoiceAsync(10, includes: true);
-        var pdfPath = _processingSettings.GetDtePdfPath(invoice.ControlNumber);
+        var pdfPath = _processingSettings.GetDtePdfPath(invoice.AuditNumber);
         var pdf = new HtmlToPdfDocument
         {
             GlobalSettings = DinkToPdfHelper.CreateDteGlobalSettings(pdfPath),

@@ -13,7 +13,7 @@ public static class Mapping
             if (result == null)
                 return Results.NotFound();
 
-            return Results.File(result.Qr, result.ContentType, result.ControlNumber);
+            return Results.File(result.Qr, result.ContentType, result.AuditNumber);
         });
 
         return webApplication;

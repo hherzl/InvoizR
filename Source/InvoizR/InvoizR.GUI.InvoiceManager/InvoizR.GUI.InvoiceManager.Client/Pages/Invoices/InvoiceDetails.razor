@@ -54,7 +54,7 @@ else
             <MudText Typo="Typo.body2">Total: <strong>@response?.InvoiceTotal.ToCurrency()</strong></MudText>
             <MudText Typo="Typo.body2">Esquema: <strong>@response?.SchemaType</strong> - <strong>@response?.SchemaVersion</strong></MudText>
             <MudText Typo="Typo.body2">Código de generación: <strong>@response?.GenerationCode</strong></MudText>
-            <MudText Typo="Typo.body2">Número de control: <strong>@response?.ControlNumber</strong></MudText>
+            <MudText Typo="Typo.body2">Número de control: <strong>@response?.AuditNumber</strong></MudText>
             <MudText Typo="Typo.body2">Fecha de emisión: <strong>@response?.EmitDateTime</strong></MudText>
             <MudText Typo="Typo.body2">Sello de recepción: <strong>@response?.ReceiptStamp</strong></MudText>
             @if (response?.Processed == true)

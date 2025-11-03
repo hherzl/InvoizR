@@ -15,7 +15,7 @@ public class DteInfoTests
 
         var result = DteInfoHelper.Get(type, prefix, branch, pos, invoiceNumber);
 
-        Assert.Equal("DTE-01-ES01POS01-000000000012345", result.ControlNumber);
+        Assert.Equal("DTE-01-ES01POS01-000000000012345", result.AuditNumber);
     }
 
     [Fact]
@@ -29,6 +29,6 @@ public class DteInfoTests
 
         var result = DteInfoHelper.Get(type, prefix, branch, pos, invoiceNumber);
 
-        Assert.Null(result.ControlNumber);
+        Assert.Null(result.AuditNumber);
     }
 }

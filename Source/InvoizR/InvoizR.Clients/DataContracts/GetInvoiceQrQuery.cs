@@ -11,10 +11,3 @@ public record GetInvoiceQrQuery : IRequest<InvoiceQrModel>
 
     public long Id { get; }
 }
-
-public record InvoiceQrModel
-{
-    public byte[] Qr { get; set; }
-    public string ContentType { get; set; }
-    public string ControlNumber { get; set; }
-}

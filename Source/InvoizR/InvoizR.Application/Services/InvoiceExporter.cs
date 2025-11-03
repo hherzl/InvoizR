@@ -26,7 +26,7 @@ public sealed class InvoiceExporter(ILogger<InvoiceExporter> logger, IEnumerable
         {
             logger.LogInformation($"Exporting '{invoice.InvoiceTypeId}-{invoice.InvoiceNumber}' invoice as '{exportStrategy.FileExtension}'...");
 
-            var bytes = await exportStrategy.ExportAsync(invoice, processingSettings.GetDtePath(invoice.ControlNumber, exportStrategy.FileExtension), cancellationToken);
+            var bytes = await exportStrategy.ExportAsync(invoice, processingSettings.GetDtePath(invoice.AuditNumber, exportStrategy.FileExtension), cancellationToken);
 
             logger.LogInformation($" Adding '{exportStrategy.FileExtension}' as bytes...");
 
@@ -41,7 +41,7 @@ public sealed class InvoiceExporter(ILogger<InvoiceExporter> logger, IEnumerable
         await dbContext.SaveChangesAsync(cancellationToken);
 
         var notificationTemplate = new DteNotificationTemplatev1(new(invoice.Pos.Branch, invoiceType, invoice));
-        var notificationPath = processingSettings.GetDteNotificationPath(invoice.ControlNumber);
+        var notificationPath = processingSettings.GetDteNotificationPath(invoice.AuditNumber);
 
         logger.LogInformation($"Creating notification file for invoice '{invoice.InvoiceTypeId}-{invoice.InvoiceNumber}', path: '{notificationPath}'...");
 

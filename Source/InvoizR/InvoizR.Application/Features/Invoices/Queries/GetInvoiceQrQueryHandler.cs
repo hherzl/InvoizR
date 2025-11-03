@@ -25,7 +25,7 @@ public class GetInvoiceQrQueryHandler : IRequestHandler<GetInvoiceQrQuery, Invoi
         {
             Qr = _qrCodeGenerator.GetBytes(entity.ExternalUrl ?? "noexternalurl"),
             ContentType = "image/png",
-            ControlNumber = entity.ControlNumber
+            AuditNumber = entity.AuditNumber
         };
     }
 }

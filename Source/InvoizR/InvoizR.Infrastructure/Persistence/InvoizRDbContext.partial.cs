@@ -105,7 +105,7 @@ public partial class InvoizRDbContext
                 InvoiceTypeId = invoice.InvoiceTypeId,
                 InvoiceType = invoiceType.Name,
                 GenerationCode = invoice.GenerationCode,
-                ControlNumber = invoice.ControlNumber
+                AuditNumber = invoice.AuditNumber
             };
 
         return query;
@@ -245,7 +245,7 @@ public partial class InvoizRDbContext
                 InvoiceNumber = invoice.InvoiceNumber,
                 InvoiceDate = invoice.InvoiceDate,
                 InvoiceTotal = invoice.InvoiceTotal,
-                ControlNumber = invoice.ControlNumber,
+                AuditNumber = invoice.AuditNumber,
                 ProcessingTypeId = invoice.ProcessingTypeId,
                 SyncStatusId = invoice.ProcessingStatusId,
                 Payload = invoice.Payload

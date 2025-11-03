@@ -20,12 +20,12 @@ public abstract class InvoiceSyncStatusChanger(ILogger logger)
         invoice.SchemaType = invoiceType.SchemaType;
         invoice.SchemaVersion = invoiceType.SchemaVersion;
         invoice.GenerationCode = dteInfo.GenerationCode;
-        invoice.ControlNumber = dteInfo.ControlNumber;
+        invoice.AuditNumber = dteInfo.AuditNumber;
         invoice.ProcessingStatusId = (short)InvoiceProcessingStatus.Initialized;
 
         dbContext.InvoiceProcessingStatusLog.Add(new(invoice.Id, invoice.ProcessingStatusId));
 
-        logger.LogInformation($" Updating '{invoice.InvoiceNumber}' invoice: '{invoice.SchemaType}{invoice.SchemaVersion}', '{invoice.GenerationCode}', '{invoice.ControlNumber}'...");
+        logger.LogInformation($" Updating '{invoice.InvoiceNumber}' invoice: '{invoice.SchemaType}{invoice.SchemaVersion}', '{invoice.GenerationCode}', '{invoice.AuditNumber}'...");
 
         await dbContext.SaveChangesAsync(cancellationToken);
     }
@@ -39,7 +39,7 @@ public abstract class InvoiceSyncStatusChanger(ILogger logger)
 
         dbContext.InvoiceProcessingStatusLog.Add(new(invoice.Id, invoice.ProcessingStatusId));
 
-        logger.LogInformation($" Updating '{invoice.InvoiceNumber}' invoice: '{invoice.SchemaType}{invoice.SchemaVersion}', '{invoice.GenerationCode}', '{invoice.ControlNumber}'...");
+        logger.LogInformation($" Updating '{invoice.InvoiceNumber}' invoice: '{invoice.SchemaType}{invoice.SchemaVersion}', '{invoice.GenerationCode}', '{invoice.AuditNumber}'...");
 
         await dbContext.SaveChangesAsync(cancellationToken);
     }
@@ -55,7 +55,7 @@ public abstract class InvoiceSyncStatusChanger(ILogger logger)
 
         dbContext.InvoiceProcessingStatusLog.Add(new(invoice.Id, invoice.ProcessingStatusId));
 
-        logger.LogInformation($" Updating '{invoice.InvoiceNumber}' invoice: '{invoice.SchemaType}{invoice.SchemaVersion}', '{invoice.GenerationCode}', '{invoice.ControlNumber}'...");
+        logger.LogInformation($" Updating '{invoice.InvoiceNumber}' invoice: '{invoice.SchemaType}{invoice.SchemaVersion}', '{invoice.GenerationCode}', '{invoice.AuditNumber}'...");
 
         await dbContext.SaveChangesAsync(cancellationToken);
     }

@@ -22,5 +22,5 @@ GO
 
 CREATE VIEW [dbo].[VInvoice]
 AS
-    SELECT [Id] FROM [dbo].[Invoice]
+    SELECT [Id], [InvoiceTypeId], [InvoiceDate], [AuditNumber] FROM [dbo].[Invoice]
 GO

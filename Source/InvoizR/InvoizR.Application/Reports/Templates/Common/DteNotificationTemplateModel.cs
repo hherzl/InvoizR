@@ -18,7 +18,7 @@ public record DteNotificationTemplateModel
         CustomerEmail = invoice.CustomerEmail;
         InvoiceDate = invoice.InvoiceDate;
         InvoiceTotal = invoice.InvoiceTotal;
-        ControlNumber = invoice.ControlNumber;
+        AuditNumber = invoice.AuditNumber;
 
         Copies = [];
         Bcc = [];
@@ -36,7 +36,7 @@ public record DteNotificationTemplateModel
     public string CustomerEmail { get; }
     public DateTime? InvoiceDate { get; }
     public decimal? InvoiceTotal { get; }
-    public string ControlNumber { get; }
+    public string AuditNumber { get; }
 
     public List<string> Copies { get; }
     public List<string> Bcc { get; }

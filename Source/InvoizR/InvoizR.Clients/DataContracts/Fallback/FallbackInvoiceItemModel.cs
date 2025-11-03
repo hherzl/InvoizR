@@ -6,5 +6,5 @@ public record FallbackInvoiceItemModel
     public short? InvoiceTypeId { get; set; }
     public string InvoiceType { get; set; }
     public string GenerationCode { get; set; }
-    public string ControlNumber { get; set; }
+    public string AuditNumber { get; set; }
 }

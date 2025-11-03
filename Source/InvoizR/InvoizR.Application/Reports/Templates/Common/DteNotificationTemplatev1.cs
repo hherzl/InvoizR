@@ -34,7 +34,7 @@ public class DteNotificationTemplatev1
         output.AppendLine($" <li>Tipo: {AsStrong(Model.InvoiceType)}</li>");
         output.AppendLine($" <li>Fecha: {AsStrong(AsDate(Model.InvoiceDate))}</li>");
         output.AppendLine($" <li>Total: {AsCurrency(Model.InvoiceTotal)}</li>");
-        output.AppendLine($" <li>Número de control: {AsStrong(Model.ControlNumber)}</li>");
+        output.AppendLine($" <li>Número de control: {AsStrong(Model.AuditNumber)}</li>");
         output.AppendLine($"</ul>");
 
         output.AppendLine($"<br>");

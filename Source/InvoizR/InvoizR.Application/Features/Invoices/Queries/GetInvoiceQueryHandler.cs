@@ -51,7 +51,7 @@ public class GetInvoiceQueryHandler : IRequestHandler<GetInvoiceQuery, InvoiceDe
             SchemaType = entity.SchemaType,
             SchemaVersion = entity.SchemaVersion,
             GenerationCode = entity.GenerationCode,
-            ControlNumber = entity.ControlNumber,
+            AuditNumber = entity.AuditNumber,
             Payload = entity.Payload,
             ProcessingStatusId = entity.ProcessingStatusId,
             ProcessingStatus = processingStatuses.First(item => item.Id == entity.ProcessingStatusId).Desc,

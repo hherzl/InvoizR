@@ -24,7 +24,7 @@ static class Anulacion
         //dte.Emisor.Correo = request.Document.Branch.Email;
 
         //dte.Documento.TipoDte = request.ReferenceDocument.SchemaType;
-        //dte.Documento.NumeroControl = request.ReferenceDocument.ControlNumber;
+        //dte.Documento.NumeroControl = request.ReferenceDocument.AuditNumber;
         //dte.Documento.CodigoGeneracion = request.ReferenceDocument.GenerationCode;
         //dte.Documento.SelloRecibido = request.ReferenceDocument.ReceiptStamp;
 

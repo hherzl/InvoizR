@@ -51,7 +51,7 @@ public class Dte14TemplateFactory : DteTemplateFactory
             SchemaType = invoice.SchemaType,
             SchemaVersion = invoice.SchemaVersion,
             GenerationCode = invoice.GenerationCode,
-            ControlNumber = invoice.ControlNumber,
+            AuditNumber = invoice.AuditNumber,
             EmitDateTime = invoice.EmitDateTime,
             ReceiptStamp = invoice.ReceiptStamp,
             ExternalUrl = invoice.ExternalUrl
