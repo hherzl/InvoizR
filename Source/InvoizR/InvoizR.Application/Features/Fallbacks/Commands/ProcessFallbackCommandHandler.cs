@@ -34,11 +34,11 @@ public sealed class ProcessFallbackCommandHandler(IInvoizRDbContext dbContext, I
         dte.DetalleDTE.Clear();
 
         var invoices = await dbContext.GetInvoicesBy(request.Id).ToListAsync(ct);
-        var details = invoices.OrderBy(item => item.InvoiceDate).Select(item => new { item.GenerationCode, item.SchemaType }).ToList();
+        var details = invoices.OrderBy(item => item.InvoiceDate).Select(item => new { item.InvoiceGuid, item.SchemaType }).ToList();
         for (var i = 0; i < details.Count; i++)
         {
             var detail = details[i];
-            dte.DetalleDTE.Add(new() { NoItem = i + 1, CodigoGeneracion = detail.GenerationCode, TipoDoc = detail.SchemaType });
+            dte.DetalleDTE.Add(new() { NoItem = i + 1, CodigoGeneracion = detail.InvoiceGuid, TipoDoc = detail.SchemaType });
         }
 
         fallback.Payload = dte.ToJson();

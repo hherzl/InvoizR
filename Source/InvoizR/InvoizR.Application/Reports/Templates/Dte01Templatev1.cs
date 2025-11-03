@@ -35,7 +35,7 @@ public class Dte01Templatev1 : DteTemplatev1<Dte01TemplateModel>
         output.AppendLine($"    <td>");
 
         output.AppendLine($"     <ul>");
-        output.AppendLine($"      <li>Código de generación: {AsStrong(Model.GenerationCode)}</li>");
+        output.AppendLine($"      <li>Código de generación: {AsStrong(Model.InvoiceGuid)}</li>");
         output.AppendLine($"      <li>Número de control: {AsStrong(Model.AuditNumber)}</li>");
         output.AppendLine($"      <li>Sello de recepción: {AsStrong(Model.ReceiptStamp)}</li>");
         output.AppendLine($"      <li>Modelo de facturación: {MhCatalog.Cat003.Desc(Model.Dte.Identificacion.TipoModelo)}</li>");

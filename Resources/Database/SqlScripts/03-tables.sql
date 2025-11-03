@@ -271,7 +271,7 @@ CREATE TABLE [dbo].[Invoice]
 	[Lines] INT NOT NULL,
 	[SchemaType] NVARCHAR(2) NULL,
 	[SchemaVersion] SMALLINT NULL,
-	[GenerationCode] NVARCHAR(50) NULL,
+	[InvoiceGuid] NVARCHAR(50) NULL,
 	[AuditNumber] NVARCHAR(50) NULL,
 	[Payload] NVARCHAR(MAX) NULL,
 	[ProcessingTypeId] SMALLINT NOT NULL,

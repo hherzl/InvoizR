@@ -34,7 +34,7 @@ public class FallbackTemplatev1 : DteTemplatev1<FallbackTemplateModel>
         output.AppendLine($"    <td>");
 
         output.AppendLine($"     <ul>");
-        output.AppendLine($"      <li>Código de generación: {AsStrong(Model.GenerationCode)}</li>");
+        output.AppendLine($"      <li>Código de generación: {AsStrong(Model.InvoiceGuid)}</li>");
         output.AppendLine($"      <li>Sello de recepción: {AsStrong(Model.ReceiptStamp)}</li>");
         output.AppendLine($"      <li>Fecha y hora de generación: {AsDateTime(Model.EmitDateTime)}</li>");
         output.AppendLine($"      <li>Versión de JSON: {AsStrong(Model.SchemaVersion.ToString())}</li>");

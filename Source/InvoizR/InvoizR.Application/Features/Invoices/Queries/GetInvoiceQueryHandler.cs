@@ -50,7 +50,7 @@ public class GetInvoiceQueryHandler : IRequestHandler<GetInvoiceQuery, InvoiceDe
             Lines = entity.Lines,
             SchemaType = entity.SchemaType,
             SchemaVersion = entity.SchemaVersion,
-            GenerationCode = entity.GenerationCode,
+            InvoiceGuid = entity.InvoiceGuid,
             AuditNumber = entity.AuditNumber,
             Payload = entity.Payload,
             ProcessingStatusId = entity.ProcessingStatusId,

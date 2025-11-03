@@ -147,7 +147,7 @@ internal class InvoiceConfiguration : IEntityTypeConfiguration<Invoice>
             ;
 
         builder
-            .Property(p => p.GenerationCode)
+            .Property(p => p.InvoiceGuid)
             .HasColumnType("nvarchar")
             .HasMaxLength(50)
             ;

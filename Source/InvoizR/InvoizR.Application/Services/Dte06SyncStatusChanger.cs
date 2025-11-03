@@ -30,7 +30,7 @@ public sealed class Dte06SyncStatusChanger : InvoiceSyncStatusChanger
 
         dte.Identificacion.Version = (int)invoice.SchemaVersion;
         dte.Identificacion.TipoDte = invoice.SchemaType;
-        dte.Identificacion.CodigoGeneracion = invoice.GenerationCode;
+        dte.Identificacion.CodigoGeneracion = invoice.InvoiceGuid;
         dte.Identificacion.NumeroControl = invoice.AuditNumber;
 
         dte.Resumen.TotalLetras = MoneyToWordsConverter.SpellingNumber(invoice.InvoiceTotal);
