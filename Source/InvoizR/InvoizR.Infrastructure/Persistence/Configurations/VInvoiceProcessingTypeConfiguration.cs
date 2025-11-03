@@ -4,12 +4,12 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace InvoizR.Infrastructure.Persistence.Configurations;
 
-internal class VInvoiceProcessingStatusConfiguration : IEntityTypeConfiguration<VInvoiceProcessingStatus>
+internal class VInvoiceProcessingTypeConfiguration : IEntityTypeConfiguration<VInvoiceProcessingType>
 {
-    public void Configure(EntityTypeBuilder<VInvoiceProcessingStatus> builder)
+    public void Configure(EntityTypeBuilder<VInvoiceProcessingType> builder)
     {
         // Set configuration for entity
-        builder.ToView("VInvoiceProcessingStatus", "dbo");
+        builder.ToView("VInvoiceProcessingType", "dbo");
 
         builder.HasNoKey();
 

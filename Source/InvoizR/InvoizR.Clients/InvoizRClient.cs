@@ -170,8 +170,14 @@ public class InvoizRClient : Client, IInvoizRClient
         if (request.PosId != null)
             queryString.Add("posId", request.PosId.ToString());
 
-        if (request.ProcessingStatusId != null)
-            queryString.Add("processingStatusId", request.ProcessingStatusId.ToString());
+        if (request.InvoiceTypeId != null)
+            queryString.Add("invoiceTypeId", request.InvoiceTypeId.ToString());
+
+        if (request.ProcessingTypeId != null)
+            queryString.Add("processingTypeId", request.ProcessingTypeId.ToString());
+
+        if (request.SyncStatusId != null)
+            queryString.Add("syncStatusId", request.SyncStatusId.ToString());
 
         var response = await _httpClient.GetAsync($"invoice?{queryString.ToString()}");
         response.EnsureSuccessStatusCode();

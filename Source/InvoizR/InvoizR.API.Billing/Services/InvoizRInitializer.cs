@@ -86,6 +86,9 @@ public class InvoizRInitializer
             _dbContext.EnumDescription.Add(new((short)InvoiceProcessingStatus.Cancelled, "Inválida", typeof(InvoiceProcessingStatus).FullName));
             _dbContext.EnumDescription.Add(new((short)InvoiceProcessingStatus.Notified, "Notificada", typeof(InvoiceProcessingStatus).FullName));
 
+            _dbContext.EnumDescription.Add(new((short)InvoiceProcessingType.RoundTrip, "RT", typeof(InvoiceProcessingType).FullName));
+            _dbContext.EnumDescription.Add(new((short)InvoiceProcessingType.OneWay, "OW", typeof(InvoiceProcessingType).FullName));
+
             await _dbContext.SaveChangesAsync();
         }
     }

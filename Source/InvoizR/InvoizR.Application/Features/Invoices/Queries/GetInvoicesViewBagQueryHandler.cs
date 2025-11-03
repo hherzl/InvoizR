@@ -6,16 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace InvoizR.Application.Features.Invoices.Queries;
 
-public class GetInvoicesViewBagQueryHandler : IRequestHandler<GetInvoicesViewBagQuery, GetInvoicesViewBagResponse>
+public class GetInvoicesViewBagQueryHandler(IInvoizRDbContext dbContext) : IRequestHandler<GetInvoicesViewBagQuery, GetInvoicesViewBagResponse>
 {
-    private readonly IInvoizRDbContext _dbContext;
-
-    public GetInvoicesViewBagQueryHandler(IInvoizRDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
-
-    public async Task<GetInvoicesViewBagResponse> Handle(GetInvoicesViewBagQuery request, CancellationToken cancellationToken)
+    public async Task<GetInvoicesViewBagResponse> Handle(GetInvoicesViewBagQuery request, CancellationToken st)
     {
         var pageSizes = new List<ListItem<int>>
         {
@@ -25,21 +18,13 @@ public class GetInvoicesViewBagQueryHandler : IRequestHandler<GetInvoicesViewBag
             new(100, "100")
         };
 
-        var branchPos = await _dbContext.Pos
-            .Include(e => e.Branch)
-            .OrderBy(e => e.Branch.Name)
-            .Select(item => new ListItem<short?>(item.Id, $"{item.Branch.Name}/{item.Name}"))
-            .ToListAsync(cancellationToken);
-
-        var processingStatuses = await _dbContext.VInvoiceProcessingStatus
-            .Select(item => new ListItem<short?>(item.Id, item.Desc))
-            .ToListAsync(cancellationToken);
-
         return new()
         {
             PageSizes = pageSizes,
-            BranchPos = branchPos,
-            ProcessingStatuses = processingStatuses
+            BranchPos = await dbContext.Pos.Include(e => e.Branch).OrderBy(e => e.Branch.Name).Select(item => new ListItem<short?>(item.Id, $"{item.Branch.Company.Name}/{item.Branch.Name}/{item.Name}")).ToListAsync(st),
+            InvoiceTypes = await dbContext.InvoiceType.OrderBy(e => e.Name).Select(item => new ListItem<short?>(item.Id, item.Name)).ToListAsync(st),
+            ProcessingTypes = await dbContext.VInvoiceProcessingType.Select(item => new ListItem<short?>(item.Id, item.Desc)).ToListAsync(st),
+            SyncStatuses = await dbContext.VInvoiceProcessingStatus.Select(item => new ListItem<short?>(item.Id, item.Desc)).ToListAsync(st)
         };
     }
 }

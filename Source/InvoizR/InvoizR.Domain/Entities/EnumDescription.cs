@@ -14,6 +14,7 @@ public partial class EnumDescription : Entity
     }
 
     public int? Id { get; set; }
-    public string Desc { get; set; }
     public string FullName { get; set; }
+    public int? Value { get; set; }
+    public string Desc { get; set; }
 }

@@ -2,10 +2,10 @@
 
 public partial class EnumDescription
 {
-    public EnumDescription(int? id, string desc, string fullNamen)
+    public EnumDescription(int? value, string desc, string fullName)
     {
-        Id = id;
+        Value = value;
         Desc = desc;
-        FullName = fullNamen;
+        FullName = fullName;
     }
 }

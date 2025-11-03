@@ -1,6 +1,4 @@
-﻿using System;
-using System.ComponentModel.Design;
-using InvoizR.Application.Specifications;
+﻿using InvoizR.Application.Specifications;
 using InvoizR.Clients.DataContracts;
 using InvoizR.Clients.DataContracts.Fallback;
 using InvoizR.Domain.Entities;
@@ -230,25 +228,27 @@ public partial class InvoizRDbContext
     public IQueryable<InvoiceItemModel> GetInvoicesForProcessing(short? typeId = null, short? processingTypeId = null, short?[] processingStatuses = null)
     {
         var query =
-            from inv in Invoice
-            join pos in Pos on inv.PosId equals pos.Id
+            from invoice in Invoice
+            join pos in Pos on invoice.PosId equals pos.Id
             join branch in Branch on pos.BranchId equals branch.Id
             join company in Company on branch.CompanyId equals company.Id
-            where inv.InvoiceTypeId == typeId && inv.ProcessingTypeId == processingTypeId && processingStatuses.Contains(inv.ProcessingStatusId)
+            where invoice.InvoiceTypeId == typeId && invoice.ProcessingTypeId == processingTypeId && processingStatuses.Contains(invoice.ProcessingStatusId)
             select new InvoiceItemModel
             {
-                Id = inv.Id,
-                PosId = inv.PosId,
+                Id = invoice.Id,
+                PosId = invoice.PosId,
+                BranchId = branch.Id,
                 CompanyId = company.Id,
                 Environment = company.Environment,
-                CustomerName = inv.CustomerName,
-                InvoiceTypeId = inv.InvoiceTypeId,
-                InvoiceNumber = inv.InvoiceNumber,
-                InvoiceDate = inv.InvoiceDate,
-                InvoiceTotal = inv.InvoiceTotal,
-                ControlNumber = inv.ControlNumber,
-                ProcessingStatusId = inv.ProcessingStatusId,
-                Payload = inv.Payload
+                CustomerName = invoice.CustomerName,
+                InvoiceTypeId = invoice.InvoiceTypeId,
+                InvoiceNumber = invoice.InvoiceNumber,
+                InvoiceDate = invoice.InvoiceDate,
+                InvoiceTotal = invoice.InvoiceTotal,
+                ControlNumber = invoice.ControlNumber,
+                ProcessingTypeId = invoice.ProcessingTypeId,
+                SyncStatusId = invoice.ProcessingStatusId,
+                Payload = invoice.Payload
             };
 
         return query;

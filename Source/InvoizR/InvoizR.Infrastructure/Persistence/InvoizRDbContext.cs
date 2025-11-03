@@ -36,6 +36,7 @@ public partial class InvoizRDbContext : DbContext, IInvoizRDbContext
     public DbSet<InvoiceCancellationLog> InvoiceCancellationLog { get; set; }
 
     public DbSet<VInvoiceProcessingStatus> VInvoiceProcessingStatus { get; set; }
+    public DbSet<VInvoiceProcessingType> VInvoiceProcessingType { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
