@@ -88,6 +88,7 @@ try
 
     app.UseCors("Manager");
 
+    app.MapThirdPartyServices();
     app.MapCompanies();
     app.MapBranches();
     app.MapResponsibles();

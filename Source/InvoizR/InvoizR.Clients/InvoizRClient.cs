@@ -12,6 +12,7 @@ using InvoizR.Clients.DataContracts.Dte05;
 using InvoizR.Clients.DataContracts.Dte06;
 using InvoizR.Clients.DataContracts.Dte14;
 using InvoizR.Clients.DataContracts.Fallback;
+using InvoizR.Clients.DataContracts.ThirdPartyServices;
 using Microsoft.Extensions.Options;
 
 namespace InvoizR.Clients;
@@ -28,11 +29,31 @@ public class InvoizRClient : Client, IInvoizRClient
 
     public InvoizRClientSettings ClientSettings { get; }
 
+    public async Task<ListResponse<ThirdPartyServiceItemModel>> GetThirdPartyServicesAsync(GetThirdPartyServicesQuery request)
+    {
+        var queryString = HttpUtility.ParseQueryString(string.Empty);
+
+        var response = await _httpClient.GetAsync($"third-party-service?{queryString}");
+        response.EnsureSuccessStatusCode();
+
+        var responseContent = await response.Content.ReadAsStringAsync();
+        return JsonSerializer.Deserialize<ListResponse<ThirdPartyServiceItemModel>>(responseContent, DefaultJsonSerializerOpts);
+    }
+
+    public async Task<SingleResponse<ThirdPartyServiceDetailsModel>> GetThirdPartyServiceAsync(short? id)
+    {
+        var response = await _httpClient.GetAsync($"third-party-service/{id}");
+        response.EnsureSuccessStatusCode();
+
+        var responseContent = await response.Content.ReadAsStringAsync();
+        return JsonSerializer.Deserialize<SingleResponse<ThirdPartyServiceDetailsModel>>(responseContent, DefaultJsonSerializerOpts);
+    }
+
     public async Task<ListResponse<CompanyItemModel>> GetCompaniesAsync(GetCompaniesQuery request)
     {
         var queryString = HttpUtility.ParseQueryString(string.Empty);
 
-        var response = await _httpClient.GetAsync($"company?{queryString.ToString()}");
+        var response = await _httpClient.GetAsync($"company?{queryString}");
         response.EnsureSuccessStatusCode();
 
         var responseContent = await response.Content.ReadAsStringAsync();

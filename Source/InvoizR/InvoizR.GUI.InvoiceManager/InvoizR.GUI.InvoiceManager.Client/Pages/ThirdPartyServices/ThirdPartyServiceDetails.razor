@@ -1,0 +1,75 @@
+﻿@page "/third-party-service/{Id:int?}"
+
+@using InvoizR.Clients.Contracts
+@using InvoizR.Clients.DataContracts
+@using InvoizR.Clients.DataContracts.Common
+@using InvoizR.Clients.DataContracts.ThirdPartyServices
+
+@inject IInvoizRClient InvoizRClient
+
+<PageTitle>Third Party Service Details - @Id</PageTitle>
+
+<h3>Third Party Service Details</h3>
+<h4>@Id</h4>
+
+<br />
+
+@if (DetailsResponse != null)
+{
+    <MudCard>
+        <MudCardHeader>
+            <CardHeaderContent>
+                <MudText Typo="Typo.h6">Third Party Service</MudText>
+            </CardHeaderContent>
+            <CardHeaderActions>
+                <MudIconButton Icon="@Icons.Material.Filled.Cloud" Color="Color.Default" />
+            </CardHeaderActions>
+        </MudCardHeader>
+        <MudCardContent>
+            <MudText Typo="Typo.body2">Environment: <strong>@DetailsResponse?.Model.EnvironmentId</strong></MudText>
+            <MudText Typo="Typo.body2">Name: <strong>@DetailsResponse?.Model.Name</strong></MudText>
+            <MudText Typo="Typo.body2">Description: <strong>@DetailsResponse?.Model.Description</strong></MudText>
+        </MudCardContent>
+    </MudCard>
+
+    <br />
+
+    <h4>Parameters</h4>
+
+    <MudTable Items="@DetailsResponse?.Model.Parameters">
+        <HeaderContent>
+            <MudTh>Category</MudTh>
+            <MudTh>Name</MudTh>
+            <MudTh>Default value</MudTh>
+            <MudTh>Requires encryption</MudTh>
+            <MudTh></MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Category">@context.Category</MudTd>
+            <MudTd DataLabel="Name">@context.Name</MudTd>
+            <MudTd DataLabel="Default value">@context.DefaultValue</MudTd>
+            <MudTd DataLabel="Requires encryption">@context.RequiresEncryption</MudTd>
+            <MudTd DataLabel="Details">
+                <a href="@($"/third-party-service-parameter/{@context.Id}")">
+                    <MudIcon Icon="@Icons.Material.Filled.Details" Title="Details" />
+                </a>
+            </MudTd>
+        </RowTemplate>
+    </MudTable>
+}
+
+<br />
+
+<a href="@("/third-party-service")">
+    <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.ArrowBack" />
+</a>
+
+@code {
+    [Parameter] public int? Id { get; set; }
+    private SingleResponse<ThirdPartyServiceDetailsModel> DetailsResponse { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        DetailsResponse = await InvoizRClient.GetThirdPartyServiceAsync((short)Id);
+    }
+}

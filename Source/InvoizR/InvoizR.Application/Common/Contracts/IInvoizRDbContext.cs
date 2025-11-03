@@ -1,5 +1,6 @@
 ﻿using InvoizR.Clients.DataContracts;
 using InvoizR.Clients.DataContracts.Fallback;
+using InvoizR.Clients.DataContracts.ThirdPartyServices;
 using InvoizR.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -38,7 +39,9 @@ public interface IInvoizRDbContext : IDisposable
     DbSet<VInvoiceProcessingStatus> VInvoiceProcessingStatus { get; set; }
     DbSet<VInvoiceProcessingType> VInvoiceProcessingType { get; set; }
 
-    IQueryable<ThirdPartyService> ThirdPartyServices(string environmentId, bool tracking = false, bool includes = false);
+    IQueryable<ThirdPartyService> GetThirdPartyServices(string environmentId, bool tracking = false, bool includes = false);
+    Task<ThirdPartyService> GetThirdPartyServiceAsync(short? id, bool tracking = false, bool includes = false, CancellationToken ct = default);
+    IQueryable<ThirdPartyServiceParameterItemModel> GetThirdPartyServiceParameters(short? thirdPartyServiceId);
 
     Task<InvoiceType> GetInvoiceTypeAsync(short? id, bool tracking = false, bool includes = false, CancellationToken ct = default);
     Task<InvoiceType> GetCurrentInvoiceTypeAsync(short? id, bool tracking = false, bool includes = false, CancellationToken ct = default);

@@ -55,7 +55,7 @@ public sealed class ProcessFallbackCommandHandler(IInvoizRDbContext dbContext, I
             await dbContext.SaveChangesAsync(ct);
         }
 
-        var thirdPartyServices = await dbContext.ThirdPartyServices(fallback.Company.Environment, includes: true).ToListAsync(ct);
+        var thirdPartyServices = await dbContext.GetThirdPartyServices(fallback.Company.Environment, includes: true).ToListAsync(ct);
         if (thirdPartyServices.Count == 0)
             throw new NoThirdPartyServicesException(fallback.Company.Name, fallback.Company.Environment);
 

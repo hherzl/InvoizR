@@ -1,6 +1,7 @@
 ﻿using InvoizR.Application.Specifications;
 using InvoizR.Clients.DataContracts;
 using InvoizR.Clients.DataContracts.Fallback;
+using InvoizR.Clients.DataContracts.ThirdPartyServices;
 using InvoizR.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,7 +9,7 @@ namespace InvoizR.Infrastructure.Persistence;
 
 public partial class InvoizRDbContext
 {
-    public IQueryable<ThirdPartyService> ThirdPartyServices(string environmentId, bool tracking = false, bool includes = false)
+    public IQueryable<ThirdPartyService> GetThirdPartyServices(string environmentId, bool tracking = false, bool includes = false)
     {
         var query = ThirdPartyService.AsQueryable();
 
@@ -19,6 +20,33 @@ public partial class InvoizRDbContext
             query = query.Include(e => e.ThirdPartyServiceParameters);
 
         return query.Where(item => item.EnvironmentId == environmentId);
+    }
+
+    public async Task<ThirdPartyService> GetThirdPartyServiceAsync(short? id, bool tracking = false, bool includes = false, CancellationToken ct = default)
+    {
+        var query = ThirdPartyService.AsQueryable();
+
+        if (!tracking)
+            query = query.AsNoTracking();
+
+        return await query.SingleOrDefaultAsync(item => item.Id == id, ct);
+    }
+
+    public IQueryable<ThirdPartyServiceParameterItemModel> GetThirdPartyServiceParameters(short? thirdPartyServiceId)
+    {
+        var query =
+            from thirdPartyServiceParameter in ThirdPartyServiceParameter
+            where thirdPartyServiceParameter.ThirdPartyServiceId == thirdPartyServiceId
+            select new ThirdPartyServiceParameterItemModel
+            {
+                Id = thirdPartyServiceParameter.Id,
+                Category = thirdPartyServiceParameter.Category,
+                Name = thirdPartyServiceParameter.Name,
+                DefaultValue = thirdPartyServiceParameter.DefaultValue,
+                RequiresEncryption = thirdPartyServiceParameter.RequiresEncryption
+            };
+
+        return query;
     }
 
     public async Task<InvoiceType> GetInvoiceTypeAsync(short? id, bool tracking = false, bool includes = false, CancellationToken ct = default)

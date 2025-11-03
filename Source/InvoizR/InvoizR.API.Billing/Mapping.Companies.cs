@@ -10,7 +10,6 @@ public static partial class Mapping
         webApplication.MapGet("/company", async (ISender mediator, [AsParameters] GetCompaniesQuery request) =>
         {
             var result = await mediator.Send(request);
-
             return Results.Ok(result);
         });
 
@@ -26,7 +25,6 @@ public static partial class Mapping
         webApplication.MapPost("/company", async (ISender mediator, CreateCompanyCommand request) =>
         {
             var result = await mediator.Send(request);
-
             return Results.Created($"{result.Id}", result);
         });
 

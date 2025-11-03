@@ -51,7 +51,7 @@ public sealed class DteCancellationCommandHandler : IRequestHandler<DteCancellat
         if (responsible == null || responsible.AuthorizeCancellation == false)
             throw new NoResponsibleForInvoiceCancellationException();
 
-        var thirdPartyServices = await _dbContext.ThirdPartyServices(invoice.Pos.Branch.Company.Environment, includes: true).ToListAsync(st);
+        var thirdPartyServices = await _dbContext.GetThirdPartyServices(invoice.Pos.Branch.Company.Environment, includes: true).ToListAsync(st);
         if (thirdPartyServices.Count == 0)
             throw new NoThirdPartyServicesException(invoice.Pos.Branch.Company.Name, invoice.Pos.Branch.Company.Environment);
 
