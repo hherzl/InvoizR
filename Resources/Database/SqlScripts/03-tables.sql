@@ -80,9 +80,10 @@ GO
 
 CREATE TABLE [dbo].[EnumDescription]
 (
-	[Id] INT NOT NULL,
-	[Desc] NVARCHAR(50) NOT NULL,
-	[FullName] NVARCHAR(200) NOT NULL
+	[Id] INT NOT NULL IDENTITY(1, 1),
+	[FullName] NVARCHAR(200) NOT NULL,
+	[Value] INT NOT NULL,
+	[Desc] NVARCHAR(50) NOT NULL
 )
 GO
 

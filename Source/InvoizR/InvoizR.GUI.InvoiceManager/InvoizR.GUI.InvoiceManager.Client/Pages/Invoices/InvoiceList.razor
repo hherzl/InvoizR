@@ -24,9 +24,29 @@
 
             <br />
 
-            <MudSelect T="ListItem<short?>" Label="Processing status" @bind-Value="SelectedProcessingStatus">
+            <MudSelect T="ListItem<short?>" Label="Invoice types" @bind-Value="SelectedInvoiceType">
                 <MudSelectItem T="ListItem<short?>" Value="new()"></MudSelectItem>
-                @foreach (var item in ViewBag.ProcessingStatuses)
+                @foreach (var item in ViewBag.InvoiceTypes)
+                {
+                    <MudSelectItem T="ListItem<short?>" Value="@item">@item.Name</MudSelectItem>
+                }
+            </MudSelect>
+
+            <br />
+
+            <MudSelect T="ListItem<short?>" Label="Processing types" @bind-Value="SelectedProcessingType">
+                <MudSelectItem T="ListItem<short?>" Value="new()"></MudSelectItem>
+                @foreach (var item in ViewBag.ProcessingTypes)
+                {
+                    <MudSelectItem T="ListItem<short?>" Value="@item">@item.Name</MudSelectItem>
+                }
+            </MudSelect>
+
+            <br />
+
+            <MudSelect T="ListItem<short?>" Label="Sync status" @bind-Value="SelectedSyncStatus">
+                <MudSelectItem T="ListItem<short?>" Value="new()"></MudSelectItem>
+                @foreach (var item in ViewBag.SyncStatuses)
                 {
                     <MudSelectItem T="ListItem<short?>" Value="@item">@item.Name</MudSelectItem>
                 }
@@ -40,11 +60,11 @@
     </MudExpansionPanel>
 </MudExpansionPanels>
 
-<MudText Typo="Typo.caption">Total of rows: @(Response?.ItemsCount).</MudText>
+<MudText Typo="Typo.caption">Total of rows: @(InvoicesResponse?.ItemsCount).</MudText>
 
 <MudProgressCircular Color="Color.Primary" Indeterminate="@Loading" />
 
-<MudTable Items="@Response?.Model">
+<MudTable Items="@InvoicesResponse?.Model">
     <HeaderContent>
         <MudTh>Branch/POS</MudTh>
         <MudTh>Customer</MudTh>
@@ -52,7 +72,8 @@
         <MudTh>Number</MudTh>
         <MudTh>Date</MudTh>
         <MudTh>Total</MudTh>
-        <MudTh>Processing status</MudTh>
+        <MudTh>Processing type</MudTh>
+        <MudTh>Sync status</MudTh>
         <MudTh></MudTh>
     </HeaderContent>
     <RowTemplate>
@@ -62,11 +83,12 @@
         <MudTd DataLabel="Invoice number">@context.InvoiceNumber</MudTd>
         <MudTd DataLabel="Invoice date">@context.InvoiceDate</MudTd>
         <MudTd DataLabel="Total">@context.InvoiceTotal.ToCurrency()</MudTd>
+        <MudTd DataLabel="Total">@context.ProcessingType</MudTd>
         <MudTd DataLabel="Sync status">
             @{
-                var buttonStyle = @context.ProcessingStatusId.GetButtonStyle();
+                var buttonStyle = @context.SyncStatusId.GetButtonStyle();
                 <MudButton Color="@buttonStyle.Item1" Variant="@buttonStyle.Item2" DropShadow="false">
-                    <MudText Typo="Typo.caption">@context.ProcessingStatus</MudText>
+                    <MudText Typo="Typo.caption">@context.SyncStatus</MudText>
                 </MudButton>
             }
         </MudTd>
@@ -81,7 +103,7 @@
     </LoadingContent>
     <PagerContent>
         <MudTablePager PageSizeOptions="new int[] { 10, 25, 50, 100 }" />
-        <MudPagination SelectedChanged="PageChanged" Count="(int)Response?.PageCount" Class="pa-4" />
+        <MudPagination SelectedChanged="PageChanged" Count="(int)InvoicesResponse?.PageCount" Class="pa-4" />
     </PagerContent>
 </MudTable>
 
@@ -91,19 +113,23 @@
 
     ListItem<int> SelectedPageSize { get; set; }
     ListItem<short?> SelectedPos { get; set; }
-    ListItem<short?> SelectedProcessingStatus { get; set; }
-    GetInvoicesQuery Req { get; set; }
-    PagedResponse<InvoiceItemModel> Response { get; set; }
+    ListItem<short?> SelectedInvoiceType { get; set; }
+    ListItem<short?> SelectedProcessingType { get; set; }
+    ListItem<short?> SelectedSyncStatus { get; set; }
+    GetInvoicesQuery InvoicesRequest { get; set; }
+    PagedResponse<InvoiceItemModel> InvoicesResponse { get; set; }
 
     protected async Task LoadAsync()
     {
         Loading = true;
 
-        Req.PageSize = SelectedPageSize.Id;
-        Req.PosId = SelectedPos?.Id;
-        Req.ProcessingStatusId = SelectedProcessingStatus?.Id;
+        InvoicesRequest.PageSize = SelectedPageSize.Id;
+        InvoicesRequest.PosId = SelectedPos?.Id;
+        InvoicesRequest.InvoiceTypeId = SelectedInvoiceType?.Id;
+        InvoicesRequest.ProcessingTypeId = SelectedProcessingType?.Id;
+        InvoicesRequest.SyncStatusId = SelectedSyncStatus?.Id;
 
-        Response = await invoizRClient.GetInvoicesAsync(Req);
+        InvoicesResponse = await invoizRClient.GetInvoicesAsync(InvoicesRequest);
 
         Loading = false;
     }
@@ -114,9 +140,11 @@
 
         SelectedPageSize = ViewBag.PageSizes.First();
         SelectedPos = new() { Name = "Seleccionar" };
-        SelectedProcessingStatus = new() { Name = "Seleccionar" };
+        SelectedInvoiceType = new() { Name = "Seleccionar" };
+        SelectedProcessingType = new() { Name = "Seleccionar" };
+        SelectedSyncStatus = new() { Name = "Seleccionar" };
 
-        Req = new();
+        InvoicesRequest = new();
 
         await LoadAsync();
     }
@@ -128,19 +156,21 @@
 
     private async Task Clear_Click()
     {
-        Req.PageSize = 25;
-        Req.PageNumber = 1;
+        InvoicesRequest.PageSize = 25;
+        InvoicesRequest.PageNumber = 1;
 
         SelectedPageSize = ViewBag.PageSizes.First();
         SelectedPos.Id = null;
-        SelectedProcessingStatus.Id = null;
+        SelectedInvoiceType.Id = null;
+        SelectedProcessingType.Id = null;
+        SelectedSyncStatus.Id = null;
 
         await LoadAsync();
     }
 
     private async Task PageChanged(int i)
     {
-        Req.PageNumber = i;
+        InvoicesRequest.PageNumber = i;
         await LoadAsync();
     }
 }

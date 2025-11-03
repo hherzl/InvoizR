@@ -36,6 +36,7 @@ public interface IInvoizRDbContext : IDisposable
     DbSet<InvoiceCancellationLog> InvoiceCancellationLog { get; set; }
 
     DbSet<VInvoiceProcessingStatus> VInvoiceProcessingStatus { get; set; }
+    DbSet<VInvoiceProcessingType> VInvoiceProcessingType { get; set; }
 
     IQueryable<ThirdPartyService> ThirdPartyServices(string environmentId, bool tracking = false, bool includes = false);
 

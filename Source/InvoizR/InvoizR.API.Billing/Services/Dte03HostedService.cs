@@ -44,19 +44,19 @@ public sealed class Dte03HostedService(ILogger<Dte03HostedService> logger, IServ
 
                 foreach (var invoice in invoices)
                 {
-                    if (invoice.ProcessingStatusId == (short)InvoiceProcessingStatus.Created)
+                    if (invoice.SyncStatusId == (short)InvoiceProcessingStatus.Created)
                     {
                         logger.LogInformation($"Processing '{invoice.InvoiceNumber}' invoice, changing status from '{InvoiceProcessingStatus.Created}'...");
 
                         await dteSyncStatusChanger.SetInvoiceAsInitializedAsync(invoice.Id, dbContext, st);
                     }
-                    else if (invoice.ProcessingStatusId == (short)InvoiceProcessingStatus.Initialized)
+                    else if (invoice.SyncStatusId == (short)InvoiceProcessingStatus.Initialized)
                     {
                         logger.LogInformation($"Processing '{invoice.InvoiceNumber}' invoice, changing status from '{InvoiceProcessingStatus.Initialized}'...");
 
                         await dteSyncStatusChanger.SetInvoiceAsRequestedAsync(invoice.Id, dbContext, st);
                     }
-                    else if (invoice.ProcessingStatusId == (short)InvoiceProcessingStatus.Requested)
+                    else if (invoice.SyncStatusId == (short)InvoiceProcessingStatus.Requested)
                     {
                         logger.LogInformation($"Processing '{invoice.InvoiceNumber}' invoice, changing status from '{InvoiceProcessingStatus.Requested}'...");
 

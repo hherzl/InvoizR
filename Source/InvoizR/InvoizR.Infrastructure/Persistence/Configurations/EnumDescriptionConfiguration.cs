@@ -14,9 +14,25 @@ internal class EnumDescriptionConfiguration : IEntityTypeConfiguration<EnumDescr
         // Set key for entity
         builder.HasKey(p => p.Id);
 
+        // Set identity for entity (auto increment)
+        builder.Property(p => p.Id).UseIdentityColumn();
+
         // Set configuration for columns
         builder
             .Property(p => p.Id)
+            .HasColumnType("int")
+            .IsRequired()
+            ;
+
+        builder
+            .Property(p => p.FullName)
+            .HasColumnType("nvarchar")
+            .HasMaxLength(200)
+            .IsRequired()
+            ;
+
+        builder
+            .Property(p => p.Value)
             .HasColumnType("int")
             .IsRequired()
             ;
@@ -28,11 +44,12 @@ internal class EnumDescriptionConfiguration : IEntityTypeConfiguration<EnumDescr
             .IsRequired()
             ;
 
+        // Add configuration for uniques
+
         builder
-            .Property(p => p.FullName)
-            .HasColumnType("nvarchar")
-            .HasMaxLength(200)
-            .IsRequired()
+            .HasIndex(p => new { p.FullName, p.Value })
+            .IsUnique()
+            .HasDatabaseName("UQ_dbo_EnumDescription_FullName_Value")
             ;
     }
 }

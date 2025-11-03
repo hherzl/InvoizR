@@ -20,5 +20,7 @@ public record GetInvoicesQuery : IRequest<PagedResponse<InvoiceItemModel>>
     public DateTime? StartDate { get; set; }
     public DateTime? EndDate { get; set; }
     public string ControlNumber { get; set; }
-    public short? ProcessingStatusId { get; set; }
+    public short? InvoiceTypeId { get; set; }
+    public short? ProcessingTypeId { get; set; }
+    public short? SyncStatusId { get; set; }
 }

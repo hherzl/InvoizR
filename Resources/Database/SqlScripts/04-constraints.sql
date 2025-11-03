@@ -2,6 +2,10 @@ ALTER TABLE [dbo].[EnumDescription] ADD CONSTRAINT [PK_dbo_EnumDescription]
 	PRIMARY KEY ([Id])
 GO
 
+ALTER TABLE [dbo].[EnumDescription] ADD CONSTRAINT [UQ_dbo_EnumDescription_FullName_Value]
+	UNIQUE ([FullName], [Value])
+GO
+
 ALTER TABLE [dbo].[Company] ADD CONSTRAINT [PK_dbo_Company]
 	PRIMARY KEY ([Id])
 GO

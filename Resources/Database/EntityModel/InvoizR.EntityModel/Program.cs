@@ -15,13 +15,16 @@ var enumDescription = db
     .DefineEntity(new
     {
         Id = 0,
-        Desc = "",
-        FullName = ""
+        FullName = "",
+        Value = 0,
+        Desc = ""
     })
     .SetNaming("EnumDescription")
-    .SetColumnFor(e => e.Desc, 50)
     .SetColumnFor(e => e.FullName, 200)
+    .SetColumnFor(e => e.Desc, 50)
     .SetPrimaryKey(e => e.Id)
+    .SetIdentity(e => e.Id)
+    .AddUnique(e => new { e.FullName, e.Value })
     ;
 
 var company = db
