@@ -60,7 +60,7 @@ public sealed class Dte14HostedService(ILogger<Dte14HostedService> logger, IServ
                     {
                         logger.LogInformation($"Processing '{invoice.InvoiceNumber}' invoice, changing status from '{InvoiceProcessingStatus.Requested}'...");
 
-                        var thirdPartyServices = await dbContext.ThirdPartyServices(invoice.Environment, includes: true).ToListAsync(st);
+                        var thirdPartyServices = await dbContext.GetThirdPartyServices(invoice.Environment, includes: true).ToListAsync(st);
                         if (thirdPartyServices.Count == 0)
                             throw new NoThirdPartyServicesException(invoice.Company, invoice.Environment);
 

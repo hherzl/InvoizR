@@ -111,7 +111,7 @@ public sealed class CreateDte01RTCommandHandler(ILogger<CreateDte01RTCommandHand
 
             logger.LogInformation($"Processing '{invoice.InvoiceNumber}' invoice, changing status from '{InvoiceProcessingStatus.Requested}'...");
 
-            var thirdPartyServices = await dbContext.ThirdPartyServices(pos.Branch.Company.Environment, includes: true).ToListAsync(st);
+            var thirdPartyServices = await dbContext.GetThirdPartyServices(pos.Branch.Company.Environment, includes: true).ToListAsync(st);
             if (thirdPartyServices.Count == 0)
                 throw new NoThirdPartyServicesException(pos.Branch.Company.Name, pos.Branch.Company.Environment);
 

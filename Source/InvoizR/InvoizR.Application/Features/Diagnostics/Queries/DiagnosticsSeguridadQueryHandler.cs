@@ -22,7 +22,7 @@ public class DiagnosticsSeguridadQueryHandler : IRequestHandler<DiagnosticsSegur
     {
         var company = await _dbContext.GetCompanyAsync(request.CompanyId, ct: cancellationToken);
 
-        var thirdPartyServices = await _dbContext.ThirdPartyServices(company.Environment, includes: true).ToListAsync(cancellationToken);
+        var thirdPartyServices = await _dbContext.GetThirdPartyServices(company.Environment, includes: true).ToListAsync(cancellationToken);
         if (thirdPartyServices.Count == 0)
             throw new NoThirdPartyServicesException(company.Name, company.Environment);
 

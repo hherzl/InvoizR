@@ -3,7 +3,7 @@ using MediatR;
 
 namespace InvoizR.Clients.DataContracts.Fallback;
 
-public record class GetFallbacksQuery : IRequest<PagedResponse<FallbackItemModel>>
+public record GetFallbacksQuery : IRequest<PagedResponse<FallbackItemModel>>
 {
     public GetFallbacksQuery()
     {

@@ -8,12 +8,16 @@ using InvoizR.Clients.DataContracts.Dte05;
 using InvoizR.Clients.DataContracts.Dte06;
 using InvoizR.Clients.DataContracts.Dte14;
 using InvoizR.Clients.DataContracts.Fallback;
+using InvoizR.Clients.DataContracts.ThirdPartyServices;
 
 namespace InvoizR.Clients.Contracts;
 
 public interface IInvoizRClient
 {
     InvoizRClientSettings ClientSettings { get; }
+
+    Task<ListResponse<ThirdPartyServiceItemModel>> GetThirdPartyServicesAsync(GetThirdPartyServicesQuery request);
+    Task<SingleResponse<ThirdPartyServiceDetailsModel>> GetThirdPartyServiceAsync(short? id);
 
     Task<ListResponse<CompanyItemModel>> GetCompaniesAsync(GetCompaniesQuery request);
     Task<SingleResponse<CompanyDetailsModel>> GetCompanyAsync(short? id);

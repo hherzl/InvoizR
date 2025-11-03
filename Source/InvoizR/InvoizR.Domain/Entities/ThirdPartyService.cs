@@ -24,4 +24,5 @@ public partial class ThirdPartyService : Entity
     public string Description { get; set; }
 
     public virtual Collection<ThirdPartyServiceParameter> ThirdPartyServiceParameters { get; set; }
+    public virtual Collection<CompanyThirdPartyServiceParameter> CompanyThirdPartyServiceParameters { get; set; }
 }

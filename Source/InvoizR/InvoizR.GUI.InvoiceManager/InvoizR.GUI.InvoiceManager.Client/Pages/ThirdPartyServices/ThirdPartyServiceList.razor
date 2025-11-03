@@ -1,0 +1,51 @@
+﻿@page "/third-party-service"
+
+@using InvoizR.Clients.Contracts
+@using InvoizR.Clients.DataContracts
+@using InvoizR.Clients.DataContracts.Common
+@using InvoizR.Clients.DataContracts.ThirdPartyServices
+
+@inject IInvoizRClient InvoizRClient
+
+<PageTitle>Third Party Services</PageTitle>
+
+<h3>Third Party Services</h3>
+
+<MudTable Items="@ListResponse?.Model">
+    <HeaderContent>
+        <MudTh>Environment</MudTh>
+        <MudTh>Name</MudTh>
+        <MudTh></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Environment">@context.EnvironmentId</MudTd>
+        <MudTd DataLabel="Name">@context.Name</MudTd>
+        <MudTd DataLabel="Details">
+            <a href="@($"/third-party-service/{@context.Id}")">
+                <MudIcon Icon="@Icons.Material.Filled.Details" Title="Details" />
+            </a>
+        </MudTd>
+    </RowTemplate>
+</MudTable>
+
+@code {
+    GetThirdPartyServicesQuery ListRequest { get; set; }
+    ListResponse<ThirdPartyServiceItemModel> ListResponse { get; set; }
+
+    protected async Task LoadAsync()
+    {
+        ListRequest = new();
+
+        ListResponse = await InvoizRClient.GetThirdPartyServicesAsync(ListRequest);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAsync();
+    }
+
+    private async Task Load_Click()
+    {
+        await LoadAsync();
+    }
+}
