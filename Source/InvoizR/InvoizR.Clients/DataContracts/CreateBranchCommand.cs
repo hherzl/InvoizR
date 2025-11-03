@@ -9,7 +9,6 @@ public record CreateBranchCommand : IRequest<CreatedResponse<short?>>, IValidata
 {
     public short? CompanyId { get; set; }
     public string Name { get; set; }
-    public string EstablishmentPrefix { get; set; }
     public string TaxAuthId { get; set; }
     public string Address { get; set; }
     public string Phone { get; set; }
@@ -32,9 +31,6 @@ public record CreateBranchCommand : IRequest<CreatedResponse<short?>>, IValidata
 
         if (string.IsNullOrEmpty(Name))
             yield return new("Name is required", [nameof(Name)]);
-
-        if (string.IsNullOrEmpty(EstablishmentPrefix))
-            yield return new("EstablishmentPrefix is required", [nameof(EstablishmentPrefix)]);
 
         if (string.IsNullOrEmpty(TaxAuthId))
             yield return new("TaxAuthId is required", [nameof(TaxAuthId)]);

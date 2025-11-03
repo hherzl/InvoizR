@@ -38,13 +38,6 @@ internal class BranchConfiguration : IEntityTypeConfiguration<Branch>
             ;
 
         builder
-            .Property(p => p.EstablishmentPrefix)
-            .HasColumnType("nvarchar")
-            .HasMaxLength(5)
-            .IsRequired()
-            ;
-
-        builder
             .Property(p => p.TaxAuthId)
             .HasColumnType("nvarchar")
             .HasMaxLength(4)

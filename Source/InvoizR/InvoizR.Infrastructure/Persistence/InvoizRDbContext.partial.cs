@@ -162,7 +162,6 @@ public partial class InvoizRDbContext
                 CompanyId = branch.CompanyId,
                 Company = company.Name,
                 Name = branch.Name,
-                EstablishmentPrefix = branch.EstablishmentPrefix,
                 TaxAuthId = branch.TaxAuthId
             };
 
@@ -205,7 +204,7 @@ public partial class InvoizRDbContext
                 BranchId = pos.BranchId,
                 Branch = branch.Name,
                 Code = pos.Code,
-                TaxAuthPos = pos.TaxAuthPos,
+                TaxAuthId = pos.TaxAuthId,
                 Description = pos.Description
             };
 

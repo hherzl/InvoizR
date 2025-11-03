@@ -21,7 +21,7 @@ public class CreatePosCommandHandler : IRequestHandler<CreatePosCommand, Created
             BranchId = request.BranchId,
             Name = request.Name,
             Code = request.Code,
-            TaxAuthPos = request.TaxAuthPos,
+            TaxAuthId = request.TaxAuthId,
             Description = request.Description
         };
 

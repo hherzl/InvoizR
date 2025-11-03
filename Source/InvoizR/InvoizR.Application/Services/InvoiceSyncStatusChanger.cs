@@ -14,7 +14,7 @@ public abstract class InvoiceSyncStatusChanger(ILogger logger)
         var invoice = await dbContext.GetInvoiceAsync(invoiceId, includes: true, tracking: true, ct: cancellationToken);
         var invoiceType = await dbContext.GetInvoiceTypeAsync(invoice.InvoiceTypeId, ct: cancellationToken);
 
-        var invoiceCodes = new InvoiceCodeGenerator().Generate(invoiceType.Id, invoice.Pos.Branch.EstablishmentPrefix, invoice.Pos.Branch.TaxAuthId, invoice.Pos.Code, invoice.InvoiceNumber);
+        var invoiceCodes = new InvoiceCodeGenerator().Generate(invoiceType.Id, invoice.Pos.Branch.TaxAuthId, invoice.Pos.TaxAuthId, invoice.InvoiceNumber);
 
         invoice.SchemaType = invoiceType.SchemaType;
         invoice.SchemaVersion = invoiceType.SchemaVersion;

@@ -21,7 +21,6 @@ public class CreateBranchCommandHandler : IRequestHandler<CreateBranchCommand, C
         {
             CompanyId = request.CompanyId,
             Name = request.Name,
-            EstablishmentPrefix = request.EstablishmentPrefix,
             TaxAuthId = request.TaxAuthId,
             Address = request.Address,
             Phone = request.Phone,

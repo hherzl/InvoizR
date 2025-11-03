@@ -47,13 +47,11 @@
     <MudTable Items="response?.Model.Branches">
         <HeaderContent>
             <MudTh>Name</MudTh>
-            <MudTh>Establishment prefix</MudTh>
             <MudTh>Tax Auth ID</MudTh>
             <MudTh></MudTh>
         </HeaderContent>
         <RowTemplate>
             <MudTd DataLabel="Name">@context.Name</MudTd>
-            <MudTd DataLabel="Establishment prefix">@context.EstablishmentPrefix</MudTd>
             <MudTd DataLabel="Tax Auth ID">@context.TaxAuthId</MudTd>
             <MudTd>
                 <a href="@($"/branch/{@context.Id}")">
