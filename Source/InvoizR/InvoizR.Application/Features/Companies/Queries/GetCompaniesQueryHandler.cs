@@ -21,7 +21,7 @@ public class GetCompaniesQueryHandler(IInvoizRDbContext dbContext) : IRequestHan
                 Code = company.Code,
                 BusinessName = company.BusinessName,
                 TaxIdNumber = company.TaxIdNumber,
-                TaxRegistrationNumber = company.TaxRegistrationNumber
+                TaxpayerRegistrationNumber = company.TaxpayerRegistrationNumber
             };
 
         return new(await query.ToListAsync(cancellationToken));

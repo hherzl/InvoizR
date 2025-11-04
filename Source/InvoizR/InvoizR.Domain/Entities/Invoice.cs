@@ -25,6 +25,7 @@ public partial class Invoice : Entity
     public string CustomerId { get; set; }
     public string CustomerDocumentTypeId { get; set; }
     public string CustomerDocumentNumber { get; set; }
+    public string CustomerTaxpayerRegistrationNumber { get; set; }
     public string CustomerWtId { get; set; }
     public string CustomerName { get; set; }
     public string CustomerCountryId { get; set; }

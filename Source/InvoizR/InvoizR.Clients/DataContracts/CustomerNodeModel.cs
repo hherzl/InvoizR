@@ -5,6 +5,7 @@ public record CustomerNodeModel
     public string Id { get; set; }
     public string DocumentTypeId { get; set; }
     public string DocumentNumber { get; set; }
+    public string TaxpayerRegistrationNumber { get; set; }
     public string WtId { get; set; }
     public string Name { get; set; }
     public string CountryId { get; set; }

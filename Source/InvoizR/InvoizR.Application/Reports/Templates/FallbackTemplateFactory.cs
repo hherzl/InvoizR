@@ -21,7 +21,7 @@ public class FallbackTemplateFactory
             {
                 BusinessName = company.BusinessName,
                 TaxIdNumber = company.TaxIdNumber,
-                TaxRegistrationNumber = company.TaxRegistrationNumber,
+                TaxpayerRegistrationNumber = company.TaxpayerRegistrationNumber,
                 EconomicActivityId = company.EconomicActivityId,
                 EconomicActivity = company.EconomicActivity,
                 Address = company.Address,

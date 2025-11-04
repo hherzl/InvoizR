@@ -2,13 +2,13 @@
 
 public partial class Company
 {
-    public Company(string name, string code, string businessName, string taxIdNumber, string taxRegistrationNumber)
+    public Company(string name, string code, string businessName, string taxIdNumber, string taxpayerRegistrationNumber)
     {
         Name = name;
         Code = code;
         BusinessName = businessName;
         TaxIdNumber = taxIdNumber;
-        TaxRegistrationNumber = taxRegistrationNumber;
+        TaxpayerRegistrationNumber = taxpayerRegistrationNumber;
         EconomicActivityId = "1111";
         EconomicActivity = "Misc 1";
     }

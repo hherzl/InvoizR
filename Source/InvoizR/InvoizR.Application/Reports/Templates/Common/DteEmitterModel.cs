@@ -4,7 +4,7 @@ public record DteEmitterModel
 {
     public string BusinessName { get; set; }
     public string TaxIdNumber { get; set; }
-    public string TaxRegistrationNumber { get; set; }
+    public string TaxpayerRegistrationNumber { get; set; }
     public string EconomicActivityId { get; set; }
     public string EconomicActivity { get; set; }
     public string Address { get; set; }

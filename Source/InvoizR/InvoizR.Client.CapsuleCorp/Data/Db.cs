@@ -67,17 +67,17 @@ public static class Db
             Card.CreateWalkIn("W001", "Walk-in cust.", "SV", 1, "N/A", "N/A", "walk-incust@capsulecorp.com"),
 
             // Suppliers
-            Card.CreateCompany("S001", "36", "0614-010122-000-1", "Kame House Supplies", "JP", 1, "Kame House, South Sea", "+81-555-3333", "kame@supplies.com", wtId: "WT1"),
+            Card.CreateCompany("S001", "36", "0614-010122-000-1", "Kame House Supplies", "JP", 1, "Kame House, South Sea", "+81-555-3333", "kame@supplies.com", taxpayerId: "101-0", wtId: "WT1"),
             Card.CreateCompany("S002", "36", "0614-010222-000-2", "Saiyan Training Equipment Ltd.", "JP", 1, "123 Vegeta Boulevard, North City", "+81-555-8888", "training@vegeta.com"),
-            Card.CreateCompany("S003", "36", "0614-010322-000-3", "Advanced Tech Innovations", "JP", 1, "17 Future Lane, West City", "+81-555-7777", "tech@capsulecorp.com"),
-            Card.CreateCompany("S004", "36", "0614-010422-000-4", "Penguin Village Exports", "JP", 1, "5 Arale Lane, Penguin Village", "+81-555-4444", "exports@penguinvillage.com"),
-            Card.CreateCompany("S005", "36", "0614-010522-000-5", "Orange Star Logistics", "JP", 1, "21 Gohan Avenue, Orange Star City", "+81-555-2222", "logistics@orangestar.com", wtId: "WT1"),
+            Card.CreateCompany("S003", "36", "0614-010322-000-3", "Advanced Tech Innovations", "JP", 1, "17 Future Lane, West City", "+81-555-7777", "tech@capsulecorp.com", taxpayerId: "321-0"),
+            Card.CreateCompany("S004", "36", "0614-010422-000-4", "Penguin Village Exports", "JP", 1, "5 Arale Lane, Penguin Village", "+81-555-4444", "exports@penguinvillage.com", taxpayerId: "543-0"),
+            Card.CreateCompany("S005", "36", "0614-010522-000-5", "Orange Star Logistics", "JP", 1, "21 Gohan Avenue, Orange Star City", "+81-555-2222", "logistics@orangestar.com", taxpayerId: "555-0", wtId: "WT1"),
             Card.CreateCompany("S006", "36", "0614-010622-000-6", "Red Ribbon Tech", "JP", 1, "55 Ribbon Street, West City", "+81-555-1111", "contact@redribbon.com"),
             Card.CreateCompany("S007", "36", "0614-010722-000-7", "Ginyu Force Services", "JP", 1, "99 Space Route, North City", "+81-555-1010", "ginyu@force.com"),
-            Card.CreateCompany("S008", "36", "0614-010822-000-8", "Yajirobe Food Supplies", "JP", 1, "7 Korin Way, Sacred Land", "+81-555-2020", "food@yajirobe.com"),
+            Card.CreateCompany("S008", "36", "0614-010822-000-8", "Yajirobe Food Supplies", "JP", 1, "7 Korin Way, Sacred Land", "+81-555-2020", "food@yajirobe.com", taxpayerId: "101-0"),
             Card.CreateCompany("S009", "36", "0614-010922-000-9", "Hercule's Gym Equipment", "JP", 1, "1 Martial Arts Plaza, Satan City", "+81-555-3030", "gym@hercule.com"),
-            Card.CreateCompany("S010", "36", "0614-011022-100-1", "Future Capsule Logistics", "JP", 1, "7 Trunks Boulevard, West City", "+81-555-4040", "logistics@futurecapsule.com"),
-            Card.CreateCompany("S011", "36", "0614-011122-100-2", "King Kai Communication Ltd.", "JP", 1, "Kai Lane, Otherworld", "+81-555-5050", "communication@kingkai.com", wtId: "WT1")
+            Card.CreateCompany("S010", "36", "0614-011022-100-1", "Future Capsule Logistics", "JP", 1, "7 Trunks Boulevard, West City", "+81-555-4040", "logistics@futurecapsule.com", taxpayerId: "999-8"),
+            Card.CreateCompany("S011", "36", "0614-011122-100-2", "King Kai Communication Ltd.", "JP", 1, "Kai Lane, Otherworld", "+81-555-5050", "communication@kingkai.com", taxpayerId: "1111-0", wtId: "WT1")
         };
     }
 

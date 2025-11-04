@@ -12,7 +12,7 @@ public static class CompanyMocks
             Code = "CC",
             BusinessName = "Capsule Corp.",
             TaxIdNumber = "0614-010121-123-4",
-            TaxRegistrationNumber = "225-5",
+            TaxpayerRegistrationNumber = "225-5",
             EconomicActivityId = "26101",
             EconomicActivity = "Fabricación de componentes y tableros electrónicos",
             CountryLevelId = 1,

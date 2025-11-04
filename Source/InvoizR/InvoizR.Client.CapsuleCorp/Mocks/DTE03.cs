@@ -46,6 +46,7 @@ static class Dte03
         request.Customer.Id = randomCard.Id;
         request.Customer.DocumentTypeId = randomCard.DocumentTypeId;
         request.Customer.DocumentNumber = randomCard.DocumentNumber;
+        request.Customer.TaxpayerRegistrationNumber = randomCard.TaxpayerId;
         request.Customer.WtId = randomCard.WtId;
         request.Customer.Name = randomCard.Name;
         request.Customer.CountryId = randomCard.CountryId;

@@ -37,6 +37,7 @@ public sealed class CreateDte03OWCommandHandler : IRequestHandler<CreateDte03OWC
                 CustomerId = request.Customer.Id,
                 CustomerDocumentTypeId = request.Customer.DocumentTypeId,
                 CustomerDocumentNumber = request.Customer.DocumentNumber,
+                CustomerTaxpayerRegistrationNumber = request.Customer.TaxpayerRegistrationNumber,
                 CustomerWtId = request.Customer.WtId,
                 CustomerName = request.Customer.Name,
                 CustomerCountryId = request.Customer.CountryId,

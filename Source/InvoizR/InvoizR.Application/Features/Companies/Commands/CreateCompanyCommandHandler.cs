@@ -24,7 +24,7 @@ public sealed class CreateCompanyCommandHandler : IRequestHandler<CreateCompanyC
             Code = request.Code,
             BusinessName = request.BusinessName,
             TaxIdNumber = request.TaxIdNumber,
-            TaxRegistrationNumber = request.TaxRegistrationNumber,
+            TaxpayerRegistrationNumber = request.TaxpayerRegistrationNumber,
             EconomicActivityId = request.EconomicActivityId,
             EconomicActivity = request.EconomicActivity,
             CountryLevelId = request.CountryLevelId,
