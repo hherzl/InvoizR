@@ -60,9 +60,9 @@ internal class CompanyConfiguration : IEntityTypeConfiguration<Company>
             ;
 
         builder
-            .Property(p => p.TaxRegistrationNumber)
+            .Property(p => p.TaxpayerRegistrationNumber)
             .HasColumnType("nvarchar")
-            .HasMaxLength(20)
+            .HasMaxLength(10)
             .IsRequired()
             ;
 

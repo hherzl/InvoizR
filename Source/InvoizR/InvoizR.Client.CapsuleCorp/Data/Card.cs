@@ -23,7 +23,7 @@ public partial class Card
     public short? CardTypeId { get; set; }
     public string DocumentTypeId { get; set; }
     public string DocumentNumber { get; set; }
-    public string TaxId { get; set; }
+    public string TaxpayerId { get; set; }
     public string WtId { get; set; }
     public string Name { get; set; }
     public string CountryId { get; set; }
@@ -40,17 +40,7 @@ public partial class Card
 {
     public static Card CreatePerson
     (
-        string id,
-        string documentTypeId,
-        string documentNumber,
-        string name,
-        string countryId,
-        short? countryLevelId,
-        string address,
-        string phone,
-        string email,
-        string taxId = null,
-        string wtId = null
+        string id, string documentTypeId, string documentNumber, string name, string countryId, short? countryLevelId, string address, string phone, string email, string taxpayerId = null, string wtId = null
     )
     {
         return new()
@@ -65,24 +55,14 @@ public partial class Card
             Address = address,
             Phone = phone,
             Email = email,
-            TaxId = taxId,
+            TaxpayerId = taxpayerId,
             WtId = wtId
         };
     }
 
     public static Card CreateCompany
     (
-        string id,
-        string documentTypeId,
-        string documentNumber,
-        string name,
-        string countryId,
-        short? countryLevelId,
-        string address,
-        string phone,
-        string email,
-        string taxId = null,
-        string wtId = null
+        string id, string documentTypeId, string documentNumber, string name, string countryId, short? countryLevelId, string address, string phone, string email, string taxpayerId = null, string wtId = null
     )
     {
         return new()
@@ -97,7 +77,7 @@ public partial class Card
             Address = address,
             Phone = phone,
             Email = email,
-            TaxId = taxId,
+            TaxpayerId = taxpayerId,
             WtId = wtId
         };
     }

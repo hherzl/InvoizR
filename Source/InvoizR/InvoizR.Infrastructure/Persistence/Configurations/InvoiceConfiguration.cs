@@ -54,6 +54,12 @@ internal class InvoiceConfiguration : IEntityTypeConfiguration<Invoice>
             ;
 
         builder
+            .Property(p => p.CustomerTaxpayerRegistrationNumber)
+            .HasColumnType("nvarchar")
+            .HasMaxLength(10)
+            ;
+
+        builder
             .Property(p => p.CustomerWtId)
             .HasColumnType("nvarchar")
             .HasMaxLength(5)

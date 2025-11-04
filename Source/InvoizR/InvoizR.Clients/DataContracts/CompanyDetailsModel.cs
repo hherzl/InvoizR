@@ -13,7 +13,7 @@ public record CompanyDetailsModel
     public string Code { get; set; }
     public string BusinessName { get; set; }
     public string TaxIdNumber { get; set; }
-    public string TaxRegistrationNumber { get; set; }
+    public string TaxpayerRegistrationNumber { get; set; }
     public string EconomicActivityId { get; set; }
     public string EconomicActivity { get; set; }
     public short? CountryLevelId { get; set; }

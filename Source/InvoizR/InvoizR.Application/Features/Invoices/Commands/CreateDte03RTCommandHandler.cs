@@ -46,6 +46,7 @@ public sealed class CreateDte03RTCommandHandler(ILogger<CreateDte03RTCommandHand
                 CustomerId = request.Customer.Id,
                 CustomerDocumentTypeId = request.Customer.DocumentTypeId,
                 CustomerDocumentNumber = request.Customer.DocumentNumber,
+                CustomerTaxpayerRegistrationNumber = request.Customer.TaxpayerRegistrationNumber,
                 CustomerWtId = request.Customer.WtId,
                 CustomerName = request.Customer.Name,
                 CustomerCountryId = request.Customer.CountryId,

@@ -31,7 +31,7 @@ public class GetCompanyQueryHandler : IRequestHandler<GetCompanyQuery, SingleRes
             Code = entity.Code,
             BusinessName = entity.BusinessName,
             TaxIdNumber = entity.TaxIdNumber,
-            TaxRegistrationNumber = entity.TaxRegistrationNumber,
+            TaxpayerRegistrationNumber = entity.TaxpayerRegistrationNumber,
             EconomicActivityId = entity.EconomicActivityId,
             EconomicActivity = entity.EconomicActivity,
             CountryLevelId = entity.CountryLevelId,

@@ -8,5 +8,5 @@ public record CompanyItemModel
     public string Code { get; set; }
     public string BusinessName { get; set; }
     public string TaxIdNumber { get; set; }
-    public string TaxRegistrationNumber { get; set; }
+    public string TaxpayerRegistrationNumber { get; set; }
 }

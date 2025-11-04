@@ -53,7 +53,7 @@ public class FallbackTemplatev1 : DteTemplatev1<FallbackTemplateModel>
         output.AppendLine("  <tbody>");
 
         output.Append($"   <tr><td>Nombre o razón social: {AsStrong(Model.Emitter.BusinessName)}, ");
-        output.AppendLine($"   NIT: {AsStrong(Model.Emitter.TaxIdNumber)}, NRC: {AsStrong(Model.Emitter.TaxRegistrationNumber)}</td></tr>");
+        output.AppendLine($"   NIT: {AsStrong(Model.Emitter.TaxIdNumber)}, NRC: {AsStrong(Model.Emitter.TaxpayerRegistrationNumber)}</td></tr>");
 
         output.AppendLine($"   <tr><td>Actividad económica: {AsStrong(Model.Emitter.EconomicActivity)}</td></tr>");
         output.AppendLine($"   <tr><td>Dirección: {AsStrong(Model.Emitter.Address)}, Teléfono: {AsStrong(Model.Emitter.Phone)}</td></tr>");

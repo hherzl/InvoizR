@@ -24,7 +24,7 @@ internal class FeNrv3Helper
         var emisor = CompanyMocks.GetCapsuleCorp();
 
         dte.Emisor.Nit = emisor.TaxIdNumber;
-        dte.Emisor.Nrc = emisor.TaxRegistrationNumber;
+        dte.Emisor.Nrc = emisor.TaxpayerRegistrationNumber;
         dte.Emisor.Nombre = emisor.BusinessName;
         dte.Emisor.CodActividad = emisor.EconomicActivityId;
         dte.Emisor.DescActividad = emisor.EconomicActivity;
