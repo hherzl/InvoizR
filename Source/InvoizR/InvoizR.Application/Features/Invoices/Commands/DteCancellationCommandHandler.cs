@@ -17,14 +17,14 @@ public sealed class DteCancellationCommandHandler : IRequestHandler<DteCancellat
     private readonly ILogger _logger;
     private readonly IInvoizRDbContext _dbContext;
     private readonly ISeguridadClient _seguridadClient;
-    private readonly DteCancellationHandler _dteCancellationHandler;
+    private readonly InvoiceCancellationHandler _dteCancellationHandler;
 
     public DteCancellationCommandHandler
     (
         ILogger<DteCancellationCommandHandler> logger,
         IInvoizRDbContext dbContext,
         ISeguridadClient seguridadClient,
-        DteCancellationHandler dteCancellationHandler
+        InvoiceCancellationHandler dteCancellationHandler
     )
     {
         _logger = logger;

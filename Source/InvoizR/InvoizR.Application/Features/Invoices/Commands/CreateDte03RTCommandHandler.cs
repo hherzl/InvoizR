@@ -27,7 +27,7 @@ public sealed class CreateDte03RTCommandHandler(ILogger<CreateDte03RTCommandHand
         using var dbContext = scope.ServiceProvider.GetRequiredService<IInvoizRDbContext>();
         var dteSyncStatusChanger = scope.ServiceProvider.GetRequiredService<Dte03SyncStatusChanger>();
         var seguridadClient = scope.ServiceProvider.GetRequiredService<ISeguridadClient>();
-        var dteSyncHandler = scope.ServiceProvider.GetRequiredService<DteSyncHandler>();
+        var dteSyncHandler = scope.ServiceProvider.GetRequiredService<InvoiceSyncHandler>();
 
         _ = await dbContext.GetCurrentInvoiceTypeAsync(FeCcfv3.TypeId, ct: ct) ?? throw new InvalidCurrentInvoiceTypeException();
 

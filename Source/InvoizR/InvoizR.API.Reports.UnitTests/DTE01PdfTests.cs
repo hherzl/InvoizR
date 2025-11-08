@@ -1,5 +1,5 @@
 ﻿using DinkToPdf;
-using InvoizR.Application.Helpers;
+using InvoizR.Application;
 using InvoizR.Application.Reports.Templates;
 using InvoizR.Infrastructure.Reports;
 
@@ -16,13 +16,13 @@ public class DTE01PdfTests : ReportsTest
     public async Task GenerateDTE01Pdf()
     {
         var invoice = await _dbContext.GetInvoiceAsync(1, includes: true);
-        var pdfPath = _processingSettings.GetDtePdfPath(invoice.AuditNumber);
+        var pdfPath = _processingSettings.GetInvoicePdfPath(invoice.AuditNumber);
         var pdf = new HtmlToPdfDocument
         {
             GlobalSettings = DinkToPdfHelper.CreateDteGlobalSettings(pdfPath),
             Objects =
             {
-                DinkToPdfHelper.CreateDteObjSettings(new Dte01Templatev1(new Dte01TemplateFactory(_qrCodeGenerator).Create(invoice)).ToString(), ReportsPathHelper.GetDteCssPath())
+                DinkToPdfHelper.CreateDteObjSettings(new Dte01Templatev1(new Dte01TemplateFactory(_qrCodeGenerator).Create(invoice)).ToString(), ReportsPathHelper.GetInvoiceCssPath())
             }
         };
 
@@ -35,13 +35,13 @@ public class DTE01PdfTests : ReportsTest
     public async Task GenerateDTE03Pdf()
     {
         var invoice = await _dbContext.GetInvoiceAsync(10, includes: true);
-        var pdfPath = _processingSettings.GetDtePdfPath(invoice.AuditNumber);
+        var pdfPath = _processingSettings.GetInvoicePdfPath(invoice.AuditNumber);
         var pdf = new HtmlToPdfDocument
         {
             GlobalSettings = DinkToPdfHelper.CreateDteGlobalSettings(pdfPath),
             Objects =
             {
-                DinkToPdfHelper.CreateDteObjSettings(new Dte03Templatev1(new Dte03TemplateFactory(_qrCodeGenerator).Create(invoice)).ToString(), ReportsPathHelper.GetDteCssPath())
+                DinkToPdfHelper.CreateDteObjSettings(new Dte03Templatev1(new Dte03TemplateFactory(_qrCodeGenerator).Create(invoice)).ToString(), ReportsPathHelper.GetInvoiceCssPath())
             }
         };
 

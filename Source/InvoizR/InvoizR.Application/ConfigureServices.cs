@@ -17,10 +17,12 @@ public static class ConfigureServices
         {
             options.OutputPath = configuration["ProcessingSettings:OutputPath"];
             options.LogsPath = configuration["ProcessingSettings:LogsPath"];
-            options.DtePath = configuration["ProcessingSettings:DtePath"];
+            options.InvoicesPath = configuration["ProcessingSettings:InvoicesPath"];
+            options.NotificationsPath = configuration["ProcessingSettings:NotificationsPath"];
+            options.FallbacksPath = configuration["ProcessingSettings:FallbacksPath"];
         });
 
-        services.AddScoped<DteSyncHandler>();
+        services.AddScoped<InvoiceSyncHandler>();
 
         services.AddScoped<Dte01SyncStatusChanger>();
         services.AddScoped<Dte01TemplateFactory>();
@@ -42,7 +44,7 @@ public static class ConfigureServices
 
         services.AddScoped<FallbackTemplateFactory>();
 
-        services.AddScoped<DteCancellationHandler>();
+        services.AddScoped<InvoiceCancellationHandler>();
 
         services.AddScoped<InvoiceExporter>();
         services.AddScoped<FallbackInvoiceExporter>();

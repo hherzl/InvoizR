@@ -1,6 +1,5 @@
 ﻿using InvoizR.Application.Common;
 using InvoizR.Application.Common.Contracts;
-using InvoizR.Application.Helpers;
 using InvoizR.Clients.ThirdParty.Contracts;
 using InvoizR.Clients.ThirdParty.DataContracts;
 using InvoizR.Domain.Entities;
@@ -16,20 +15,9 @@ using Microsoft.Extensions.Options;
 
 namespace InvoizR.Application.Services;
 
-public class DteSyncHandler
+public sealed class InvoiceSyncHandler(IOptions<ProcessingSettings> processingOptions, IFirmadorClient firmadorClient, IFeSvClient feSvClient)
 {
-    private readonly ProcessingSettings _processingSettings;
-    private readonly IFirmadorClient _firmadorClient;
-    private readonly IFesvClient _fesvClient;
-
-    public DteSyncHandler(IOptions<ProcessingSettings> processingOptions, IFirmadorClient firmadorClient, IFesvClient fesvClient)
-    {
-        _processingSettings = processingOptions.Value;
-        _firmadorClient = firmadorClient;
-        _fesvClient = fesvClient;
-    }
-
-    private void ReceiveInvoice(Invoice invoice, string eSignature)
+    private static void ReceiveInvoice(Invoice invoice, string eSignature)
     {
         if (invoice.InvoiceTypeId == FeFcv1.TypeId)
         {
@@ -81,34 +69,38 @@ public class DteSyncHandler
         }
     }
 
-    public async Task<bool> HandleAsync<TDte>(ICreateDteRequest<TDte> request, IInvoizRDbContext dbContext, CancellationToken cancellationToken = default) where TDte : Dte
+    public async Task<bool> HandleAsync<TDte>(ICreateDteRequest<TDte> request, IInvoizRDbContext dbContext, CancellationToken ct = default) where TDte : Dte
     {
-        var invoice = await dbContext.GetInvoiceAsync(request.InvoiceId, true, true, cancellationToken);
+        var processingSettings = processingOptions.Value;
 
-        if (!Directory.Exists(_processingSettings.GetLogsPath(invoice.AuditNumber)))
-            Directory.CreateDirectory(_processingSettings.GetLogsPath(invoice.AuditNumber));
+        var invoice = await dbContext.GetInvoiceAsync(request.InvoiceId, true, true, ct);
 
-        _firmadorClient.ClientSettings = request.ThirdPartyClientParameters.GetByService(_firmadorClient.ServiceName).ToFirmadorClientSettings();
+        if (!Directory.Exists(processingSettings.GetLogsPath(invoice.AuditNumber)))
+            Directory.CreateDirectory(processingSettings.GetLogsPath(invoice.AuditNumber));
+
+        firmadorClient.ClientSettings = request.ThirdPartyClientParameters.GetByService(firmadorClient.ServiceName).ToFirmadorClientSettings();
 
         var firmarDocumentoRequest = new FirmarDocumentoRequest<TDte>(request.ThirdPartyClientParameters.GetUser(), true, request.ThirdPartyClientParameters.GetPrivateKey(), request.Dte);
 
-        await File.WriteAllTextAsync(_processingSettings.GetFirmaRequestJsonPath(invoice.AuditNumber), firmarDocumentoRequest.ToJson(), cancellationToken);
+        await File.WriteAllTextAsync(processingSettings.GetFirmaRequestJsonPath(invoice.AuditNumber), firmarDocumentoRequest.ToJson(), ct);
 
-        var firmarDocumentoResponse = await _firmadorClient.FirmarDocumentoAsync(firmarDocumentoRequest);
-        await File.WriteAllTextAsync(_processingSettings.GetFirmaResponseJsonPath(invoice.AuditNumber), firmarDocumentoResponse.ToJson(), cancellationToken);
+        var firmarDocumentoResponse = await firmadorClient.FirmarDocumentoAsync(firmarDocumentoRequest);
+        await File.WriteAllTextAsync(processingSettings.GetFirmaResponseJsonPath(invoice.AuditNumber), firmarDocumentoResponse.ToJson(), ct);
 
         dbContext.InvoiceProcessingLog.Add(
             InvoiceProcessingLog.CreateRequest(invoice.Id, InvoiceProcessingStatus.Requested, firmarDocumentoResponse.ToJson())
         );
 
+        feSvClient.ClientSettings = request.ThirdPartyClientParameters.GetByService(feSvClient.ServiceName).ToFesvClientSettings();
+
         var recepcionRequest = new RecepcionDteRequest(invoice.Pos.Branch.Company.Environment, invoice.SchemaVersion, invoice.SchemaType, invoice.InvoiceGuid, firmarDocumentoResponse.Body);
-        await File.WriteAllTextAsync(_processingSettings.GetRecepcionRequestJsonPath(invoice.AuditNumber), recepcionRequest.ToJson(), cancellationToken);
+        await File.WriteAllTextAsync(processingSettings.GetRecepcionRequestJsonPath(invoice.AuditNumber), recepcionRequest.ToJson(), ct);
 
-        _fesvClient.Jwt = request.ThirdPartyClientParameters.GetToken();
+        feSvClient.Jwt = request.ThirdPartyClientParameters.GetToken();
 
-        var recepcionResponse = await _fesvClient.RecepcionDteAsync(recepcionRequest);
+        var recepcionResponse = await feSvClient.RecepcionDteAsync(recepcionRequest);
 
-        await File.WriteAllTextAsync(_processingSettings.GetRecepcionResponseJsonPath(invoice.AuditNumber), recepcionResponse.ToJson(), cancellationToken);
+        await File.WriteAllTextAsync(processingSettings.GetRecepcionResponseJsonPath(invoice.AuditNumber), recepcionResponse.ToJson(), ct);
 
         if (recepcionResponse.IsSuccessful)
         {
@@ -141,7 +133,7 @@ public class DteSyncHandler
             dbContext.InvoiceProcessingStatusLog.Add(new(invoice.Id, invoice.ProcessingStatusId));
         }
 
-        await dbContext.SaveChangesAsync(cancellationToken);
+        await dbContext.SaveChangesAsync(ct);
 
         return recepcionResponse.IsSuccessful;
     }

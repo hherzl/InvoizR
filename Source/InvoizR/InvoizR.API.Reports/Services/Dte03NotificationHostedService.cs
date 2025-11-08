@@ -10,18 +10,18 @@ namespace InvoizR.API.Reports.Services;
 public sealed class Dte03NotificationHostedService(ILogger<Dte03NotificationHostedService> logger, IServiceProvider serviceProvider, IConfiguration configuration)
     : BackgroundService
 {
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    protected override async Task ExecuteAsync(CancellationToken st)
     {
-        using var scope = serviceProvider.CreateScope();
+        using var serviceScope = serviceProvider.CreateScope();
 
-        using var dbContext = scope.ServiceProvider.GetRequiredService<IInvoizRDbContext>();
-        var invoiceExporter = scope.ServiceProvider.GetRequiredService<InvoiceExporter>();
+        using var dbContext = serviceScope.ServiceProvider.GetRequiredService<IInvoizRDbContext>();
+        var invoiceExporter = serviceScope.ServiceProvider.GetRequiredService<InvoiceExporter>();
 
         var processingSettings = new ProcessingSettings();
         configuration.Bind("ProcessingSettings", processingSettings);
 
         var timer = new PeriodicTimer(TimeSpan.FromMinutes(1));
-        while (await timer.WaitForNextTickAsync(stoppingToken))
+        while (await timer.WaitForNextTickAsync(st))
         {
             try
             {
@@ -30,7 +30,7 @@ public sealed class Dte03NotificationHostedService(ILogger<Dte03NotificationHost
                     .Add(InvoiceProcessingStatus.Processed)
                     ;
 
-                var invoices = await dbContext.GetInvoicesForProcessing(filters.InvoiceTypeId, filters.ProcessingTypeId, [.. filters.ProcessingStatuses]).ToListAsync(stoppingToken);
+                var invoices = await dbContext.GetInvoicesForProcessing(filters.InvoiceTypeId, filters.ProcessingTypeId, [.. filters.ProcessingStatuses]).ToListAsync(st);
                 if (invoices.Count == 0)
                 {
                     logger.LogInformation($"There are no '{FeCcfv3.SchemaType}' invoices to process...");
@@ -39,9 +39,9 @@ public sealed class Dte03NotificationHostedService(ILogger<Dte03NotificationHost
 
                 logger.LogInformation($"Exporting '{invoices.Count}' invoices ...");
 
-                foreach (var item in invoices)
+                foreach (var invoice in invoices)
                 {
-                    await invoiceExporter.ExportAsync(item.Id, stoppingToken);
+                    await invoiceExporter.ExportAsync(invoice.Id, st);
                 }
             }
             catch (Exception ex)

@@ -16,11 +16,11 @@ public sealed class Dte03HostedService(ILogger<Dte03HostedService> logger, IServ
 {
     protected override async Task ExecuteAsync(CancellationToken st)
     {
-        using var scope = serviceProvider.CreateScope();
+        using var serviceScope = serviceProvider.CreateScope();
 
-        using var dbContext = scope.ServiceProvider.GetRequiredService<IInvoizRDbContext>();
-        var seguridadClient = scope.ServiceProvider.GetRequiredService<ISeguridadClient>();
-        var hubContext = scope.ServiceProvider.GetRequiredService<IHubContext<BillingHub>>();
+        using var dbContext = serviceScope.ServiceProvider.GetRequiredService<IInvoizRDbContext>();
+        var seguridadClient = serviceScope.ServiceProvider.GetRequiredService<ISeguridadClient>();
+        var hubContext = serviceScope.ServiceProvider.GetRequiredService<IHubContext<BillingHub>>();
 
         var timer = new PeriodicTimer(TimeSpan.FromMinutes(1));
         while (await timer.WaitForNextTickAsync(st))
@@ -39,8 +39,8 @@ public sealed class Dte03HostedService(ILogger<Dte03HostedService> logger, IServ
                     continue;
                 }
 
-                var dteSyncStatusChanger = scope.ServiceProvider.GetRequiredService<Dte03SyncStatusChanger>();
-                var dteSyncHandler = scope.ServiceProvider.GetRequiredService<DteSyncHandler>();
+                var dteSyncStatusChanger = serviceScope.ServiceProvider.GetRequiredService<Dte03SyncStatusChanger>();
+                var invoiceSyncHandler = serviceScope.ServiceProvider.GetRequiredService<InvoiceSyncHandler>();
 
                 foreach (var invoice in invoices)
                 {
@@ -69,7 +69,7 @@ public sealed class Dte03HostedService(ILogger<Dte03HostedService> logger, IServ
                         var authResponse = await seguridadClient.AuthAsync();
                         thirdPartyServicesParameters.AddJwt(invoice.Environment, authResponse.Body.Token);
 
-                        if (await dteSyncHandler.HandleAsync(CreateDte03Request.Create(thirdPartyServicesParameters, invoice.Id, invoice.Payload), dbContext, st))
+                        if (await invoiceSyncHandler.HandleAsync(CreateDte03Request.Create(thirdPartyServicesParameters, invoice.Id, invoice.Payload), dbContext, st))
                         {
                             logger.LogInformation($"Broadcasting '{invoice.InvoiceNumber}' invoice...");
                             await hubContext.Clients.All.SendAsync(HubMethods.SendInvoice, invoice.InvoiceTypeId, invoice.InvoiceNumber, invoice.InvoiceTotal, st);

@@ -16,11 +16,11 @@ public sealed class Dte04HostedService(ILogger<Dte04HostedService> logger, IServ
 {
     protected override async Task ExecuteAsync(CancellationToken st)
     {
-        using var scope = serviceProvider.CreateScope();
+        using var serviceScope = serviceProvider.CreateScope();
 
-        using var dbContext = scope.ServiceProvider.GetRequiredService<IInvoizRDbContext>();
-        var seguridadClient = scope.ServiceProvider.GetRequiredService<ISeguridadClient>();
-        var hubContext = scope.ServiceProvider.GetRequiredService<IHubContext<BillingHub>>();
+        using var dbContext = serviceScope.ServiceProvider.GetRequiredService<IInvoizRDbContext>();
+        var seguridadClient = serviceScope.ServiceProvider.GetRequiredService<ISeguridadClient>();
+        var hubContext = serviceScope.ServiceProvider.GetRequiredService<IHubContext<BillingHub>>();
 
         var timer = new PeriodicTimer(TimeSpan.FromMinutes(1));
         while (await timer.WaitForNextTickAsync(st))
@@ -39,8 +39,8 @@ public sealed class Dte04HostedService(ILogger<Dte04HostedService> logger, IServ
                     continue;
                 }
 
-                var dteProcessingStatusChanger = scope.ServiceProvider.GetRequiredService<Dte04SyncStatusChanger>();
-                var dteSyncHandler = scope.ServiceProvider.GetRequiredService<DteSyncHandler>();
+                var dteSyncStatusChanger = serviceScope.ServiceProvider.GetRequiredService<Dte04SyncStatusChanger>();
+                var invoiceSyncHandler = serviceScope.ServiceProvider.GetRequiredService<InvoiceSyncHandler>();
 
                 foreach (var invoice in invoices)
                 {
@@ -48,13 +48,13 @@ public sealed class Dte04HostedService(ILogger<Dte04HostedService> logger, IServ
                     {
                         logger.LogInformation($"Processing '{invoice.InvoiceNumber}' invoice, changing status from '{InvoiceProcessingStatus.Created}'...");
 
-                        await dteProcessingStatusChanger.SetInvoiceAsInitializedAsync(invoice.Id, dbContext, st);
+                        await dteSyncStatusChanger.SetInvoiceAsInitializedAsync(invoice.Id, dbContext, st);
                     }
                     else if (invoice.SyncStatusId == (short)InvoiceProcessingStatus.Initialized)
                     {
                         logger.LogInformation($"Processing '{invoice.InvoiceNumber}' invoice, changing status from '{InvoiceProcessingStatus.Initialized}'...");
 
-                        await dteProcessingStatusChanger.SetInvoiceAsRequestedAsync(invoice.Id, dbContext, st);
+                        await dteSyncStatusChanger.SetInvoiceAsRequestedAsync(invoice.Id, dbContext, st);
                     }
                     else if (invoice.SyncStatusId == (short)InvoiceProcessingStatus.Requested)
                     {
@@ -69,7 +69,7 @@ public sealed class Dte04HostedService(ILogger<Dte04HostedService> logger, IServ
                         var authResponse = await seguridadClient.AuthAsync();
                         thirdPartyServicesParameters.AddJwt(invoice.Environment, authResponse.Body.Token);
 
-                        if (await dteSyncHandler.HandleAsync(CreateDte04Request.Create(thirdPartyServicesParameters, invoice.Id, invoice.Payload), dbContext, st))
+                        if (await invoiceSyncHandler.HandleAsync(CreateDte04Request.Create(thirdPartyServicesParameters, invoice.Id, invoice.Payload), dbContext, st))
                         {
                             logger.LogInformation($"Broadcasting '{invoice.InvoiceNumber}' invoice...");
                             await hubContext.Clients.All.SendAsync(HubMethods.SendInvoice, invoice.InvoiceTypeId, invoice.InvoiceNumber, invoice.InvoiceTotal, st);

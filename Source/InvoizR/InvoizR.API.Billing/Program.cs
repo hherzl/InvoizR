@@ -102,7 +102,7 @@ try
     app.MapDte06();
     app.MapDte14();
     app.MapFallback();
-    app.MapDteCancellation();
+    app.MapInvoiceCancellation();
     app.MapDiagnostics();
 
     app.MapHub<BillingHub>("/billinghub");
