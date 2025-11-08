@@ -31,4 +31,12 @@ public static class ThirdPartyClientParameterExtensions
             PrivateKey = thirdPartyClientParameters.GetValue("PrivateKey")
         };
     }
+
+    public static FesvClientSettings ToFesvClientSettings(this IEnumerable<ThirdPartyClientParameter> thirdPartyClientParameters)
+    {
+        return new()
+        {
+            Endpoint = thirdPartyClientParameters.GetValue("Endpoint")
+        };
+    }
 }

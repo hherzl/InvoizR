@@ -30,7 +30,7 @@ public static class ConfigureServices
         services.AddScoped<IFirmadorClient, FirmadorClient>();
 
         services.Configure<FesvClientSettings>(options => options.Endpoint = configuration["Clients:Fesv:Endpoint"]);
-        services.AddScoped<IFesvClient, FesvClient>();
+        services.AddScoped<IFeSvClient, FeSvClient>();
 
         services.Configure<SmtpClientSettings>(options =>
         {

@@ -8,13 +8,16 @@ using Microsoft.Extensions.Options;
 
 namespace InvoizR.Infrastructure.Clients.ThirdParty;
 
-public class FesvClient : MhClient, IFesvClient
+public class FeSvClient : MhClient, IFeSvClient
 {
-    public FesvClient(IOptions<FesvClientSettings> options)
+    public FeSvClient(IOptions<FesvClientSettings> options)
         : base()
     {
         ClientSettings = options.Value;
     }
+
+    public string ServiceName
+        => "FE SV";
 
     public FesvClientSettings ClientSettings { get; set; }
 

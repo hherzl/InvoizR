@@ -1,6 +1,5 @@
 ﻿using InvoizR.Application.Common;
 using InvoizR.Application.Common.Contracts;
-using InvoizR.Application.Helpers;
 using InvoizR.Application.Services.Models;
 using InvoizR.Clients.ThirdParty.Contracts;
 using InvoizR.Clients.ThirdParty.DataContracts;
@@ -11,13 +10,13 @@ using Microsoft.Extensions.Options;
 
 namespace InvoizR.Application.Services;
 
-public sealed class FallbackSyncHandler(IOptions<ProcessingSettings> processingOptions, IFirmadorClient firmadorClient, IFesvClient fesvClient)
+public sealed class FallbackSyncHandler(IOptions<ProcessingSettings> processingOptions, IFirmadorClient firmadorClient, IFeSvClient feSvClient)
 {
-    public async Task<bool> HandleAsync(CreateFallbackRequest request, IInvoizRDbContext dbContext, CancellationToken cancellationToken = default)
+    public async Task<bool> HandleAsync(CreateFallbackRequest request, IInvoizRDbContext dbContext, CancellationToken ct = default)
     {
         var _processingSettings = processingOptions.Value;
 
-        var fallback = await dbContext.GetFallbackAsync((short)request.InvoiceId, tracking: true, ct: cancellationToken);
+        var fallback = await dbContext.GetFallbackAsync((short)request.InvoiceId, tracking: true, ct: ct);
 
         if (!Directory.Exists(_processingSettings.GetLogsPath(fallback.FallbackGuid)))
             Directory.CreateDirectory(_processingSettings.GetLogsPath(fallback.FallbackGuid));
@@ -26,20 +25,20 @@ public sealed class FallbackSyncHandler(IOptions<ProcessingSettings> processingO
 
         var firmarDocumentoRequest = new FirmarDocumentoRequest<Contingenciav3>(request.ThirdPartyClientParameters.GetUser(), true, request.ThirdPartyClientParameters.GetPrivateKey(), request.Dte);
 
-        await File.WriteAllTextAsync(_processingSettings.GetFirmaRequestJsonPath(fallback.FallbackGuid), firmarDocumentoRequest.ToJson(), cancellationToken);
+        await File.WriteAllTextAsync(_processingSettings.GetFirmaRequestJsonPath(fallback.FallbackGuid), firmarDocumentoRequest.ToJson(), ct);
 
         var firmarDocumentoResponse = await firmadorClient.FirmarDocumentoAsync(firmarDocumentoRequest);
-        await File.WriteAllTextAsync(_processingSettings.GetFirmaResponseJsonPath(fallback.FallbackGuid), firmarDocumentoResponse.ToJson(), cancellationToken);
+        await File.WriteAllTextAsync(_processingSettings.GetFirmaResponseJsonPath(fallback.FallbackGuid), firmarDocumentoResponse.ToJson(), ct);
 
         dbContext.FallbackProcessingLog.Add(FallbackProcessingLog.CreateRequest(fallback.Id, InvoiceProcessingStatus.Requested, firmarDocumentoResponse.ToJson()));
 
         var contingenciaRequest = new ContingenciaRequest("NIT", firmarDocumentoResponse.Body);
-        await File.WriteAllTextAsync(_processingSettings.GetRecepcionRequestJsonPath(fallback.FallbackGuid), contingenciaRequest.ToJson(), cancellationToken);
+        await File.WriteAllTextAsync(_processingSettings.GetRecepcionRequestJsonPath(fallback.FallbackGuid), contingenciaRequest.ToJson(), ct);
 
-        fesvClient.Jwt = request.ThirdPartyClientParameters.GetToken();
+        feSvClient.Jwt = request.ThirdPartyClientParameters.GetToken();
 
-        var contingenciaResponse = await fesvClient.ContingenciaAsync(contingenciaRequest);
-        await File.WriteAllTextAsync(_processingSettings.GetRecepcionResponseJsonPath(fallback.FallbackGuid), contingenciaResponse.ToJson(), cancellationToken);
+        var contingenciaResponse = await feSvClient.ContingenciaAsync(contingenciaRequest);
+        await File.WriteAllTextAsync(_processingSettings.GetRecepcionResponseJsonPath(fallback.FallbackGuid), contingenciaResponse.ToJson(), ct);
 
         if (contingenciaResponse.IsSuccessful)
         {
@@ -57,7 +56,7 @@ public sealed class FallbackSyncHandler(IOptions<ProcessingSettings> processingO
             fallback.SyncAttempts += 1;
         }
 
-        await dbContext.SaveChangesAsync(cancellationToken);
+        await dbContext.SaveChangesAsync(ct);
 
         return contingenciaResponse.IsSuccessful;
     }

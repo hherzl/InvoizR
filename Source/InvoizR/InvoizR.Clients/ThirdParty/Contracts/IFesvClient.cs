@@ -2,8 +2,10 @@
 
 namespace InvoizR.Clients.ThirdParty.Contracts;
 
-public interface IFesvClient
+public interface IFeSvClient
 {
+    string ServiceName { get; }
+
     FesvClientSettings ClientSettings { get; set; }
 
     string Jwt { get; set; }

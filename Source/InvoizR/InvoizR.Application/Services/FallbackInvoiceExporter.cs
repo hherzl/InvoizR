@@ -1,63 +1,54 @@
 ﻿using InvoizR.Application.Common;
 using InvoizR.Application.Common.Contracts;
-using InvoizR.Application.Helpers;
 using InvoizR.Application.Reports.Templates.Common;
 using InvoizR.Clients.Contracts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace InvoizR.Application.Services;
 
-public sealed class FallbackInvoiceExporter
+public sealed class FallbackInvoiceExporter(ILogger<FallbackInvoiceExporter> logger, IServiceProvider serviceProvider, IConfiguration configuration)
 {
-    private readonly ILogger _logger;
-    private readonly IEnumerable<IInvoiceExportStrategy> _invoiceExportStrategies;
-    private readonly IConfiguration _configuration;
-    private readonly IInvoizRDbContext _dbContext;
-    private readonly ISmtpClient _smtpClient;
-
-    public FallbackInvoiceExporter(ILogger<FallbackInvoiceExporter> logger, IInvoizRDbContext dbContext, IConfiguration configuration, IEnumerable<IInvoiceExportStrategy> invoiceExportStrategies, ISmtpClient smtpClient)
+    public async Task ExportAsync(long? invoiceId, CancellationToken ct = default)
     {
-        _logger = logger;
-        _dbContext = dbContext;
-        _configuration = configuration;
-        _invoiceExportStrategies = invoiceExportStrategies;
-        _smtpClient = smtpClient;
-    }
+        using var serviceScope = serviceProvider.CreateScope();
 
-    public async Task ExportAsync(long? invoiceId, CancellationToken cancellationToken = default)
-    {
-        var invoice = await _dbContext.GetInvoiceAsync(invoiceId, true, true, cancellationToken);
-        var invoiceType = await _dbContext.GetInvoiceTypeAsync(invoice.InvoiceTypeId, ct: cancellationToken);
-        var pos = await _dbContext.GetPosAsync(invoice.PosId, includes: true, ct: cancellationToken);
+        using var dbContext = serviceScope.ServiceProvider.GetRequiredService<IInvoizRDbContext>();
+        var invoiceExportStrategies = serviceScope.ServiceProvider.GetServices<IInvoiceExportStrategy>();
+        var smtpClient = serviceScope.ServiceProvider.GetRequiredService<ISmtpClient>();
+
+        var invoice = await dbContext.GetInvoiceAsync(invoiceId, true, true, ct);
+        var invoiceType = await dbContext.GetInvoiceTypeAsync(invoice.InvoiceTypeId, ct: ct);
 
         var processingSettings = new ProcessingSettings();
-        _configuration.Bind("ProcessingSettings", processingSettings);
+        configuration.Bind("ProcessingSettings", processingSettings);
 
-        foreach (var item in _invoiceExportStrategies)
+        foreach (var item in invoiceExportStrategies)
         {
-            _logger.LogInformation($"Exporting '{invoice.InvoiceTypeId}-{invoice.InvoiceNumber}' invoice as '{item.FileExtension}'...");
-            var bytes = await item.ExportAsync(invoice, processingSettings.GetDtePath(invoice.AuditNumber, item.FileExtension), cancellationToken);
+            logger.LogInformation($"Exporting '{invoice.InvoiceTypeId}-{invoice.InvoiceNumber}' invoice as '{item.FileExtension}'...");
 
-            _logger.LogInformation($" Adding '{item.FileExtension}' as bytes...");
+            var bytes = await item.ExportAsync(invoice, processingSettings.GetInvoicePath(invoice.AuditNumber, item.FileExtension), ct);
 
-            _dbContext.InvoiceFile.Add(new(invoice, bytes, item.ContentType, item.FileExtension));
+            logger.LogInformation($" Adding '{item.FileExtension}' as bytes...");
+
+            dbContext.InvoiceFile.Add(new(invoice, bytes, item.ContentType, item.FileExtension));
         }
 
         var notificationTemplate = new DteNotificationTemplatev1(new(invoice.Pos.Branch, invoiceType, invoice));
-        var notificationPath = processingSettings.GetDteNotificationPath(invoice.AuditNumber);
+        var notificationPath = processingSettings.GetInvoiceNotificationPath(invoice.AuditNumber);
 
-        _logger.LogInformation($"Creating notification file for invoice '{invoice.InvoiceTypeId}-{invoice.InvoiceNumber}', path: '{notificationPath}'...");
+        logger.LogInformation($"Creating notification file for invoice '{invoice.InvoiceTypeId}-{invoice.InvoiceNumber}', path: '{notificationPath}'...");
 
-        await File.WriteAllTextAsync(notificationPath, notificationTemplate.ToString(), cancellationToken);
+        await File.WriteAllTextAsync(notificationPath, notificationTemplate.ToString(), ct);
 
         if (!invoice.HasCustomerEmail)
-            invoice.CustomerEmail = pos.Branch.NonCustomerEmail;
+            invoice.CustomerEmail = invoice.Pos.Branch.NonCustomerEmail;
 
-        _dbContext.InvoiceNotification.Add(new(invoice.Id, invoice.CustomerEmail, false, (short)_invoiceExportStrategies.Count(), true));
+        dbContext.InvoiceNotification.Add(new(invoice.Id, invoice.CustomerEmail, false, (short)invoiceExportStrategies.Count(), true));
 
-        var branchNotifications = await _dbContext.GetBranchNotificationsBy(invoice.Pos.BranchId, invoice.InvoiceTypeId).ToListAsync(cancellationToken);
+        var branchNotifications = await dbContext.GetBranchNotificationsBy(invoice.Pos.BranchId, invoice.InvoiceTypeId).ToListAsync(ct);
         foreach (var branchNotification in branchNotifications)
         {
             if (branchNotification.Bcc == true)
@@ -65,13 +56,13 @@ public sealed class FallbackInvoiceExporter
             else
                 notificationTemplate.Model.Copies.Add(branchNotification.Email);
 
-            _dbContext.InvoiceNotification.Add(new(invoice.Id, branchNotification.Email, branchNotification.Bcc, (short)_invoiceExportStrategies.Count(), true));
+            dbContext.InvoiceNotification.Add(new(invoice.Id, branchNotification.Email, branchNotification.Bcc, (short)invoiceExportStrategies.Count(), true));
         }
 
-        _logger.LogInformation($"Sending notification for invoice '{invoice.InvoiceTypeId}-{invoice.InvoiceNumber}'; customer '{invoice.CustomerName}', email: '{invoice.CustomerEmail}'...");
+        logger.LogInformation($"Sending notification for invoice '{invoice.InvoiceTypeId}-{invoice.InvoiceNumber}'; customer '{invoice.CustomerName}', email: '{invoice.CustomerEmail}'...");
 
-        _smtpClient.Send(notificationTemplate.ToMailMessage());
+        smtpClient.Send(notificationTemplate.ToMailMessage());
 
-        await _dbContext.SaveChangesAsync(cancellationToken);
+        await dbContext.SaveChangesAsync(ct);
     }
 }

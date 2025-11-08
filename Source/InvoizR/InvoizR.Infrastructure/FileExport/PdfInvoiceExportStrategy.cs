@@ -52,17 +52,17 @@ public class PdfInvoiceExportStrategy : IInvoiceExportStrategy
         ObjectSettings objSettings = null;
 
         if (invoice.InvoiceTypeId == FeFcv1.TypeId)
-            objSettings = DinkToPdfHelper.CreateDteObjSettings(new Dte01Templatev1(_dte01TemplateFactory.Create(invoice)).ToString(), ReportsPathHelper.GetDteCssPath());
+            objSettings = DinkToPdfHelper.CreateDteObjSettings(new Dte01Templatev1(_dte01TemplateFactory.Create(invoice)).ToString(), ReportsPathHelper.GetInvoiceCssPath());
         else if (invoice.InvoiceTypeId == FeCcfv3.TypeId)
-            objSettings = DinkToPdfHelper.CreateDteObjSettings(new Dte03Templatev1(_dte03TemplateFactory.Create(invoice)).ToString(), ReportsPathHelper.GetDteCssPath());
+            objSettings = DinkToPdfHelper.CreateDteObjSettings(new Dte03Templatev1(_dte03TemplateFactory.Create(invoice)).ToString(), ReportsPathHelper.GetInvoiceCssPath());
         else if (invoice.InvoiceTypeId == FeNrv3.TypeId)
-            objSettings = DinkToPdfHelper.CreateDteObjSettings(new Dte04Templatev1(_dte04TemplateFactory.Create(invoice)).ToString(), ReportsPathHelper.GetDteCssPath());
+            objSettings = DinkToPdfHelper.CreateDteObjSettings(new Dte04Templatev1(_dte04TemplateFactory.Create(invoice)).ToString(), ReportsPathHelper.GetInvoiceCssPath());
         else if (invoice.InvoiceTypeId == FeNcv3.TypeId)
-            objSettings = DinkToPdfHelper.CreateDteObjSettings(new Dte05Templatev1(_dte05TemplateFactory.Create(invoice)).ToString(), ReportsPathHelper.GetDteCssPath());
+            objSettings = DinkToPdfHelper.CreateDteObjSettings(new Dte05Templatev1(_dte05TemplateFactory.Create(invoice)).ToString(), ReportsPathHelper.GetInvoiceCssPath());
         else if (invoice.InvoiceTypeId == FeNdv3.TypeId)
-            objSettings = DinkToPdfHelper.CreateDteObjSettings(new Dte06Templatev1(_dte06TemplateFactory.Create(invoice)).ToString(), ReportsPathHelper.GetDteCssPath());
+            objSettings = DinkToPdfHelper.CreateDteObjSettings(new Dte06Templatev1(_dte06TemplateFactory.Create(invoice)).ToString(), ReportsPathHelper.GetInvoiceCssPath());
         else if (invoice.InvoiceTypeId == FeFsev1.TypeId)
-            objSettings = DinkToPdfHelper.CreateDteObjSettings(new Dte14Templatev1(_dte14TemplateFactory.Create(invoice)).ToString(), ReportsPathHelper.GetDteCssPath());
+            objSettings = DinkToPdfHelper.CreateDteObjSettings(new Dte14Templatev1(_dte14TemplateFactory.Create(invoice)).ToString(), ReportsPathHelper.GetInvoiceCssPath());
 
         var pdfDocument = new HtmlToPdfDocument
         {
