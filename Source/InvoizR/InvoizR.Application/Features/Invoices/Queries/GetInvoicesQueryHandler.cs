@@ -1,6 +1,6 @@
 ﻿using InvoizR.Application.Common;
 using InvoizR.Application.Common.Contracts;
-using InvoizR.Application.Specifications;
+using InvoizR.Application.QuerySpecs;
 using InvoizR.Clients.DataContracts;
 using InvoizR.Clients.DataContracts.Common;
 using MediatR;
@@ -10,7 +10,7 @@ namespace InvoizR.Application.Features.Invoices.Queries;
 
 public sealed class GetInvoicesQueryHandler(IInvoizRDbContext dbContext) : IRequestHandler<GetInvoicesQuery, PagedResponse<InvoiceItemModel>>
 {
-    public async Task<PagedResponse<InvoiceItemModel>> Handle(GetInvoicesQuery request, CancellationToken st)
+    public async Task<PagedResponse<InvoiceItemModel>> Handle(GetInvoicesQuery request, CancellationToken ct)
     {
         var query =
             from invoice in dbContext.Invoice
@@ -46,17 +46,17 @@ public sealed class GetInvoicesQueryHandler(IInvoizRDbContext dbContext) : IRequ
             };
 
         query = query
-            .Specify(new GetInvoicesByPosSpec(request.PosId))
-            .Specify(new GetInvoicesByInvoiceTypeQuerySpec(request.InvoiceTypeId))
-            .Specify(new GetInvoicesByProcessingTypeQuerySpec(request.ProcessingTypeId))
-            .Specify(new GetInvoicesBySyncStatusQuerySpec(request.SyncStatusId))
+            .Spec(new GetInvoicesByPosQuerySpec(request.PosId))
+            .Spec(new GetInvoicesByInvoiceTypeQuerySpec(request.InvoiceTypeId))
+            .Spec(new GetInvoicesByProcessingTypeQuerySpec(request.ProcessingTypeId))
+            .Spec(new GetInvoicesBySyncStatusQuerySpec(request.SyncStatusId))
             ;
 
-        var itemsCount = await query.CountAsync(st);
+        var itemsCount = await query.CountAsync(ct);
 
         var model = await query
             .Paging(request.PageSize, request.PageNumber)
-            .ToListAsync(st)
+            .ToListAsync(ct)
             ;
 
         return new(model, request.PageSize, request.PageNumber, itemsCount);

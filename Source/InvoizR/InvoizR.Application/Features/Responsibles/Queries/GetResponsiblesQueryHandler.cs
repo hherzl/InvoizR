@@ -6,19 +6,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace InvoizR.Application.Features.Responsibles.Queries;
 
-public class GetResponsiblesQueryHandler : IRequestHandler<GetResponsiblesQuery, ListResponse<ResponsibleItemModel>>
+public sealed class GetResponsiblesQueryHandler(IInvoizRDbContext dbContext) : IRequestHandler<GetResponsiblesQuery, ListResponse<ResponsibleItemModel>>
 {
-    private readonly IInvoizRDbContext _dbContext;
-
-    public GetResponsiblesQueryHandler(IInvoizRDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
-
-    public async Task<ListResponse<ResponsibleItemModel>> Handle(GetResponsiblesQuery request, CancellationToken cancellationToken)
+    public async Task<ListResponse<ResponsibleItemModel>> Handle(GetResponsiblesQuery request, CancellationToken ct)
     {
         var query =
-            from responsible in _dbContext.Responsible
+            from responsible in dbContext.Responsible
             orderby responsible.Name
             select new ResponsibleItemModel
             {
@@ -32,6 +25,9 @@ public class GetResponsiblesQueryHandler : IRequestHandler<GetResponsiblesQuery,
                 AuthorizeFallback = responsible.AuthorizeFallback
             };
 
-        return new(await query.ToListAsync(cancellationToken));
+        if (request.CompanyId.HasValue)
+            query = query.Where(item => item.CompanyId == request.CompanyId);
+
+        return new(await query.ToListAsync(ct));
     }
 }

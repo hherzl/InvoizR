@@ -1,9 +1,9 @@
 ﻿using InvoizR.Domain.Common;
 using InvoizR.Domain.Entities;
 
-namespace InvoizR.Application.Specifications;
+namespace InvoizR.Application.QuerySpecs;
 
-public class GetCurrentFallbackQuerySpec : BaseSpecification<Fallback>
+public class GetCurrentFallbackQuerySpec : BaseQuerySpec<Fallback>
 {
     public GetCurrentFallbackQuerySpec(short? companyId)
     {

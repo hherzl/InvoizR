@@ -6,22 +6,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace InvoizR.Application.Features.Branches.Queries;
 
-public class GetBranchQueryHandler : IRequestHandler<GetBranchQuery, SingleResponse<BranchDetailsModel>>
+public sealed class GetBranchQueryHandler(IInvoizRDbContext dbContext) : IRequestHandler<GetBranchQuery, SingleResponse<BranchDetailsModel>>
 {
-    private readonly IInvoizRDbContext _dbContext;
-
-    public GetBranchQueryHandler(IInvoizRDbContext dbContext)
+    public async Task<SingleResponse<BranchDetailsModel>> Handle(GetBranchQuery request, CancellationToken ct)
     {
-        _dbContext = dbContext;
-    }
-
-    public async Task<SingleResponse<BranchDetailsModel>> Handle(GetBranchQuery request, CancellationToken cancellationToken)
-    {
-        var entity = await _dbContext.GetBranchAsync(request.Id, ct: cancellationToken);
+        var entity = await dbContext.GetBranchAsync(request.Id, ct: ct);
         if (entity == null)
             return null;
 
-        var posCollection = await _dbContext.GetPosBy(entity.Id).ToListAsync(cancellationToken);
+        var pointsOfSales = await dbContext.GetPosBy(entity.Id).ToListAsync(ct);
 
         var model = new BranchDetailsModel
         {
@@ -34,7 +27,7 @@ public class GetBranchQueryHandler : IRequestHandler<GetBranchQuery, SingleRespo
             Email = entity.Email,
             Headquarters = entity.Headquarters,
             ResponsibleId = entity.ResponsibleId,
-            Pos = posCollection
+            Pos = pointsOfSales
         };
 
         if (entity.Logo != null)

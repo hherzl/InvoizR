@@ -1,4 +1,4 @@
-using InvoizR.GUI.InvoiceManager.Client.Pages;
+using InvoizR.GUI.InvoiceManager.Client;
 using InvoizR.GUI.InvoiceManager.Components;
 using InvoizR.GUI.InvoiceManager.Components.Account;
 using InvoizR.GUI.InvoiceManager.Data;
@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor.Services;
-using InvoizR.GUI.InvoiceManager.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -44,19 +43,32 @@ builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSe
 
 builder.Services.AddClients();
 
+builder.Services.AddScoped(sp =>
+{
+    var handler = new HttpClientHandler
+    {
+        ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
+    };
+
+    return new HttpClient(handler)
+    {
+        BaseAddress = new Uri("https://localhost:13890")
+    };
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-app.UseWebAssemblyDebugging();
-app.UseMigrationsEndPoint();
+    app.UseWebAssemblyDebugging();
+    app.UseMigrationsEndPoint();
 }
 else
 {
-app.UseExceptionHandler("/Error", createScopeForErrors: true);
-// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-app.UseHsts();
+    app.UseExceptionHandler("/Error", createScopeForErrors: true);
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    app.UseHsts();
 }
 
 app.UseHttpsRedirection();

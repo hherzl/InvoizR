@@ -6,9 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace InvoizR.Application.Features.Companies.Queries;
 
-public class GetCompaniesQueryHandler(IInvoizRDbContext dbContext) : IRequestHandler<GetCompaniesQuery, ListResponse<CompanyItemModel>>
+public sealed class GetCompaniesQueryHandler(IInvoizRDbContext dbContext) : IRequestHandler<GetCompaniesQuery, ListResponse<CompanyItemModel>>
 {
-    public async Task<ListResponse<CompanyItemModel>> Handle(GetCompaniesQuery request, CancellationToken cancellationToken)
+    public async Task<ListResponse<CompanyItemModel>> Handle(GetCompaniesQuery request, CancellationToken ct)
     {
         var query =
             from company in dbContext.Company
@@ -24,6 +24,6 @@ public class GetCompaniesQueryHandler(IInvoizRDbContext dbContext) : IRequestHan
                 TaxpayerRegistrationNumber = company.TaxpayerRegistrationNumber
             };
 
-        return new(await query.ToListAsync(cancellationToken));
+        return new(await query.ToListAsync(ct));
     }
 }

@@ -6,22 +6,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace InvoizR.Application.Features.Companies.Queries;
 
-public class GetCompanyQueryHandler : IRequestHandler<GetCompanyQuery, SingleResponse<CompanyDetailsModel>>
+public sealed class GetCompanyQueryHandler(IInvoizRDbContext dbContext) : IRequestHandler<GetCompanyQuery, SingleResponse<CompanyDetailsModel>>
 {
-    private readonly IInvoizRDbContext _dbContext;
-
-    public GetCompanyQueryHandler(IInvoizRDbContext dbContext)
+    public async Task<SingleResponse<CompanyDetailsModel>> Handle(GetCompanyQuery request, CancellationToken ct)
     {
-        _dbContext = dbContext;
-    }
-
-    public async Task<SingleResponse<CompanyDetailsModel>> Handle(GetCompanyQuery request, CancellationToken cancellationToken)
-    {
-        var entity = await _dbContext.GetCompanyAsync(request.Id, ct: cancellationToken);
+        var entity = await dbContext.GetCompanyAsync(request.Id, ct: ct);
         if (entity == null)
             return null;
 
-        var branches = await _dbContext.GetBranchesBy(entity.Id).ToListAsync(cancellationToken);
+        var branches = await dbContext.GetBranchesBy(entity.Id).ToListAsync(ct);
+        var responsibles = await dbContext.GetResponsiblesBy(entity.Id).ToListAsync(ct);
 
         var model = new CompanyDetailsModel
         {
@@ -39,7 +33,8 @@ public class GetCompanyQueryHandler : IRequestHandler<GetCompanyQuery, SingleRes
             Phone = entity.Phone,
             Email = entity.Email,
             Headquarters = entity.Headquarters,
-            Branches = branches
+            Branches = branches,
+            Responsibles = responsibles
         };
 
         if (entity.Logo != null)
