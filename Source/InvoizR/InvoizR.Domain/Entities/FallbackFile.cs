@@ -2,7 +2,7 @@
 
 namespace InvoizR.Domain.Entities;
 
-public partial class FallbackFile : Entity
+public partial class FallbackFile : AuditableEntity
 {
     public FallbackFile()
     {
@@ -20,7 +20,6 @@ public partial class FallbackFile : Entity
     public string FileType { get; set; }
     public string FileName { get; set; }
     public string ExternalUrl { get; set; }
-    public DateTime? CreatedAt { get; set; }
     public byte[] File { get; set; }
 
     public virtual Fallback FallbackFk { get; set; }

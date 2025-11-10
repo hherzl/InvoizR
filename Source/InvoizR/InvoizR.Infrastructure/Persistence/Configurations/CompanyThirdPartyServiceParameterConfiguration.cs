@@ -1,13 +1,16 @@
 ﻿using InvoizR.Domain.Entities;
+using InvoizR.Infrastructure.Persistence.Configurations.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace InvoizR.Infrastructure.Persistence.Configurations;
 
-internal class CompanyThirdPartyServiceParameterConfiguration : IEntityTypeConfiguration<CompanyThirdPartyServiceParameter>
+internal class CompanyThirdPartyServiceParameterConfiguration : AuditableEntityConfiguration<CompanyThirdPartyServiceParameter>
 {
-    public void Configure(EntityTypeBuilder<CompanyThirdPartyServiceParameter> builder)
+    public override void Configure(EntityTypeBuilder<CompanyThirdPartyServiceParameter> builder)
     {
+        base.Configure(builder);
+
         // Set configuration for entity
         builder.ToTable("CompanyThirdPartyServiceParameter", "dbo");
 

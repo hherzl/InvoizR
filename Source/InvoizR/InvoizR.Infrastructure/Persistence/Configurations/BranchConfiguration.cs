@@ -1,13 +1,16 @@
 ﻿using InvoizR.Domain.Entities;
+using InvoizR.Infrastructure.Persistence.Configurations.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace InvoizR.Infrastructure.Persistence.Configurations;
 
-internal class BranchConfiguration : IEntityTypeConfiguration<Branch>
+internal class BranchConfiguration : AuditableEntityConfiguration<Branch>
 {
-    public void Configure(EntityTypeBuilder<Branch> builder)
+    public override void Configure(EntityTypeBuilder<Branch> builder)
     {
+        base.Configure(builder);
+
         // Set configuration for entity
         builder.ToTable("Branch", "dbo");
 

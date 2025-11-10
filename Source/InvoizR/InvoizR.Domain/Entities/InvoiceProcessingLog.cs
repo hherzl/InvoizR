@@ -2,7 +2,7 @@
 
 namespace InvoizR.Domain.Entities;
 
-public partial class InvoiceProcessingLog : Entity
+public partial class InvoiceProcessingLog : AuditableEntity
 {
     public InvoiceProcessingLog()
     {
@@ -15,7 +15,6 @@ public partial class InvoiceProcessingLog : Entity
 
     public long? Id { get; set; }
     public long? InvoiceId { get; set; }
-    public DateTime? CreatedAt { get; set; }
     public short? ProcessingStatusId { get; set; }
     public string LogType { get; set; }
     public string ContentType { get; set; }

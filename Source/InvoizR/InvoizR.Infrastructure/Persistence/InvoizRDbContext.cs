@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using InvoizR.Application.Common.Contracts;
+using InvoizR.Domain.Common;
 using InvoizR.Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -45,6 +46,25 @@ public partial class InvoizRDbContext : DbContext, IInvoizRDbContext
             ;
 
         base.OnModelCreating(modelBuilder);
+    }
+
+    public async override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        foreach (var entry in ChangeTracker.Entries())
+        {
+            if (entry.State == EntityState.Added && entry.Entity is AuditableEntity addedEntity)
+            {
+                addedEntity.CreatedAt = DateTime.Now;
+                addedEntity.CreatedBy = "user";
+            }
+            else if (entry.State == EntityState.Modified && entry.Entity is AuditableEntity modifiedEntity)
+            {
+                modifiedEntity.LastModifiedAt = DateTime.Now;
+                modifiedEntity.LastModifiedBy = "user";
+            }
+        }
+
+        return await base.SaveChangesAsync(cancellationToken);
     }
 
     public async Task DispatchNotificationsAsync(CancellationToken cancellationToken = default)

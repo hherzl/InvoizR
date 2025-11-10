@@ -2,7 +2,7 @@
 
 namespace InvoizR.Domain.Entities;
 
-public partial class FallbackProcessingLog : Entity
+public partial class FallbackProcessingLog : AuditableEntity
 {
     public FallbackProcessingLog()
     {
@@ -15,7 +15,6 @@ public partial class FallbackProcessingLog : Entity
 
     public int? Id { get; set; }
     public short? FallbackId { get; set; }
-    public DateTime? CreatedAt { get; set; }
     public short? SyncStatusId { get; set; }
     public string LogType { get; set; }
     public string ContentType { get; set; }

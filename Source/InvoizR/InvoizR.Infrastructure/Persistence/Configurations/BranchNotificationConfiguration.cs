@@ -1,13 +1,17 @@
 ﻿using InvoizR.Domain.Entities;
+using InvoizR.Infrastructure.Persistence.Configurations.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace InvoizR.Infrastructure.Persistence.Configurations;
 
-internal class BranchNotificationConfiguration : IEntityTypeConfiguration<BranchNotification>
+internal class BranchNotificationConfiguration : AuditableEntityConfiguration<BranchNotification>
 {
-    public void Configure(EntityTypeBuilder<BranchNotification> builder)
-    {// Set configuration for entity
+    public override void Configure(EntityTypeBuilder<BranchNotification> builder)
+    {
+        base.Configure(builder);
+
+        // Set configuration for entity
         builder.ToTable("BranchNotification", "dbo");
 
         // Set key for entity

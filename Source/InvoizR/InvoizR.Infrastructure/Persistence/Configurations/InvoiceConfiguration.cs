@@ -1,13 +1,16 @@
 ﻿using InvoizR.Domain.Entities;
+using InvoizR.Infrastructure.Persistence.Configurations.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace InvoizR.Infrastructure.Persistence.Configurations;
 
-internal class InvoiceConfiguration : IEntityTypeConfiguration<Invoice>
+internal class InvoiceConfiguration : AuditableEntityConfiguration<Invoice>
 {
-    public void Configure(EntityTypeBuilder<Invoice> builder)
+    public override void Configure(EntityTypeBuilder<Invoice> builder)
     {
+        base.Configure(builder);
+
         // Set configuration for entity
         builder.ToTable("Invoice", "dbo");
 
@@ -103,12 +106,6 @@ internal class InvoiceConfiguration : IEntityTypeConfiguration<Invoice>
         builder
             .Property(p => p.CustomerLastUpdated)
             .HasColumnType("datetime")
-            ;
-
-        builder
-            .Property(p => p.CreatedAt)
-            .HasColumnType("datetime")
-            .IsRequired()
             ;
 
         builder

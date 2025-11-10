@@ -4,7 +4,7 @@ using InvoizR.Domain.Common;
 namespace InvoizR.Domain.Entities;
 
 [DebuggerDisplay("Category={Category}, Name={Name}, Value={Value}, RequiresEncryption={RequiresEncryption}")]
-public partial class ThirdPartyServiceParameter : Entity
+public partial class ThirdPartyServiceParameter : AuditableEntity
 {
     public ThirdPartyServiceParameter()
     {

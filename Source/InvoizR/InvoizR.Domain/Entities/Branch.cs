@@ -3,7 +3,7 @@ using InvoizR.Domain.Common;
 
 namespace InvoizR.Domain.Entities;
 
-public partial class Branch : Entity
+public partial class Branch : AuditableEntity
 {
     public Branch()
     {

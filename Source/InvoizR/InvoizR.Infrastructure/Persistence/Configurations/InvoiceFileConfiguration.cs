@@ -1,13 +1,16 @@
 ﻿using InvoizR.Domain.Entities;
+using InvoizR.Infrastructure.Persistence.Configurations.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace InvoizR.Infrastructure.Persistence.Configurations;
 
-internal class InvoiceFileConfiguration : IEntityTypeConfiguration<InvoiceFile>
+internal class InvoiceFileConfiguration : AuditableEntityConfiguration<InvoiceFile>
 {
-    public void Configure(EntityTypeBuilder<InvoiceFile> builder)
+    public override void Configure(EntityTypeBuilder<InvoiceFile> builder)
     {
+        base.Configure(builder);
+
         // Set configuration for entity
         builder.ToTable("InvoiceFile", "dbo");
 
@@ -61,12 +64,6 @@ internal class InvoiceFileConfiguration : IEntityTypeConfiguration<InvoiceFile>
             .Property(p => p.ExternalUrl)
             .HasColumnType("nvarchar")
             .HasMaxLength(200)
-            ;
-
-        builder
-            .Property(p => p.CreatedAt)
-            .HasColumnType("datetime")
-            .IsRequired()
             ;
 
         builder

@@ -1,8 +1,9 @@
 ﻿using System.Collections.ObjectModel;
+using InvoizR.Domain.Common;
 
 namespace InvoizR.Domain.Entities;
 
-public partial class Responsible
+public partial class Responsible : AuditableEntity
 {
     public Responsible()
     {

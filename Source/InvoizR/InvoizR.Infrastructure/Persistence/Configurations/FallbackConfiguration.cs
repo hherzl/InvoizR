@@ -1,13 +1,16 @@
 ﻿using InvoizR.Domain.Entities;
+using InvoizR.Infrastructure.Persistence.Configurations.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace InvoizR.Infrastructure.Persistence.Configurations;
 
-internal class FallbackConfiguration : IEntityTypeConfiguration<Fallback>
+internal class FallbackConfiguration : AuditableEntityConfiguration<Fallback>
 {
-    public void Configure(EntityTypeBuilder<Fallback> builder)
+    public override void Configure(EntityTypeBuilder<Fallback> builder)
     {
+        base.Configure(builder);
+
         // Set configuration for entity
         builder.ToTable("Fallback", "dbo");
 

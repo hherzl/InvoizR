@@ -1,13 +1,16 @@
 ﻿using InvoizR.Domain.Entities;
+using InvoizR.Infrastructure.Persistence.Configurations.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace InvoizR.Infrastructure.Persistence.Configurations;
 
-internal class InvoiceNotificationConfiguration : IEntityTypeConfiguration<InvoiceNotification>
+internal class InvoiceNotificationConfiguration : AuditableEntityConfiguration<InvoiceNotification>
 {
-    public void Configure(EntityTypeBuilder<InvoiceNotification> builder)
+    public override void Configure(EntityTypeBuilder<InvoiceNotification> builder)
     {
+        base.Configure(builder);
+
         // Set configuration for entity
         builder.ToTable("InvoiceNotification", "dbo");
 
@@ -52,12 +55,6 @@ internal class InvoiceNotificationConfiguration : IEntityTypeConfiguration<Invoi
         builder
             .Property(p => p.Successful)
             .HasColumnType("bit")
-            .IsRequired()
-            ;
-
-        builder
-            .Property(p => p.CreatedAt)
-            .HasColumnType("datetime")
             .IsRequired()
             ;
     }
