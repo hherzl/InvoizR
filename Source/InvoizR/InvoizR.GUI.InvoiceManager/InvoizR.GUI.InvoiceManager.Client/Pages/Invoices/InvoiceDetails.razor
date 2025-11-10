@@ -16,198 +16,197 @@
 @if (response == null)
 {
     <MudText Typo="Typo.caption">There is no invoice with @Id ID.</MudText>
+    return;
 }
-else
-{
-    <MudCard>
-        <MudCardHeader>
-            <CardHeaderContent>
-                <MudText Typo="Typo.h6">Customer</MudText>
-            </CardHeaderContent>
-            <CardHeaderActions>
-                <MudIconButton Icon="@Icons.Material.Filled.Person" Color="Color.Default" />
-            </CardHeaderActions>
-        </MudCardHeader>
-        <MudCardContent>
-            <MudText Typo="Typo.body2">Name: <strong>@response?.CustomerName</strong></MudText>
-            <MudText Typo="Typo.body2">Country: <strong>@response?.CustomerCountryId</strong></MudText>
-            <MudText Typo="Typo.body2">Address: <strong>@response?.CustomerAddress</strong></MudText>
-            <MudText Typo="Typo.body2">Phone: <strong>@response?.CustomerPhone</strong></MudText>
-            <MudText Typo="Typo.body2">Email: <strong>@response?.CustomerEmail</strong></MudText>
-        </MudCardContent>
-    </MudCard>
 
-    <br />
+<MudCard>
+    <MudCardHeader>
+        <CardHeaderContent>
+            <MudText Typo="Typo.h6">Customer</MudText>
+        </CardHeaderContent>
+        <CardHeaderActions>
+            <MudIconButton Icon="@Icons.Material.Filled.Person" Color="Color.Default" />
+        </CardHeaderActions>
+    </MudCardHeader>
+    <MudCardContent>
+        <MudText Typo="Typo.body2">Name: <strong>@response?.CustomerName</strong></MudText>
+        <MudText Typo="Typo.body2">Country: <strong>@response?.CustomerCountryId</strong></MudText>
+        <MudText Typo="Typo.body2">Address: <strong>@response?.CustomerAddress</strong></MudText>
+        <MudText Typo="Typo.body2">Phone: <strong>@response?.CustomerPhone</strong></MudText>
+        <MudText Typo="Typo.body2">Email: <strong>@response?.CustomerEmail</strong></MudText>
+    </MudCardContent>
+</MudCard>
 
-    <MudCard>
-        <MudCardHeader>
-            <CardHeaderContent>
-                <MudText Typo="Typo.h6">Invoice</MudText>
-            </CardHeaderContent>
-            <CardHeaderActions>
-                <MudIconButton Icon="@Icons.Material.Filled.Receipt" Color="Color.Default" />
-            </CardHeaderActions>
-        </MudCardHeader>
-        <MudCardContent>
-            <MudText Typo="Typo.body2">Tipo y número: <strong>@response?.InvoiceTypeId</strong> - <strong>@response?.InvoiceNumber</strong></MudText>
-            <MudText Typo="Typo.body2">Fecha: <strong>@response?.InvoiceDate</strong></MudText>
-            <MudText Typo="Typo.body2">Total: <strong>@response?.InvoiceTotal.ToCurrency()</strong></MudText>
-            <MudText Typo="Typo.body2">Esquema: <strong>@response?.SchemaType</strong> - <strong>@response?.SchemaVersion</strong></MudText>
-            <MudText Typo="Typo.body2">Código de generación: <strong>@response?.InvoiceGuid</strong></MudText>
-            <MudText Typo="Typo.body2">Número de control: <strong>@response?.AuditNumber</strong></MudText>
-            <MudText Typo="Typo.body2">Fecha de emisión: <strong>@response?.EmitDateTime</strong></MudText>
-            <MudText Typo="Typo.body2">Sello de recepción: <strong>@response?.ReceiptStamp</strong></MudText>
-            @if (response?.Processed == true)
+<br />
+
+<MudCard>
+    <MudCardHeader>
+        <CardHeaderContent>
+            <MudText Typo="Typo.h6">Invoice</MudText>
+        </CardHeaderContent>
+        <CardHeaderActions>
+            <MudIconButton Icon="@Icons.Material.Filled.Receipt" Color="Color.Default" />
+        </CardHeaderActions>
+    </MudCardHeader>
+    <MudCardContent>
+        <MudText Typo="Typo.body2">Tipo y número: <strong>@response?.InvoiceTypeId</strong> - <strong>@response?.InvoiceNumber</strong></MudText>
+        <MudText Typo="Typo.body2">Fecha: <strong>@response?.InvoiceDate</strong></MudText>
+        <MudText Typo="Typo.body2">Total: <strong>@response?.InvoiceTotal.ToCurrency()</strong></MudText>
+        <MudText Typo="Typo.body2">Esquema: <strong>@response?.SchemaType</strong> - <strong>@response?.SchemaVersion</strong></MudText>
+        <MudText Typo="Typo.body2">Código de generación: <strong>@response?.InvoiceGuid</strong></MudText>
+        <MudText Typo="Typo.body2">Número de control: <strong>@response?.AuditNumber</strong></MudText>
+        <MudText Typo="Typo.body2">Fecha de emisión: <strong>@response?.EmitDateTime</strong></MudText>
+        <MudText Typo="Typo.body2">Sello de recepción: <strong>@response?.ReceiptStamp</strong></MudText>
+        @if (response?.Processed == true)
+        {
+            <a href="@response?.ExternalUrl" target="_blank">
+                <MudButton Color="Color.Secondary" Variant="Variant.Filled">
+                    Visualizar en Portal del Ministerio de Hacienda
+                </MudButton>
+            </a>
+        }
+    </MudCardContent>
+</MudCard>
+
+<br />
+
+<MudExpansionPanels>
+    <MudExpansionPanel Text="DTE" Expanded="false">
+        <Dte01 Json="@response.Payload" />
+    </MudExpansionPanel>
+</MudExpansionPanels>
+
+<br />
+
+<h5>Processing Status Logs</h5>
+
+<br />
+
+<MudTimeline>
+    @foreach (var processingStatus in response.ProcessingStatusLogs)
+    {
+            @if (processingStatus.ProcessingStatusId >= 3000)
             {
-                <a href="@response?.ExternalUrl" target="_blank">
-                    <MudButton Color="Color.Secondary" Variant="Variant.Filled">
-                        Visualizar en Portal del Ministerio de Hacienda
-                    </MudButton>
-                </a>
+                <MudTimelineItem Color="Color.Success">
+                    <MudText Color="Color.Success" Typo="Typo.body2">@processingStatus.ProcessingStatus</MudText>
+                    <MudText Typo="Typo.body2">@processingStatus.CreatedAt</MudText>
+                </MudTimelineItem>
             }
-        </MudCardContent>
-    </MudCard>
+            else if (processingStatus.ProcessingStatusId == 2000)
+            {
+                <MudTimelineItem Color="Color.Error">
+                    <MudText Color="Color.Error" Typo="Typo.body2">@processingStatus.ProcessingStatus</MudText>
+                    <MudText Typo="Typo.body2">@processingStatus.CreatedAt</MudText>
+                </MudTimelineItem>
+            }
+            else if (processingStatus.ProcessingStatusId == 1000)
+            {
+                <MudTimelineItem Color="Color.Info">
+                    <MudText Color="Color.Info" Typo="Typo.body2">@processingStatus.ProcessingStatus</MudText>
+                    <MudText Typo="Typo.body2">@processingStatus.CreatedAt</MudText>
+                </MudTimelineItem>
+            }
+            else
+            {
+                <MudTimelineItem Color="Color.Default">
+                    <MudText Color="Color.Default" Typo="Typo.body2">@processingStatus.ProcessingStatus</MudText>
+                    <MudText Typo="Typo.body2">@processingStatus.CreatedAt</MudText>
+                </MudTimelineItem>
+            }
+    }
+</MudTimeline>
+
+<br />
+
+@if (response.ProcessingLogs?.Count > 0)
+{
+    <h5>Processing Logs</h5>
 
     <br />
 
     <MudExpansionPanels>
-        <MudExpansionPanel Text="DTE" Expanded="false">
-            <Dte01 Json="@response.Payload" />
-        </MudExpansionPanel>
+        @foreach (var processingLog in response.ProcessingLogs)
+        {
+            <MudExpansionPanel Text="@processingLog.LogType" Expanded="false">
+                <MudText Typo="Typo.body2">Processing status: <strong>@processingLog.ProcessingStatus</strong></MudText>
+                <MudText Typo="Typo.body2">Created at: <strong>@processingLog.CreatedAt</strong></MudText>
+                <MudText Typo="Typo.body2">Content type: <strong>@processingLog.ContentType</strong></MudText>
+                <div style="overflow-x: auto; white-space: pre-wrap; width: 100%;">
+                    <pre>@processingLog.Content</pre>
+                </div>
+            </MudExpansionPanel>
+        }
+    </MudExpansionPanels>
+}
+
+<br />
+
+@if (response.Files?.Count > 0)
+{
+    <h5>Files</h5>
+
+    <br />
+
+    <MudExpansionPanels>
+
+        @foreach (var file in response.Files)
+        {
+            if (file.FileType == "JSON")
+            {
+                <MudExpansionPanel Text="JSON" Expanded="false">
+                    <MudText Typo="Typo.subtitle2">
+                        <div style="overflow-x: auto; white-space: pre-wrap; width: 100%;">
+                            <pre>@GetJson(file.File)</pre>
+                        </div>
+                    </MudText>
+                </MudExpansionPanel>
+            }
+            else if (file.FileType == "PDF")
+            {
+                <MudExpansionPanel Text="PDF" Expanded="false">
+                    <embed style="width: 100%; height: 90vh;" type="application/pdf" src="data:application/pdf;base64,@GetPdf(file.File)" />
+                </MudExpansionPanel>
+            }
+        }
+
     </MudExpansionPanels>
 
     <br />
-
-    <h5>Processing Status Logs</h5>
-
-    <br />
-
-    <MudTimeline>
-        @foreach (var processingStatus in response.ProcessingStatusLogs)
-        {
-                @if (processingStatus.ProcessingStatusId >= 3000)
-                {
-                    <MudTimelineItem Color="Color.Success">
-                        <MudText Color="Color.Success" Typo="Typo.body2">@processingStatus.ProcessingStatus</MudText>
-                        <MudText Typo="Typo.body2">@processingStatus.CreatedAt</MudText>
-                    </MudTimelineItem>
-                }
-                else if (processingStatus.ProcessingStatusId == 2000)
-                {
-                    <MudTimelineItem Color="Color.Error">
-                        <MudText Color="Color.Error" Typo="Typo.body2">@processingStatus.ProcessingStatus</MudText>
-                        <MudText Typo="Typo.body2">@processingStatus.CreatedAt</MudText>
-                    </MudTimelineItem>
-                }
-                else if (processingStatus.ProcessingStatusId == 1000)
-                {
-                    <MudTimelineItem Color="Color.Info">
-                        <MudText Color="Color.Info" Typo="Typo.body2">@processingStatus.ProcessingStatus</MudText>
-                        <MudText Typo="Typo.body2">@processingStatus.CreatedAt</MudText>
-                    </MudTimelineItem>
-                }
-                else
-                {
-                    <MudTimelineItem Color="Color.Default">
-                        <MudText Color="Color.Default" Typo="Typo.body2">@processingStatus.ProcessingStatus</MudText>
-                        <MudText Typo="Typo.body2">@processingStatus.CreatedAt</MudText>
-                    </MudTimelineItem>
-                }
-        }
-    </MudTimeline>
-
-    <br />
-
-    @if (response.ProcessingLogs?.Count > 0)
-    {
-        <h5>Processing Logs</h5>
-
-        <br />
-
-        <MudExpansionPanels>
-            @foreach (var processingLog in response.ProcessingLogs)
-            {
-                <MudExpansionPanel Text="@processingLog.LogType" Expanded="false">
-                    <MudText Typo="Typo.body2">Processing status: <strong>@processingLog.ProcessingStatus</strong></MudText>
-                    <MudText Typo="Typo.body2">Created at: <strong>@processingLog.CreatedAt</strong></MudText>
-                    <MudText Typo="Typo.body2">Content type: <strong>@processingLog.ContentType</strong></MudText>
-                    <div style="overflow-x: auto; white-space: pre-wrap; width: 100%;">
-                        <pre>@processingLog.Content</pre>
-                    </div>
-                </MudExpansionPanel>
-            }
-        </MudExpansionPanels>
-    }
-
-    <br />
-
-    @if (response.Files?.Count > 0)
-    {
-        <h5>Files</h5>
-
-        <br />
-
-        <MudExpansionPanels>
-
-            @foreach (var file in response.Files)
-            {
-                if (file.FileType == "JSON")
-                {
-                    <MudExpansionPanel Text="JSON" Expanded="false">
-                        <MudText Typo="Typo.subtitle2">
-                            <div style="overflow-x: auto; white-space: pre-wrap; width: 100%;">
-                                <pre>@GetJson(file.File)</pre>
-                            </div>
-                        </MudText>
-                    </MudExpansionPanel>
-                }
-                else if (file.FileType == "PDF")
-                {
-                    <MudExpansionPanel Text="PDF" Expanded="false">
-                        <embed style="width: 100%; height: 90vh;" type="application/pdf" src="data:application/pdf;base64,@GetPdf(file.File)" />
-                    </MudExpansionPanel>
-                }
-            }
-
-        </MudExpansionPanels>
-
-        <br />
-    }
-
-    @if (response.Notifications?.Count > 0)
-    {
-        <h5>Notifications</h5>
-
-        <br />
-
-        <MudExpansionPanels>
-
-            <MudTable Items="response.Notifications">
-                <HeaderContent>
-                    <MudTh>Email</MudTh>
-                    <MudTh>Bcc</MudTh>
-                    <MudTh>Files</MudTh>
-                    <MudTh>Successful</MudTh>
-                    <MudTh>Created At</MudTh>
-                </HeaderContent>
-                <RowTemplate>
-                    <MudTd DataLabel="Created at">@context.Email</MudTd>
-                    <MudTd DataLabel="Created at">@(context.Bcc == true ? "Yes" : "No")</MudTd>
-                    <MudTd DataLabel="Created at">@context.Files</MudTd>
-                    <MudTd DataLabel="Created at">@(context.Successful == true ? "Yes" : "No")</MudTd>
-                    <MudTd DataLabel="Created at">@context.CreatedAt</MudTd>
-                </RowTemplate>
-            </MudTable>
-
-        </MudExpansionPanels>
-
-        <br />
-    }
-
-    <a href="@("/invoice")">
-        <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.ArrowBack" />
-    </a>
 }
+
+@if (response.Notifications?.Count > 0)
+{
+    <h5>Notifications</h5>
+
+    <br />
+
+    <MudExpansionPanels>
+
+        <MudTable Items="response.Notifications">
+            <HeaderContent>
+                <MudTh>Email</MudTh>
+                <MudTh>Bcc</MudTh>
+                <MudTh>Files</MudTh>
+                <MudTh>Successful</MudTh>
+                <MudTh>Created At</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Created at">@context.Email</MudTd>
+                <MudTd DataLabel="Created at">@(context.Bcc == true ? "Yes" : "No")</MudTd>
+                <MudTd DataLabel="Created at">@context.Files</MudTd>
+                <MudTd DataLabel="Created at">@(context.Successful == true ? "Yes" : "No")</MudTd>
+                <MudTd DataLabel="Created at">@context.CreatedAt</MudTd>
+            </RowTemplate>
+        </MudTable>
+
+    </MudExpansionPanels>
+
+    <br />
+}
+
+<a href="@("/invoice")">
+    <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.ArrowBack" />
+</a>
 
 @code {
     [Parameter] public long? Id { get; set; }

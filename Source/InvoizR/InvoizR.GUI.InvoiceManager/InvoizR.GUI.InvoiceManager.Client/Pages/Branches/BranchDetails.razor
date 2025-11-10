@@ -6,7 +6,7 @@
 @using InvoizR.Clients.DataContracts
 @using InvoizR.Clients.DataContracts.Common
 
-@inject IInvoizRClient invoizRClient
+@inject IInvoizRClient InvoizRClient
 
 <h3>Branch Details</h3>
 <h4>@Id</h4>
@@ -26,17 +26,17 @@
         </CardHeaderActions>
     </MudCardHeader>
     <MudCardContent>
-        <MudText>Name: @response?.Model.Name</MudText>
-        <MudText>Tax Auth ID: @response?.Model.TaxAuthId</MudText>
-        <MudText>Address: @response?.Model.Address</MudText>
-        <MudText>Phone: @response?.Model.Phone</MudText>
-        <MudText>Email: @response?.Model.Email</MudText>
+        <MudText Typo="Typo.body2">Name: @response?.Model.Name</MudText>
+        <MudText Typo="Typo.body2">Tax Auth ID: @response?.Model.TaxAuthId</MudText>
+        <MudText Typo="Typo.body2">Address: @response?.Model.Address</MudText>
+        <MudText Typo="Typo.body2">Phone: @response?.Model.Phone</MudText>
+        <MudText Typo="Typo.body2">Email: @response?.Model.Email</MudText>
     </MudCardContent>
 </MudCard>
 
 <br />
 
-<h5>POS</h5>
+<h5>Points of Sales</h5>
 
 <br />
 
@@ -60,9 +60,7 @@
     <h5>Logo</h5>
 
     <br />
-
     <img alt='Logo' src='data:image/png;base64, @(response.Model.Logo)' style="height: 200px; width: 200px;">
-
     <br />
 }
 
@@ -77,6 +75,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-        response = await invoizRClient.GetBranchAsync((short)Id);
+        response = await InvoizRClient.GetBranchAsync((short)Id);
     }
 }

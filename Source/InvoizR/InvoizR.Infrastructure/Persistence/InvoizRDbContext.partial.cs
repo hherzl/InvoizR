@@ -1,7 +1,8 @@
-﻿using InvoizR.Application.Specifications;
+﻿using InvoizR.Application.QuerySpecs;
 using InvoizR.Clients.DataContracts;
 using InvoizR.Clients.DataContracts.Fallback;
 using InvoizR.Clients.DataContracts.ThirdPartyServices;
+using InvoizR.Domain.Common;
 using InvoizR.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -71,7 +72,7 @@ public partial class InvoizRDbContext
 
     public async Task<Company> GetCompanyAsync(short? id, bool tracking = false, bool includes = false, CancellationToken ct = default)
     {
-        var query = Company.Specify(new GetCompanySpec(id));
+        var query = Company.Spec(new GetCompanyQuerySpec(id));
 
         if (!tracking)
             query = query.AsNoTracking();
@@ -81,7 +82,7 @@ public partial class InvoizRDbContext
 
     public async Task<Fallback> GetCurrentFallbackAsync(short? companyId, bool tracking = false, bool includes = false, CancellationToken ct = default)
     {
-        var query = Fallback.Specify(new GetCurrentFallbackQuerySpec(companyId));
+        var query = Fallback.Spec(new GetCurrentFallbackQuerySpec(companyId));
 
         if (!tracking)
             query = query.AsNoTracking();
@@ -94,7 +95,7 @@ public partial class InvoizRDbContext
 
     public async Task<Fallback> GetFallbackAsync(short? id, bool tracking = false, bool includes = false, CancellationToken ct = default)
     {
-        var query = Fallback.Specify(new GetFallbackQuerySpec(id));
+        var query = Fallback.Spec(new GetFallbackQuerySpec(id));
 
         if (!tracking)
             query = query.AsNoTracking();
@@ -198,7 +199,7 @@ public partial class InvoizRDbContext
 
     public async Task<Branch> GetBranchAsync(short? id, bool tracking = false, bool includes = false, CancellationToken ct = default)
     {
-        var query = Branch.Specify(new GetBranchSpec(id));
+        var query = Branch.Spec(new GetBranchQuerySpec(id));
 
         if (!tracking)
             query = query.AsNoTracking();
@@ -208,7 +209,7 @@ public partial class InvoizRDbContext
 
     public async Task<Pos> GetPosAsync(short? id, bool tracking = false, bool includes = false, CancellationToken ct = default)
     {
-        var query = Pos.Specify(new GetPosSpec(id));
+        var query = Pos.Spec(new GetPosQuerySpec(id));
 
         if (!tracking)
             query = query.AsNoTracking();
@@ -241,12 +242,33 @@ public partial class InvoizRDbContext
 
     public async Task<Responsible> GetResponsibleByCompanyIdAsync(short? companyId, bool tracking = false, bool includes = false, CancellationToken ct = default)
     {
-        var query = Responsible.Specify(new GetResponsibleByCompanyIdSpec(companyId));
+        var query = Responsible.Spec(new GetResponsibleByCompanyIdQuerySpec(companyId));
 
         if (!tracking)
             query = query.AsNoTracking();
 
         return await query.FirstOrDefaultAsync(ct);
+    }
+
+    public IQueryable<ResponsibleItemModel> GetResponsiblesBy(short? companyId)
+    {
+        var query =
+            from responsible in Responsible
+            where responsible.CompanyId == companyId
+            orderby responsible.Name
+            select new ResponsibleItemModel
+            {
+                Id = responsible.Id,
+                Name = responsible.Name,
+                Phone = responsible.Phone,
+                Email = responsible.Email,
+                IdType = responsible.IdType,
+                IdNumber = responsible.IdNumber,
+                AuthorizeCancellation = responsible.AuthorizeCancellation,
+                AuthorizeFallback = responsible.AuthorizeFallback
+            };
+
+        return query;
     }
 
     public IQueryable<BranchNotification> GetBranchNotificationsBy(short? branchId = null, short? invoiceTypeId = null)
@@ -283,7 +305,7 @@ public partial class InvoizRDbContext
 
     public async Task<Invoice> GetInvoiceAsync(long? id, bool tracking = false, bool includes = false, CancellationToken ct = default)
     {
-        var query = Invoice.Specify(new GetInvoiceSpec(id));
+        var query = Invoice.Spec(new GetInvoiceQuerySpec(id));
 
         if (!tracking)
             query = query.AsNoTracking();

@@ -5,6 +5,7 @@ public record CompanyDetailsModel
     public CompanyDetailsModel()
     {
         Branches = [];
+        Responsibles = [];
     }
 
     public short? Id { get; set; }
@@ -24,4 +25,5 @@ public record CompanyDetailsModel
     public int? Headquarters { get; set; }
 
     public List<BranchItemModel> Branches { get; set; }
+    public List<ResponsibleItemModel> Responsibles { get; set; }
 }

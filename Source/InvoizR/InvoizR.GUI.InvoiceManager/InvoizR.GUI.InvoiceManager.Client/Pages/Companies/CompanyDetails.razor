@@ -13,107 +13,101 @@
 
 <br />
 
-@if (DetailsResponse != null)
+@if (DetailsResponse == null)
 {
-    <MudCard>
-        <MudCardHeader>
-            <CardHeaderContent>
-                <MudText Typo="Typo.h6">Company</MudText>
-            </CardHeaderContent>
-            <CardHeaderActions>
-                <MudIconButton Icon="@Icons.Material.Filled.Business" Color="Color.Default" />
-            </CardHeaderActions>
-        </MudCardHeader>
-        <MudCardContent>
-            <MudText>Name: @DetailsResponse?.Model.Name</MudText>
-            <MudText>Code: @DetailsResponse?.Model.Code</MudText>
-            <MudText>Business Name: @DetailsResponse?.Model.BusinessName</MudText>
-            <MudText>Tax Id Number: @DetailsResponse?.Model.TaxIdNumber</MudText>
-            <MudText>Taxpayer Registration Number: @DetailsResponse?.Model.TaxpayerRegistrationNumber</MudText>
-            <MudText>Economic Activity: <strong>@DetailsResponse?.Model.EconomicActivityId</strong>-<i>@DetailsResponse?.Model.EconomicActivity</i></MudText>
-            <MudText>Economic Activity: </MudText>
-            <MudText>Address: @DetailsResponse?.Model.Address</MudText>
-            <MudText>Phone: @DetailsResponse?.Model.Phone</MudText>
-            <MudText>Email: @DetailsResponse?.Model.Email</MudText>
-        </MudCardContent>
-    </MudCard>
-
-    <br />
-
-    <h5>Branches</h5>
-
-    <br />
-
-    <MudTable Items="DetailsResponse?.Model.Branches">
-        <HeaderContent>
-            <MudTh>Name</MudTh>
-            <MudTh>Tax Auth ID</MudTh>
-            <MudTh></MudTh>
-        </HeaderContent>
-        <RowTemplate>
-            <MudTd DataLabel="Name">@context.Name</MudTd>
-            <MudTd DataLabel="Tax Auth ID">@context.TaxAuthId</MudTd>
-            <MudTd>
-                <a href="@($"/branch/{@context.Id}")">
-                    <MudIcon Icon="@Icons.Material.Filled.Details" Title="Details" />
-                </a>
-            </MudTd>
-        </RowTemplate>
-    </MudTable>
-
-    <br />
-
-    <h5>Responsibles</h5>
-
-    <br />
-
-    <MudTable Items="responsibles.Model">
-        <HeaderContent>
-            <MudTh>Name</MudTh>
-            <MudTh>Phone</MudTh>
-            <MudTh>Email</MudTh>
-            <MudTh>ID Type</MudTh>
-            <MudTh>ID Number</MudTh>
-        </HeaderContent>
-        <RowTemplate>
-            <MudTd DataLabel="Name">@context.Name</MudTd>
-            <MudTd DataLabel="Name">@context.Phone</MudTd>
-            <MudTd DataLabel="Name">@context.Email</MudTd>
-            <MudTd DataLabel="Name">@context.IdTypeDesc</MudTd>
-            <MudTd DataLabel="Name">@context.IdNumber</MudTd>
-        </RowTemplate>
-    </MudTable>
-
-    <br />
-
-    @if (!string.IsNullOrEmpty(DetailsResponse?.Model.Logo))
-    {
-        <h5>Logo</h5>
-
-        <br />
-
-        <img alt='Logo' src='data:image/png;base64, @(DetailsResponse?.Model.Logo)' style="height: 200px; width: 200px;">
-
-        <br />
-    }
-
-    <a href="@("/company")">
-        <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.ArrowBack" />
-    </a>
+    return;
 }
+
+<MudCard>
+    <MudCardHeader>
+        <CardHeaderContent>
+            <MudText Typo="Typo.h6">Company</MudText>
+        </CardHeaderContent>
+        <CardHeaderActions>
+            <MudIconButton Icon="@Icons.Material.Filled.Business" Color="Color.Default" />
+        </CardHeaderActions>
+    </MudCardHeader>
+    <MudCardContent>
+        <MudText Typo="Typo.body2">Name: <strong>@DetailsResponse?.Model.Name</strong></MudText>
+        <MudText Typo="Typo.body2">Code: <strong>@DetailsResponse?.Model.Code</strong></MudText>
+        <MudText Typo="Typo.body2">Business Name: <strong>@DetailsResponse?.Model.BusinessName</strong></MudText>
+        <MudText Typo="Typo.body2">Tax Id Number: <strong>@DetailsResponse?.Model.TaxIdNumber</strong></MudText>
+        <MudText Typo="Typo.body2">Taxpayer Registration Number: <strong>@DetailsResponse?.Model.TaxpayerRegistrationNumber</strong></MudText>
+        <MudText Typo="Typo.body2">Economic Activity: <strong>@DetailsResponse?.Model.EconomicActivityId</strong>-<i>@DetailsResponse?.Model.EconomicActivity</i></MudText>
+        <MudText Typo="Typo.body2">Address: <strong>@DetailsResponse?.Model.Address</strong></MudText>
+        <MudText Typo="Typo.body2">Phone: <strong>@DetailsResponse?.Model.Phone</strong></MudText>
+        <MudText Typo="Typo.body2">Email: <strong>@DetailsResponse?.Model.Email</strong></MudText>
+    </MudCardContent>
+</MudCard>
+
+<br />
+
+<h5>Branches</h5>
+
+<br />
+
+<MudTable Items="DetailsResponse?.Model.Branches">
+    <HeaderContent>
+        <MudTh>Name</MudTh>
+        <MudTh>Tax Auth ID</MudTh>
+        <MudTh></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Name">@context.Name</MudTd>
+        <MudTd DataLabel="Tax Auth ID">@context.TaxAuthId</MudTd>
+        <MudTd>
+            <a href="@($"/branch/{@context.Id}")">
+                <MudIcon Icon="@Icons.Material.Filled.Details" Title="Details" />
+            </a>
+        </MudTd>
+    </RowTemplate>
+</MudTable>
+
+<br />
+
+<h5>Responsibles</h5>
+
+<br />
+
+<MudTable Items="DetailsResponse?.Model.Responsibles">
+    <HeaderContent>
+        <MudTh>Name</MudTh>
+        <MudTh>Phone</MudTh>
+        <MudTh>Email</MudTh>
+        <MudTh>ID Type</MudTh>
+        <MudTh>ID Number</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Name">@context.Name</MudTd>
+        <MudTd DataLabel="Name">@context.Phone</MudTd>
+        <MudTd DataLabel="Name">@context.Email</MudTd>
+        <MudTd DataLabel="Name">@context.IdTypeDesc</MudTd>
+        <MudTd DataLabel="Name">@context.IdNumber</MudTd>
+    </RowTemplate>
+</MudTable>
+
+<br />
+
+@if (!string.IsNullOrEmpty(DetailsResponse?.Model.Logo))
+{
+    <h5>Logo</h5>
+
+    <br />
+    <img alt='Logo' src='data:image/png;base64, @(DetailsResponse?.Model.Logo)' style="height: 200px; width: 200px;">
+    <br />
+}
+
+<a href="@("/company")">
+    <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.ArrowBack" />
+</a>
 
 @code {
     [Parameter] public int? Id { get; set; }
 
     private SingleResponse<CompanyDetailsModel> DetailsResponse { get; set; }
-    private ListResponse<ResponsibleItemModel> responsibles { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         DetailsResponse = await InvoizRClient.GetCompanyAsync((short)Id);
-        if (DetailsResponse != null)
-        {
-            responsibles = await InvoizRClient.GetResponsiblesAsync(new() { CompanyId = (short)Id });
-        }
     }
 }

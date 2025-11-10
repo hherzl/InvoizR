@@ -61,6 +61,7 @@ public interface IInvoizRDbContext : IDisposable
     IQueryable<PosItemModel> GetPosBy(short? branchId = null);
 
     Task<Responsible> GetResponsibleByCompanyIdAsync(short? companyId, bool tracking = false, bool includes = false, CancellationToken ct = default);
+    IQueryable<ResponsibleItemModel> GetResponsiblesBy(short? companyId);
 
     IQueryable<BranchNotification> GetBranchNotificationsBy(short? branchId = null, short? invoiceTypeId = null);
 

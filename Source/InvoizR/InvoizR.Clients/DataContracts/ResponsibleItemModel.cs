@@ -12,6 +12,7 @@ public record ResponsibleItemModel
     public string IdNumber { get; set; }
     public bool? AuthorizeCancellation { get; set; }
     public bool? AuthorizeFallback { get; set; }
+    public short? CompanyId { get; set; }
 
     public string IdTypeDesc
         => MhCatalog.Cat022.Desc(IdType);
