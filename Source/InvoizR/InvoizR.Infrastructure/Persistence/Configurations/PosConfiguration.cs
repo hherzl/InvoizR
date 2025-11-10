@@ -1,13 +1,16 @@
 ﻿using InvoizR.Domain.Entities;
+using InvoizR.Infrastructure.Persistence.Configurations.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace InvoizR.Infrastructure.Persistence.Configurations;
 
-internal class PosConfiguration : IEntityTypeConfiguration<Pos>
+internal class PosConfiguration : AuditableEntityConfiguration<Pos>
 {
-    public void Configure(EntityTypeBuilder<Pos> builder)
+    public override void Configure(EntityTypeBuilder<Pos> builder)
     {
+        base.Configure(builder);
+
         // Set configuration for entity
         builder.ToTable("Pos", "dbo");
 

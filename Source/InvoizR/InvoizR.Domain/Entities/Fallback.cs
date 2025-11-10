@@ -3,7 +3,7 @@ using InvoizR.Domain.Common;
 
 namespace InvoizR.Domain.Entities;
 
-public partial class Fallback : Entity
+public partial class Fallback : AuditableEntity
 {
     public Fallback()
     {

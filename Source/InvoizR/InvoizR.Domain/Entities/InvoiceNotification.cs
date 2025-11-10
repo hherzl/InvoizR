@@ -2,7 +2,7 @@
 
 namespace InvoizR.Domain.Entities;
 
-public partial class InvoiceNotification : Entity
+public partial class InvoiceNotification : AuditableEntity
 {
     public InvoiceNotification()
     {
@@ -19,5 +19,4 @@ public partial class InvoiceNotification : Entity
     public bool? Bcc { get; set; }
     public short? Files { get; set; }
     public bool? Successful { get; set; }
-    public DateTime? CreatedAt { get; set; }
 }

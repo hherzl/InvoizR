@@ -2,7 +2,7 @@
 
 namespace InvoizR.Domain.Entities;
 
-public partial class CompanyThirdPartyServiceParameter : Entity
+public partial class CompanyThirdPartyServiceParameter : AuditableEntity
 {
     public CompanyThirdPartyServiceParameter()
     {

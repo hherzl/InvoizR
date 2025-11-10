@@ -3,7 +3,7 @@ using InvoizR.Domain.Common;
 
 namespace InvoizR.Domain.Entities;
 
-public partial class Pos : Entity
+public partial class Pos : AuditableEntity
 {
     public Pos()
     {

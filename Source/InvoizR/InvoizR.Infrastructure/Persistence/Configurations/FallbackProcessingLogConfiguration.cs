@@ -1,13 +1,16 @@
 ﻿using InvoizR.Domain.Entities;
+using InvoizR.Infrastructure.Persistence.Configurations.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace InvoizR.Infrastructure.Persistence.Configurations;
 
-internal class FallbackProcessingLogConfiguration : IEntityTypeConfiguration<FallbackProcessingLog>
+internal class FallbackProcessingLogConfiguration : AuditableEntityConfiguration<FallbackProcessingLog>
 {
-    public void Configure(EntityTypeBuilder<FallbackProcessingLog> builder)
+    public override void Configure(EntityTypeBuilder<FallbackProcessingLog> builder)
     {
+        base.Configure(builder);
+
         // Set configuration for entity
         builder.ToTable("FallbackProcessingLog", "dbo");
 
@@ -27,12 +30,6 @@ internal class FallbackProcessingLogConfiguration : IEntityTypeConfiguration<Fal
         builder
             .Property(p => p.FallbackId)
             .HasColumnType("smallint")
-            .IsRequired()
-            ;
-
-        builder
-            .Property(p => p.CreatedAt)
-            .HasColumnType("datetime")
             .IsRequired()
             ;
 

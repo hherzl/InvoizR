@@ -1,13 +1,16 @@
 ﻿using InvoizR.Domain.Entities;
+using InvoizR.Infrastructure.Persistence.Configurations.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace InvoizR.Infrastructure.Persistence.Configurations;
 
-internal class InvoiceCancellationLogConfiguration : IEntityTypeConfiguration<InvoiceCancellationLog>
+internal class InvoiceCancellationLogConfiguration : AuditableEntityConfiguration<InvoiceCancellationLog>
 {
-    public void Configure(EntityTypeBuilder<InvoiceCancellationLog> builder)
+    public override void Configure(EntityTypeBuilder<InvoiceCancellationLog> builder)
     {
+        base.Configure(builder);
+
         // Set configuration for entity
         builder.ToTable("InvoiceCancellationLog", "dbo");
 
@@ -33,12 +36,6 @@ internal class InvoiceCancellationLogConfiguration : IEntityTypeConfiguration<In
         builder
             .Property(p => p.ProcessingStatusId)
             .HasColumnType("smallint")
-            .IsRequired()
-            ;
-
-        builder
-            .Property(p => p.CreatedAt)
-            .HasColumnType("datetime")
             .IsRequired()
             ;
 

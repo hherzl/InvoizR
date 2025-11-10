@@ -1,9 +1,12 @@
-﻿using CatFactory.EntityFrameworkCore;
+﻿using System.Dynamic;
+using CatFactory.EntityFrameworkCore;
+using CatFactory.ObjectRelationalMapping;
 using CatFactory.SqlServer;
 using CatFactory.SqlServer.CodeFactory;
+using CatFactory.SqlServer.DatabaseObjectModel;
 using CatFactory.SqlServer.ObjectRelationalMapping;
 
-var db = SqlServerDatabase.CreateWithDefaults("Invoizr");
+var db = SqlServerDatabase.CreateWithDefaults("InvoizR");
 
 var now = DateTime.Now;
 
@@ -278,7 +281,6 @@ var fallbackProcessingLog = db
     {
         Id = 0,
         FallbackId = (short)0,
-        CreatedAt = now,
         SyncStatusId = (short)0,
         LogType = "",
         ContentType = "",
@@ -302,7 +304,6 @@ var fallbackFile = db
         FileType = "",
         FileName = "",
         ExternalUrl = "",
-        CreatedAt = now,
         File = Array.Empty<byte>()
     })
     .SetNaming("FallbackFile")
@@ -334,7 +335,6 @@ var invoice = db
         CustomerPhone = "",
         CustomerEmail = "",
         CustomerLastUpdated = now,
-        CreatedAt = now,
         InvoiceTypeId = (short)0,
         InvoiceNumber = (long)0,
         InvoiceDate = now,
@@ -401,8 +401,7 @@ var invoiceValidation = db
         InvoiceId = (long)0,
         Field = "",
         Value = "",
-        Message = "",
-        CreatedAt = now
+        Message = ""
     })
     .SetNaming("InvoiceValidation")
     .SetColumnFor(e => e.Field, 25)
@@ -418,7 +417,6 @@ var invoiceProcessingStatusLog = db
     {
         Id = (long)0,
         InvoiceId = (long)0,
-        CreatedAt = now,
         ProcessingStatusId = (short)0
     })
     .SetNaming("InvoiceProcessingStatusLog")
@@ -432,7 +430,6 @@ var invoiceProcessingLog = db
     {
         Id = (long)0,
         InvoiceId = (long)0,
-        CreatedAt = now,
         ProcessingStatusId = (short)0,
         LogType = "",
         ContentType = "",
@@ -456,7 +453,6 @@ var invoiceFile = db
         FileType = "",
         FileName = "",
         ExternalUrl = "",
-        CreatedAt = now,
         File = Array.Empty<byte>()
     })
     .SetNaming("InvoiceFile")
@@ -478,8 +474,7 @@ var invoiceNotification = db
         Email = "",
         Bcc = false,
         Files = (short)0,
-        Successful = false,
-        CreatedAt = now
+        Successful = false
     })
     .SetNaming("InvoiceNotification")
     .SetColumnFor(e => e.Email, 50)
@@ -494,7 +489,6 @@ var invoiceCancellationLog = db
         Id = (long)0,
         InvoiceId = (long)0,
         ProcessingStatusId = (short)0,
-        CreatedAt = now,
         LogType = "",
         ContentType = "",
         Payload = ""
@@ -507,12 +501,20 @@ var invoiceCancellationLog = db
     .AddForeignKey(e => e.InvoiceId, invoice.Table)
     ;
 
+dynamic importBag = new ExpandoObject();
+importBag.ExtendedProperties = new List<ExtendedProperty>();
+
+db.AddColumnForTables(new Column { Name = "CreatedAt", Type = "datetime", ImportBag = importBag }, enumDescription.Table.FullName);
+db.AddColumnForTables(new Column { Name = "CreatedBy", Type = "nvarchar", Length = 50, ImportBag = importBag }, enumDescription.Table.FullName);
+db.AddColumnForTables(new Column { Name = "LastModifiedAt", Type = "datetime", Nullable = true, ImportBag = importBag }, enumDescription.Table.FullName);
+db.AddColumnForTables(new Column { Name = "LastModifiedBy", Type = "nvarchar", Length = 50, Nullable = true, ImportBag = importBag }, enumDescription.Table.FullName);
+db.AddColumnForTables(new Column { Name = "RowVersion", Type = "rowversion", Nullable = true, ImportBag = importBag }, enumDescription.Table.FullName);
+
 // Add table for special customers
 SqlServerDatabaseScriptCodeBuilder.CreateScript(db, @"C:\Temp\Databases", true, true);
 
 // Create instance of Entity Framework Core project
-var efCoreProject = EntityFrameworkCoreProject
-    .CreateForV5x("EB.Domain.Core", db, @"C:\Temp\Invoizr.Domain");
+var efCoreProject = EntityFrameworkCoreProject.CreateForV5x("InvoizR.Domain", db, @"C:\Temp\InvoizR.Domain");
 
 // Apply settings for Entity Framework Core project
 efCoreProject.GlobalSelection(settings =>
@@ -528,6 +530,4 @@ efCoreProject.GlobalSelection(settings =>
 efCoreProject.BuildFeatures();
 
 // Scaffolding =^^=
-efCoreProject
-    .ScaffoldDomain()
-    ;
+efCoreProject.ScaffoldDomain();

@@ -1,13 +1,16 @@
 ﻿using InvoizR.Domain.Entities;
+using InvoizR.Infrastructure.Persistence.Configurations.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace InvoizR.Infrastructure.Persistence.Configurations;
 
-internal class CompanyConfiguration : IEntityTypeConfiguration<Company>
+internal class CompanyConfiguration : AuditableEntityConfiguration<Company>
 {
-    public void Configure(EntityTypeBuilder<Company> builder)
+    public override void Configure(EntityTypeBuilder<Company> builder)
     {
+        base.Configure(builder);
+
         // Set configuration for entity
         builder.ToTable("Company", "dbo");
 

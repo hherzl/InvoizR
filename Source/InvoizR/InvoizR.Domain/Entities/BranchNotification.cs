@@ -2,7 +2,7 @@
 
 namespace InvoizR.Domain.Entities;
 
-public partial class BranchNotification : Entity
+public partial class BranchNotification : AuditableEntity
 {
     public BranchNotification()
     {

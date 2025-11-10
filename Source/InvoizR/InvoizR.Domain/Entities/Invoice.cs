@@ -3,7 +3,7 @@ using InvoizR.Domain.Common;
 
 namespace InvoizR.Domain.Entities;
 
-public partial class Invoice : Entity
+public partial class Invoice : AuditableEntity
 {
     public Invoice()
         : base()
@@ -34,7 +34,6 @@ public partial class Invoice : Entity
     public string CustomerPhone { get; set; }
     public string CustomerEmail { get; set; }
     public DateTime? CustomerLastUpdated { get; set; }
-    public DateTime? CreatedAt { get; set; }
     public short? InvoiceTypeId { get; set; }
     public long? InvoiceNumber { get; set; }
     public DateTime? InvoiceDate { get; set; }

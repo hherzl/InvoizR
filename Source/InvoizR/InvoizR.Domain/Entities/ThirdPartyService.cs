@@ -5,7 +5,7 @@ using InvoizR.Domain.Common;
 namespace InvoizR.Domain.Entities;
 
 [DebuggerDisplay("EnvironmentId={EnvironmentId}, Name={Name}")]
-public partial class ThirdPartyService : Entity
+public partial class ThirdPartyService : AuditableEntity
 {
     public ThirdPartyService()
     {

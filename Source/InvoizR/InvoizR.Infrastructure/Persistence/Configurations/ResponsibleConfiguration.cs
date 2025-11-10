@@ -1,13 +1,16 @@
 ﻿using InvoizR.Domain.Entities;
+using InvoizR.Infrastructure.Persistence.Configurations.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace InvoizR.Infrastructure.Persistence.Configurations;
 
-internal class ResponsibleConfiguration : IEntityTypeConfiguration<Responsible>
+internal class ResponsibleConfiguration : AuditableEntityConfiguration<Responsible>
 {
-    public void Configure(EntityTypeBuilder<Responsible> builder)
+    public override void Configure(EntityTypeBuilder<Responsible> builder)
     {
+        base.Configure(builder);
+
         // Set configuration for entity
         builder.ToTable("Responsible", "dbo");
 

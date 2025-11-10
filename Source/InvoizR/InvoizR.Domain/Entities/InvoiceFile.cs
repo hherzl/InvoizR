@@ -1,6 +1,8 @@
-﻿namespace InvoizR.Domain.Entities;
+﻿using InvoizR.Domain.Common;
 
-public partial class InvoiceFile
+namespace InvoizR.Domain.Entities;
+
+public partial class InvoiceFile : AuditableEntity
 {
     public InvoiceFile()
     {
@@ -18,6 +20,5 @@ public partial class InvoiceFile
     public string FileType { get; set; }
     public string FileName { get; set; }
     public string ExternalUrl { get; set; }
-    public DateTime? CreatedAt { get; set; }
     public byte[] File { get; set; }
 }

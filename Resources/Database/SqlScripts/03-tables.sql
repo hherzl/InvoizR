@@ -104,7 +104,12 @@ CREATE TABLE [dbo].[Company]
 	[Email] NVARCHAR(50) NOT NULL,
 	[Logo] VARBINARY(MAX) NULL,
 	[Headquarters] INT NULL,
-	[NonCustomerEmail] NVARCHAR(50) NULL
+	[NonCustomerEmail] NVARCHAR(50) NULL,
+	[CreatedAt] DATETIME NOT NULL,
+	[CreatedBy] NVARCHAR(50) NOT NULL,
+	[LastModifiedAt] DATETIME NULL,
+	[LastModifiedBy] NVARCHAR(50) NULL,
+	[RowVersion] ROWVERSION NULL
 )
 GO
 
@@ -113,7 +118,12 @@ CREATE TABLE [dbo].[ThirdPartyService]
 	[Id] SMALLINT NOT NULL IDENTITY(1, 1),
 	[EnvironmentId] NVARCHAR(2) NOT NULL,
 	[Name] NVARCHAR(50) NOT NULL,
-	[Description] NVARCHAR(200) NOT NULL
+	[Description] NVARCHAR(200) NOT NULL,
+	[CreatedAt] DATETIME NOT NULL,
+	[CreatedBy] NVARCHAR(50) NOT NULL,
+	[LastModifiedAt] DATETIME NULL,
+	[LastModifiedBy] NVARCHAR(50) NULL,
+	[RowVersion] ROWVERSION NULL
 )
 GO
 
@@ -124,7 +134,12 @@ CREATE TABLE [dbo].[ThirdPartyServiceParameter]
 	[Category] NVARCHAR(25) NOT NULL,
 	[Name] NVARCHAR(25) NOT NULL,
 	[DefaultValue] NVARCHAR(100) NOT NULL,
-	[RequiresEncryption] BIT NULL
+	[RequiresEncryption] BIT NULL,
+	[CreatedAt] DATETIME NOT NULL,
+	[CreatedBy] NVARCHAR(50) NOT NULL,
+	[LastModifiedAt] DATETIME NULL,
+	[LastModifiedBy] NVARCHAR(50) NULL,
+	[RowVersion] ROWVERSION NULL
 )
 GO
 
@@ -136,7 +151,12 @@ CREATE TABLE [dbo].[CompanyThirdPartyServiceParameter]
 	[EnvironmentId] NVARCHAR(2) NOT NULL,
 	[Category] NVARCHAR(25) NOT NULL,
 	[Name] NVARCHAR(25) NOT NULL,
-	[Value] NVARCHAR(100) NOT NULL
+	[Value] NVARCHAR(100) NOT NULL,
+	[CreatedAt] DATETIME NOT NULL,
+	[CreatedBy] NVARCHAR(50) NOT NULL,
+	[LastModifiedAt] DATETIME NULL,
+	[LastModifiedBy] NVARCHAR(50) NULL,
+	[RowVersion] ROWVERSION NULL
 )
 GO
 
@@ -150,7 +170,12 @@ CREATE TABLE [dbo].[Responsible]
 	[IdType] NVARCHAR(2) NOT NULL,
 	[IdNumber] NVARCHAR(25) NOT NULL,
 	[AuthorizeCancellation] BIT NOT NULL,
-	[AuthorizeFallback] BIT NOT NULL
+	[AuthorizeFallback] BIT NOT NULL,
+	[CreatedAt] DATETIME NOT NULL,
+	[CreatedBy] NVARCHAR(50) NOT NULL,
+	[LastModifiedAt] DATETIME NULL,
+	[LastModifiedBy] NVARCHAR(50) NULL,
+	[RowVersion] ROWVERSION NULL
 )
 GO
 
@@ -166,7 +191,12 @@ CREATE TABLE [dbo].[Branch]
 	[Logo] VARBINARY(MAX) NULL,
 	[Headquarters] INT NULL,
 	[ResponsibleId] SMALLINT NULL,
-	[NonCustomerEmail] NVARCHAR(50) NULL
+	[NonCustomerEmail] NVARCHAR(50) NULL,
+	[CreatedAt] DATETIME NOT NULL,
+	[CreatedBy] NVARCHAR(50) NOT NULL,
+	[LastModifiedAt] DATETIME NULL,
+	[LastModifiedBy] NVARCHAR(50) NULL,
+	[RowVersion] ROWVERSION NULL
 )
 GO
 
@@ -177,7 +207,12 @@ CREATE TABLE [dbo].[Pos]
 	[Name] NVARCHAR(25) NOT NULL,
 	[Code] NVARCHAR(5) NOT NULL,
 	[TaxAuthId] NVARCHAR(4) NULL,
-	[Description] NVARCHAR(MAX) NULL
+	[Description] NVARCHAR(MAX) NULL,
+	[CreatedAt] DATETIME NOT NULL,
+	[CreatedBy] NVARCHAR(50) NOT NULL,
+	[LastModifiedAt] DATETIME NULL,
+	[LastModifiedBy] NVARCHAR(50) NULL,
+	[RowVersion] ROWVERSION NULL
 )
 GO
 
@@ -188,7 +223,12 @@ CREATE TABLE [dbo].[InvoiceType]
 	[SchemaType] NVARCHAR(2) NOT NULL,
 	[SchemaVersion] SMALLINT NOT NULL,
 	[Current] BIT NOT NULL,
-	[CancellationPeriodInDays] SMALLINT NOT NULL
+	[CancellationPeriodInDays] SMALLINT NOT NULL,
+	[CreatedAt] DATETIME NOT NULL,
+	[CreatedBy] NVARCHAR(50) NOT NULL,
+	[LastModifiedAt] DATETIME NULL,
+	[LastModifiedBy] NVARCHAR(50) NULL,
+	[RowVersion] ROWVERSION NULL
 )
 GO
 
@@ -198,7 +238,12 @@ CREATE TABLE [dbo].[BranchNotification]
 	[BranchId] SMALLINT NOT NULL,
 	[InvoiceTypeId] SMALLINT NOT NULL,
 	[Email] NVARCHAR(50) NOT NULL,
-	[Bcc] BIT NOT NULL
+	[Bcc] BIT NOT NULL,
+	[CreatedAt] DATETIME NOT NULL,
+	[CreatedBy] NVARCHAR(50) NOT NULL,
+	[LastModifiedAt] DATETIME NULL,
+	[LastModifiedBy] NVARCHAR(50) NULL,
+	[RowVersion] ROWVERSION NULL
 )
 GO
 
@@ -216,7 +261,12 @@ CREATE TABLE [dbo].[Fallback]
 	[RetryIn] INT NOT NULL,
 	[SyncAttempts] INT NOT NULL,
 	[EmitDateTime] DATETIME NULL,
-	[ReceiptStamp] NVARCHAR(50) NULL
+	[ReceiptStamp] NVARCHAR(50) NULL,
+	[CreatedAt] DATETIME NOT NULL,
+	[CreatedBy] NVARCHAR(50) NOT NULL,
+	[LastModifiedAt] DATETIME NULL,
+	[LastModifiedBy] NVARCHAR(50) NULL,
+	[RowVersion] ROWVERSION NULL
 )
 GO
 
@@ -224,11 +274,15 @@ CREATE TABLE [dbo].[FallbackProcessingLog]
 (
 	[Id] INT NOT NULL IDENTITY(1, 1),
 	[FallbackId] SMALLINT NOT NULL,
-	[CreatedAt] DATETIME NOT NULL,
 	[SyncStatusId] SMALLINT NOT NULL,
 	[LogType] NVARCHAR(25) NOT NULL,
 	[ContentType] NVARCHAR(100) NOT NULL,
-	[Content] NVARCHAR(MAX) NOT NULL
+	[Content] NVARCHAR(MAX) NOT NULL,
+	[CreatedAt] DATETIME NOT NULL,
+	[CreatedBy] NVARCHAR(50) NOT NULL,
+	[LastModifiedAt] DATETIME NULL,
+	[LastModifiedBy] NVARCHAR(50) NULL,
+	[RowVersion] ROWVERSION NULL
 )
 GO
 
@@ -241,8 +295,12 @@ CREATE TABLE [dbo].[FallbackFile]
 	[FileType] NVARCHAR(100) NOT NULL,
 	[FileName] NVARCHAR(100) NOT NULL,
 	[ExternalUrl] NVARCHAR(200) NULL,
+	[File] VARBINARY(MAX) NOT NULL,
 	[CreatedAt] DATETIME NOT NULL,
-	[File] VARBINARY(MAX) NOT NULL
+	[CreatedBy] NVARCHAR(50) NOT NULL,
+	[LastModifiedAt] DATETIME NULL,
+	[LastModifiedBy] NVARCHAR(50) NULL,
+	[RowVersion] ROWVERSION NULL
 )
 GO
 
@@ -263,7 +321,6 @@ CREATE TABLE [dbo].[Invoice]
 	[CustomerPhone] NVARCHAR(25) NULL,
 	[CustomerEmail] NVARCHAR(100) NULL,
 	[CustomerLastUpdated] DATETIME NULL,
-	[CreatedAt] DATETIME NOT NULL,
 	[InvoiceTypeId] SMALLINT NOT NULL,
 	[InvoiceNumber] BIGINT NOT NULL,
 	[InvoiceDate] DATETIME NOT NULL,
@@ -284,7 +341,12 @@ CREATE TABLE [dbo].[Invoice]
 	[CancellationProcessingStatusId] SMALLINT NULL,
 	[CancellationDateTime] DATETIME NULL,
 	[ExternalUrl] NVARCHAR(125) NULL,
-	[Notes] NVARCHAR(MAX) NULL
+	[Notes] NVARCHAR(MAX) NULL,
+	[CreatedAt] DATETIME NOT NULL,
+	[CreatedBy] NVARCHAR(50) NOT NULL,
+	[LastModifiedAt] DATETIME NULL,
+	[LastModifiedBy] NVARCHAR(50) NULL,
+	[RowVersion] ROWVERSION NULL
 )
 GO
 
@@ -295,7 +357,11 @@ CREATE TABLE [dbo].[InvoiceValidation]
 	[Field] NVARCHAR(25) NOT NULL,
 	[Value] NVARCHAR(100) NULL,
 	[Message] NVARCHAR(100) NOT NULL,
-	[CreatedAt] DATETIME NOT NULL
+	[CreatedAt] DATETIME NOT NULL,
+	[CreatedBy] NVARCHAR(50) NOT NULL,
+	[LastModifiedAt] DATETIME NULL,
+	[LastModifiedBy] NVARCHAR(50) NULL,
+	[RowVersion] ROWVERSION NULL
 )
 GO
 
@@ -303,8 +369,12 @@ CREATE TABLE [dbo].[InvoiceProcessingStatusLog]
 (
 	[Id] BIGINT NOT NULL IDENTITY(1, 1),
 	[InvoiceId] BIGINT NOT NULL,
+	[ProcessingStatusId] SMALLINT NOT NULL,
 	[CreatedAt] DATETIME NOT NULL,
-	[ProcessingStatusId] SMALLINT NOT NULL
+	[CreatedBy] NVARCHAR(50) NOT NULL,
+	[LastModifiedAt] DATETIME NULL,
+	[LastModifiedBy] NVARCHAR(50) NULL,
+	[RowVersion] ROWVERSION NULL
 )
 GO
 
@@ -312,11 +382,15 @@ CREATE TABLE [dbo].[InvoiceProcessingLog]
 (
 	[Id] BIGINT NOT NULL IDENTITY(1, 1),
 	[InvoiceId] BIGINT NOT NULL,
-	[CreatedAt] DATETIME NOT NULL,
 	[ProcessingStatusId] SMALLINT NOT NULL,
 	[LogType] NVARCHAR(25) NOT NULL,
 	[ContentType] NVARCHAR(100) NOT NULL,
-	[Content] NVARCHAR(MAX) NOT NULL
+	[Content] NVARCHAR(MAX) NOT NULL,
+	[CreatedAt] DATETIME NOT NULL,
+	[CreatedBy] NVARCHAR(50) NOT NULL,
+	[LastModifiedAt] DATETIME NULL,
+	[LastModifiedBy] NVARCHAR(50) NULL,
+	[RowVersion] ROWVERSION NULL
 )
 GO
 
@@ -329,8 +403,12 @@ CREATE TABLE [dbo].[InvoiceFile]
 	[FileType] NVARCHAR(100) NOT NULL,
 	[FileName] NVARCHAR(100) NOT NULL,
 	[ExternalUrl] NVARCHAR(200) NULL,
+	[File] VARBINARY(MAX) NOT NULL,
 	[CreatedAt] DATETIME NOT NULL,
-	[File] VARBINARY(MAX) NOT NULL
+	[CreatedBy] NVARCHAR(50) NOT NULL,
+	[LastModifiedAt] DATETIME NULL,
+	[LastModifiedBy] NVARCHAR(50) NULL,
+	[RowVersion] ROWVERSION NULL
 )
 GO
 
@@ -342,7 +420,11 @@ CREATE TABLE [dbo].[InvoiceNotification]
 	[Bcc] BIT NOT NULL,
 	[Files] SMALLINT NOT NULL,
 	[Successful] BIT NOT NULL,
-	[CreatedAt] DATETIME NOT NULL
+	[CreatedAt] DATETIME NOT NULL,
+	[CreatedBy] NVARCHAR(50) NOT NULL,
+	[LastModifiedAt] DATETIME NULL,
+	[LastModifiedBy] NVARCHAR(50) NULL,
+	[RowVersion] ROWVERSION NULL
 )
 GO
 
@@ -351,9 +433,13 @@ CREATE TABLE [dbo].[InvoiceCancellationLog]
 	[Id] BIGINT NOT NULL IDENTITY(1, 1),
 	[InvoiceId] BIGINT NOT NULL,
 	[ProcessingStatusId] SMALLINT NOT NULL,
-	[CreatedAt] DATETIME NOT NULL,
 	[LogType] NVARCHAR(25) NOT NULL,
 	[ContentType] NVARCHAR(100) NOT NULL,
-	[Payload] NVARCHAR(MAX) NOT NULL
+	[Payload] NVARCHAR(MAX) NOT NULL,
+	[CreatedAt] DATETIME NOT NULL,
+	[CreatedBy] NVARCHAR(50) NOT NULL,
+	[LastModifiedAt] DATETIME NULL,
+	[LastModifiedBy] NVARCHAR(50) NULL,
+	[RowVersion] ROWVERSION NULL
 )
 GO

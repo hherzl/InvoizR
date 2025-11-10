@@ -90,6 +90,10 @@ ALTER TABLE [dbo].[Pos] ADD CONSTRAINT [UQ_dbo_Pos_BranchId_Name]
 	UNIQUE ([BranchId], [Name])
 GO
 
+ALTER TABLE [dbo].[Pos] ADD CONSTRAINT [UQ_dbo_Pos_BranchId_TaxAuthId]
+	UNIQUE ([BranchId], [TaxAuthId])
+GO
+
 ALTER TABLE [dbo].[Pos] ADD CONSTRAINT [FK_dbo_Pos_BranchId_dbo_Branch]
 	FOREIGN KEY ([BranchId]) REFERENCES [dbo].[Branch]
 GO
@@ -164,6 +168,10 @@ GO
 
 ALTER TABLE [dbo].[Invoice] ADD CONSTRAINT [FK_dbo_Invoice_PosId_dbo_Pos]
 	FOREIGN KEY ([PosId]) REFERENCES [dbo].[Pos]
+GO
+
+ALTER TABLE [dbo].[Invoice] ADD CONSTRAINT [FK_dbo_Invoice_InvoiceTypeId_dbo_InvoiceType]
+	FOREIGN KEY ([InvoiceTypeId]) REFERENCES [dbo].[InvoiceType]
 GO
 
 ALTER TABLE [dbo].[InvoiceValidation] ADD CONSTRAINT [PK_dbo_InvoiceValidation]

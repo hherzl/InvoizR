@@ -1,13 +1,16 @@
 ﻿using InvoizR.Domain.Entities;
+using InvoizR.Infrastructure.Persistence.Configurations.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace InvoizR.Infrastructure.Persistence.Configurations;
 
-internal class FallbackFileConfiguration : IEntityTypeConfiguration<FallbackFile>
+internal class FallbackFileConfiguration : AuditableEntityConfiguration<FallbackFile>
 {
-    public void Configure(EntityTypeBuilder<FallbackFile> builder)
+    public override void Configure(EntityTypeBuilder<FallbackFile> builder)
     {
+        base.Configure(builder);
+
         // Set configuration for entity
         builder.ToTable("FallbackFile", "dbo");
 
@@ -61,12 +64,6 @@ internal class FallbackFileConfiguration : IEntityTypeConfiguration<FallbackFile
             .Property(p => p.ExternalUrl)
             .HasColumnType("nvarchar")
             .HasMaxLength(200)
-            ;
-
-        builder
-            .Property(p => p.CreatedAt)
-            .HasColumnType("datetime")
-            .IsRequired()
             ;
 
         builder

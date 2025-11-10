@@ -1,13 +1,16 @@
 ﻿using InvoizR.Domain.Entities;
+using InvoizR.Infrastructure.Persistence.Configurations.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace InvoizR.Infrastructure.Persistence.Configurations;
 
-internal class InvoiceProcessingLogConfiguration : IEntityTypeConfiguration<InvoiceProcessingLog>
+internal class InvoiceProcessingLogConfiguration : AuditableEntityConfiguration<InvoiceProcessingLog>
 {
-    public void Configure(EntityTypeBuilder<InvoiceProcessingLog> builder)
+    public override void Configure(EntityTypeBuilder<InvoiceProcessingLog> builder)
     {
+        base.Configure(builder);
+
         // Set configuration for entity
         builder.ToTable("InvoiceProcessingLog", "dbo");
 
@@ -27,12 +30,6 @@ internal class InvoiceProcessingLogConfiguration : IEntityTypeConfiguration<Invo
         builder
             .Property(p => p.InvoiceId)
             .HasColumnType("bigint")
-            .IsRequired()
-            ;
-
-        builder
-            .Property(p => p.CreatedAt)
-            .HasColumnType("datetime")
             .IsRequired()
             ;
 
