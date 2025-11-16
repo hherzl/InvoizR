@@ -1,5 +1,6 @@
 ﻿using InvoizR.Domain.Enums;
 using InvoizR.Domain.Notifications;
+using InvoizR.SharedKernel;
 
 namespace InvoizR.Domain.Entities;
 
@@ -10,8 +11,8 @@ public partial class InvoiceCancellationLog
         {
             InvoiceId = invoiceId,
             ProcessingStatusId = (short)InvoiceProcessingStatus.Requested,
-            LogType = "REQUEST",
-            ContentType = "application/json",
+            LogType = Tokens.Request,
+            ContentType = Tokens.ApplicationJson,
             Payload = payload
         };
 
@@ -21,8 +22,8 @@ public partial class InvoiceCancellationLog
         {
             InvoiceId = invoiceId,
             ProcessingStatusId = (short)processingStatus,
-            LogType = "RESPONSE",
-            ContentType = "application/json",
+            LogType = Tokens.Response,
+            ContentType = Tokens.ApplicationJson,
             Payload = payload
         };
 

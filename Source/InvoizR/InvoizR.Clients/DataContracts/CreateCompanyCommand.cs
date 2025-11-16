@@ -26,6 +26,10 @@ public record CreateCompanyCommand : IRequest<CreatedResponse<short?>>, IValidat
     public string Logo { get; set; }
     public int? Headquarters { get; set; }
     public string NonCustomerEmail { get; set; }
+    public string WebhookNotificationProtocol { get; set; }
+    public string WebhookNotificationAddress { get; set; }
+    public string WebhookNotificationMisc1 { get; set; }
+    public string WebhookNotificationMisc2 { get; set; }
 
     public bool HasLogo
         => !string.IsNullOrEmpty(Logo);

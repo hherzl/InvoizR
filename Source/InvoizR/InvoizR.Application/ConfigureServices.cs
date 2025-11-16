@@ -44,10 +44,13 @@ public static class ConfigureServices
 
         services.AddScoped<FallbackTemplateFactory>();
 
-        services.AddScoped<InvoiceCancellationHandler>();
-
         services.AddScoped<InvoiceExporter>();
         services.AddScoped<FallbackInvoiceExporter>();
+
+        services.AddScoped<WebhookNotificationHttpHandler>();
+        services.AddScoped<WebhookNotificationHandler>();
+
+        services.AddScoped<InvoiceCancellationHandler>();
 
         services.AddScoped<FallbackExporter>();
         services.AddScoped<FallbackSyncHandler>();

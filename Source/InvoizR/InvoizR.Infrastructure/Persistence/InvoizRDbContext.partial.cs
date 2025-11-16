@@ -1,4 +1,5 @@
-﻿using InvoizR.Application.QuerySpecs;
+﻿using System;
+using InvoizR.Application.QuerySpecs;
 using InvoizR.Clients.DataContracts;
 using InvoizR.Clients.DataContracts.Fallback;
 using InvoizR.Clients.DataContracts.ThirdPartyServices;
@@ -360,7 +361,7 @@ public partial class InvoizRDbContext
         return query;
     }
 
-    public IQueryable<InvoiceFileItemModel> GetInvoiceFiles(long? invoiceId)
+    public IQueryable<InvoiceFileItemModel> GetInvoiceFilesBy(long? invoiceId)
     {
         var query =
             from invFile in InvoiceFile
@@ -377,6 +378,16 @@ public partial class InvoizRDbContext
             };
 
         return query;
+    }
+
+    public async Task<InvoiceFile> GetInvoiceFileByAsync(long? invoiceId, string fileName, bool tracking = false, bool includes = false, CancellationToken ct = default)
+    {
+        var query = InvoiceFile.AsQueryable();
+
+        if (tracking)
+            query = query.AsNoTracking();
+
+        return await query.FirstOrDefaultAsync(item => item.InvoiceId == invoiceId && item.FileName == fileName, ct);
     }
 
     public IQueryable<InvoiceNotificationItemModel> GetInvoiceNotifications(long? invoiceId)

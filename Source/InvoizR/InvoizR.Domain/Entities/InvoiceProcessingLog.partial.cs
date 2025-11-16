@@ -1,5 +1,5 @@
 ﻿using InvoizR.Domain.Enums;
-
+using InvoizR.SharedKernel;
 namespace InvoizR.Domain.Entities;
 
 public partial class InvoiceProcessingLog
@@ -10,8 +10,8 @@ public partial class InvoiceProcessingLog
             InvoiceId = invoiceId,
             CreatedAt = DateTime.Now,
             ProcessingStatusId = (short)processingStatus,
-            LogType = "REQUEST",
-            ContentType = "application/json",
+            LogType = Tokens.Request,
+            ContentType = Tokens.ApplicationJson,
             Content = content
         };
 
@@ -21,8 +21,8 @@ public partial class InvoiceProcessingLog
             InvoiceId = invoiceId,
             CreatedAt = DateTime.Now,
             ProcessingStatusId = (short)processingSyncStatus,
-            LogType = "RESPONSE",
-            ContentType = "application/json",
+            LogType = Tokens.Response,
+            ContentType = Tokens.ApplicationJson,
             Content = content
         };
 }

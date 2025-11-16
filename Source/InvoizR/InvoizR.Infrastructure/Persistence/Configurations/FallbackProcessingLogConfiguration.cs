@@ -49,7 +49,7 @@ internal class FallbackProcessingLogConfiguration : AuditableEntityConfiguration
         builder
             .Property(p => p.ContentType)
             .HasColumnType("nvarchar")
-            .HasMaxLength(100)
+            .HasMaxLength(50)
             .IsRequired()
             ;
 

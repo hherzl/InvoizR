@@ -48,7 +48,11 @@ var company = db
         Email = "",
         Logo = Array.Empty<byte>(),
         Headquarters = 0,
-        NonCustomerEmail = ""
+        NonCustomerEmail = "",
+        WebhookNotificationProtocol = "",
+        WebhookNotificationAddress = "",
+        WebhookNotificationMisc1 = "",
+        WebhookNotificationMisc2 = ""
     })
     .SetNaming("Company")
     .SetColumnFor(e => e.Environment, 2)
@@ -65,10 +69,16 @@ var company = db
     .SetColumnFor(e => e.Logo, nullable: true)
     .SetColumnFor(e => e.Headquarters, true)
     .SetColumnFor(e => e.NonCustomerEmail, 50, true)
+    .SetColumnFor(e => e.WebhookNotificationProtocol, 25, true)
+    .SetColumnFor(e => e.WebhookNotificationAddress, 100, true)
+    .SetColumnFor(e => e.WebhookNotificationMisc1, 50, true)
+    .SetColumnFor(e => e.WebhookNotificationMisc2, 50, true)
     .SetIdentity(e => e.Id)
     .SetPrimaryKey(e => e.Id)
     .AddUnique(e => e.Name)
     .AddUnique(e => e.BusinessName)
+    .AddUnique(e => e.TaxIdNumber)
+    .AddUnique(e => e.TaxpayerRegistrationNumber)
     ;
 
 var thirdPartyService = db
@@ -147,7 +157,6 @@ var responsible = db
     })
     .SetNaming("Responsible")
     .SetColumnFor(e => e.Name, 100)
-    .SetColumnFor(e => e.Email, 25)
     .SetColumnFor(e => e.Email, 50)
     .SetColumnFor(e => e.IdType, 2)
     .SetColumnFor(e => e.IdNumber, 25)
@@ -288,7 +297,7 @@ var fallbackProcessingLog = db
     })
     .SetNaming("FallbackProcessingLog")
     .SetColumnFor(e => e.LogType, 25)
-    .SetColumnFor(e => e.ContentType, 100)
+    .SetColumnFor(e => e.ContentType, 50)
     .SetIdentity(e => e.Id)
     .SetPrimaryKey(e => e.Id)
     .AddForeignKey(e => e.FallbackId, fallback.Table)
@@ -437,7 +446,7 @@ var invoiceProcessingLog = db
     })
     .SetNaming("InvoiceProcessingLog")
     .SetColumnFor(e => e.LogType, 25)
-    .SetColumnFor(e => e.ContentType, 100)
+    .SetColumnFor(e => e.ContentType, 50)
     .SetIdentity(e => e.Id)
     .SetPrimaryKey(e => e.Id)
     .AddForeignKey(e => e.InvoiceId, invoice.Table)
@@ -483,6 +492,27 @@ var invoiceNotification = db
     .AddForeignKey(e => e.InvoiceId, invoice.Table)
     ;
 
+var invoiceWebhookNotification = db
+    .DefineEntity(new
+    {
+        Id = (long)0,
+        InvoiceId = (long)0,
+        Protocol = "",
+        Address = "",
+        ContentType = "",
+        IsSuccess = false,
+        Request = "",
+        Response = ""
+    })
+    .SetNaming("InvoiceWebhookNotification")
+    .SetColumnFor(e => e.Protocol, 25)
+    .SetColumnFor(e => e.Address, 100)
+    .SetColumnFor(e => e.ContentType, 50)
+    .SetIdentity(e => e.Id)
+    .SetPrimaryKey(e => e.Id)
+    .AddForeignKey(e => e.InvoiceId, invoice.Table)
+    ;
+
 var invoiceCancellationLog = db
     .DefineEntity(new
     {
@@ -495,7 +525,7 @@ var invoiceCancellationLog = db
     })
     .SetNaming("InvoiceCancellationLog")
     .SetColumnFor(e => e.LogType, 25)
-    .SetColumnFor(e => e.ContentType, 100)
+    .SetColumnFor(e => e.ContentType, 50)
     .SetIdentity(e => e.Id)
     .SetPrimaryKey(e => e.Id)
     .AddForeignKey(e => e.InvoiceId, invoice.Table)

@@ -3,6 +3,7 @@ using System.Text.Json;
 using InvoizR.GUI.InvoiceManager.Components.Account.Pages;
 using InvoizR.GUI.InvoiceManager.Components.Account.Pages.Manage;
 using InvoizR.GUI.InvoiceManager.Data;
+using InvoizR.SharedKernel;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Http.Extensions;
@@ -104,7 +105,7 @@ namespace Microsoft.AspNetCore.Routing
                 var fileBytes = JsonSerializer.SerializeToUtf8Bytes(personalData);
 
                 context.Response.Headers.TryAdd("Content-Disposition", "attachment; filename=PersonalData.json");
-                return TypedResults.File(fileBytes, contentType: "application/json", fileDownloadName: "PersonalData.json");
+                return TypedResults.File(fileBytes, contentType: Tokens.ApplicationJson, fileDownloadName: "PersonalData.json");
             });
 
             return accountGroup;

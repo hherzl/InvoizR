@@ -126,6 +126,30 @@ internal class CompanyConfiguration : AuditableEntityConfiguration<Company>
             .HasMaxLength(50)
             ;
 
+        builder
+            .Property(p => p.WebhookNotificationProtocol)
+            .HasColumnType("nvarchar")
+            .HasMaxLength(25)
+            ;
+
+        builder
+            .Property(p => p.WebhookNotificationAddress)
+            .HasColumnType("nvarchar")
+            .HasMaxLength(100)
+            ;
+
+        builder
+            .Property(p => p.WebhookNotificationMisc1)
+            .HasColumnType("nvarchar")
+            .HasMaxLength(50)
+            ;
+
+        builder
+            .Property(p => p.WebhookNotificationMisc2)
+            .HasColumnType("nvarchar")
+            .HasMaxLength(50)
+            ;
+
         // Add configuration for uniques
 
         builder
@@ -138,6 +162,18 @@ internal class CompanyConfiguration : AuditableEntityConfiguration<Company>
             .HasIndex(p => p.BusinessName)
             .IsUnique()
             .HasDatabaseName("UQ_dbo_Company_BusinessName")
+            ;
+
+        builder
+            .HasIndex(p => p.TaxIdNumber)
+            .IsUnique()
+            .HasDatabaseName("UQ_dbo_Company_TaxIdNumber")
+            ;
+
+        builder
+            .HasIndex(p => p.TaxpayerRegistrationNumber)
+            .IsUnique()
+            .HasDatabaseName("UQ_dbo_Company_TaxpayerRegistrationNumber")
             ;
     }
 }

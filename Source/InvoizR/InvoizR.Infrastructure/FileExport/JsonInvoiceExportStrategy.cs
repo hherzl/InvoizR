@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using InvoizR.Application.Common.Contracts;
 using InvoizR.Domain.Entities;
+using InvoizR.SharedKernel;
 using Microsoft.Extensions.Logging;
 
 namespace InvoizR.Infrastructure.FileExport;
@@ -27,6 +28,6 @@ public class JsonInvoiceExportStrategy : IInvoiceExportStrategy
         return array;
     }
 
-    public string ContentType => "application/json";
-    public string FileExtension => "json";
+    public string ContentType => Tokens.ApplicationJson;
+    public string FileExtension => Tokens.Json;
 }

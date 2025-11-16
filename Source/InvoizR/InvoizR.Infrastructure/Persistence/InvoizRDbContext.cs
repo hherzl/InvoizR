@@ -34,6 +34,7 @@ public partial class InvoizRDbContext : DbContext, IInvoizRDbContext
     public DbSet<InvoiceProcessingLog> InvoiceProcessingLog { get; set; }
     public DbSet<InvoiceNotification> InvoiceNotification { get; set; }
     public DbSet<InvoiceFile> InvoiceFile { get; set; }
+    public DbSet<InvoiceWebhookNotification> InvoiceWebhookNotification { get; set; }
     public DbSet<InvoiceCancellationLog> InvoiceCancellationLog { get; set; }
 
     public DbSet<VInvoiceProcessingStatus> VInvoiceProcessingStatus { get; set; }

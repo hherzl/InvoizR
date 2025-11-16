@@ -18,6 +18,14 @@ ALTER TABLE [dbo].[Company] ADD CONSTRAINT [UQ_dbo_Company_BusinessName]
 	UNIQUE ([BusinessName])
 GO
 
+ALTER TABLE [dbo].[Company] ADD CONSTRAINT [UQ_dbo_Company_TaxIdNumber]
+	UNIQUE ([TaxIdNumber])
+GO
+
+ALTER TABLE [dbo].[Company] ADD CONSTRAINT [UQ_dbo_Company_TaxpayerRegistrationNumber]
+	UNIQUE ([TaxpayerRegistrationNumber])
+GO
+
 ALTER TABLE [dbo].[ThirdPartyService] ADD CONSTRAINT [PK_dbo_ThirdPartyService]
 	PRIMARY KEY ([Id])
 GO
@@ -215,6 +223,14 @@ ALTER TABLE [dbo].[InvoiceNotification] ADD CONSTRAINT [PK_dbo_InvoiceNotificati
 GO
 
 ALTER TABLE [dbo].[InvoiceNotification] ADD CONSTRAINT [FK_dbo_InvoiceNotification_InvoiceId_dbo_Invoice]
+	FOREIGN KEY ([InvoiceId]) REFERENCES [dbo].[Invoice]
+GO
+
+ALTER TABLE [dbo].[InvoiceWebhookNotification] ADD CONSTRAINT [PK_dbo_InvoiceWebhookNotification]
+	PRIMARY KEY ([Id])
+GO
+
+ALTER TABLE [dbo].[InvoiceWebhookNotification] ADD CONSTRAINT [FK_dbo_InvoiceWebhookNotification_InvoiceId_dbo_Invoice]
 	FOREIGN KEY ([InvoiceId]) REFERENCES [dbo].[Invoice]
 GO
 

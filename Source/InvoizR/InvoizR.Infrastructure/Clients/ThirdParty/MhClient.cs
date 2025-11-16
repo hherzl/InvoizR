@@ -1,20 +1,10 @@
 ﻿using System.Net.Http.Headers;
-using System.Text.Json;
+using InvoizR.SharedKernel;
 
 namespace InvoizR.Infrastructure.Clients.ThirdParty;
 
 public class MhClient
 {
-    protected const string APPLICATION_JSON = "application/JSON";
-    protected const string USER_AGENT = "User-Agent";
-
-    protected static JsonSerializerOptions DefaultJsonSerializerOpts
-        => new()
-        {
-            PropertyNameCaseInsensitive = true,
-            WriteIndented = true
-        };
-
     public virtual HttpClient CreateHttpClient(string endpoint, string userAgent = "mobile")
     {
         var client = new HttpClient
@@ -24,12 +14,12 @@ public class MhClient
             {
                 Accept =
                 {
-                    new MediaTypeWithQualityHeaderValue(APPLICATION_JSON)
+                    new MediaTypeWithQualityHeaderValue(Tokens.ApplicationJson)
                 }
             }
         };
 
-        client.DefaultRequestHeaders.Add(USER_AGENT, userAgent);
+        client.DefaultRequestHeaders.Add(Tokens.UserAgent, userAgent);
 
         return client;
     }

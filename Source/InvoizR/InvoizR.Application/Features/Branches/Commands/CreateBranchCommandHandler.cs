@@ -6,16 +6,9 @@ using MediatR;
 
 namespace InvoizR.Application.Features.Branches.Commands;
 
-public class CreateBranchCommandHandler : IRequestHandler<CreateBranchCommand, CreatedResponse<short?>>
+public sealed class CreateBranchCommandHandler(IInvoizRDbContext dbContext) : IRequestHandler<CreateBranchCommand, CreatedResponse<short?>>
 {
-    private readonly IInvoizRDbContext _dbContext;
-
-    public CreateBranchCommandHandler(IInvoizRDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
-
-    public async Task<CreatedResponse<short?>> Handle(CreateBranchCommand request, CancellationToken cancellationToken)
+    public async Task<CreatedResponse<short?>> Handle(CreateBranchCommand request, CancellationToken ct)
     {
         var entity = new Branch
         {
@@ -32,9 +25,9 @@ public class CreateBranchCommandHandler : IRequestHandler<CreateBranchCommand, C
         if (request.HasLogo)
             entity.Logo = Convert.FromBase64String(request.Logo);
 
-        _dbContext.Branch.Add(entity);
+        dbContext.Branch.Add(entity);
 
-        await _dbContext.SaveChangesAsync(cancellationToken);
+        await dbContext.SaveChangesAsync(ct);
 
         return new(entity.Id);
     }
