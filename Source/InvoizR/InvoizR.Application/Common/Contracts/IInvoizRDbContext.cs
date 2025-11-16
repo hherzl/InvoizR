@@ -34,6 +34,7 @@ public interface IInvoizRDbContext : IDisposable
     DbSet<InvoiceProcessingLog> InvoiceProcessingLog { get; set; }
     DbSet<InvoiceNotification> InvoiceNotification { get; set; }
     DbSet<InvoiceFile> InvoiceFile { get; set; }
+    DbSet<InvoiceWebhookNotification> InvoiceWebhookNotification { get; set; }
     DbSet<InvoiceCancellationLog> InvoiceCancellationLog { get; set; }
 
     DbSet<VInvoiceProcessingStatus> VInvoiceProcessingStatus { get; set; }
@@ -71,6 +72,7 @@ public interface IInvoizRDbContext : IDisposable
 
     IQueryable<InvoiceProcessingStatusLogItemModel> GetInvoiceProcessingStatusLogs(long? invoiceId);
     IQueryable<InvoiceProcessingLogItemModel> GetInvoiceProcessingLogs(long? invoiceId);
-    IQueryable<InvoiceFileItemModel> GetInvoiceFiles(long? invoiceId);
+    IQueryable<InvoiceFileItemModel> GetInvoiceFilesBy(long? invoiceId);
+    Task<InvoiceFile> GetInvoiceFileByAsync(long? invoiceId, string fileName, bool tracking = false, bool includes = false, CancellationToken ct = default);
     IQueryable<InvoiceNotificationItemModel> GetInvoiceNotifications(long? invoiceId);
 }

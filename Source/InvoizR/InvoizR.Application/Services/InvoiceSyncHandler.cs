@@ -15,8 +15,74 @@ using Microsoft.Extensions.Options;
 
 namespace InvoizR.Application.Services;
 
-public sealed class InvoiceSyncHandler(IOptions<ProcessingSettings> processingOptions, IFirmadorClient firmadorClient, IFeSvClient feSvClient)
+public sealed class InvoiceSyncHandler(IOptions<ProcessingSettings> processingOptions, IFirmadorClient firmadorClient, IFeSvClient feSvClient, WebhookNotificationHandler webhookNotificationHandler)
 {
+    public async Task<bool> HandleAsync<TInvoice>(ICreateDteRequest<TInvoice> request, IInvoizRDbContext dbContext, CancellationToken ct = default) where TInvoice : Dte
+    {
+        var processingSettings = processingOptions.Value;
+
+        var invoice = await dbContext.GetInvoiceAsync(request.InvoiceId, true, true, ct);
+
+        if (!Directory.Exists(processingSettings.GetLogsPath(invoice.AuditNumber)))
+            Directory.CreateDirectory(processingSettings.GetLogsPath(invoice.AuditNumber));
+
+        firmadorClient.ClientSettings = request.ThirdPartyClientParameters.GetByService(firmadorClient.ServiceName).ToFirmadorClientSettings();
+
+        var firmarDocumentoRequest = new FirmarDocumentoRequest<TInvoice>(request.ThirdPartyClientParameters.GetUser(), true, request.ThirdPartyClientParameters.GetPrivateKey(), request.Dte);
+
+        await File.WriteAllTextAsync(processingSettings.GetFirmaRequestJsonPath(invoice.AuditNumber), firmarDocumentoRequest.ToJson(), ct);
+
+        var firmarDocumentoResponse = await firmadorClient.FirmarDocumentoAsync(firmarDocumentoRequest);
+        await File.WriteAllTextAsync(processingSettings.GetFirmaResponseJsonPath(invoice.AuditNumber), firmarDocumentoResponse.ToJson(), ct);
+
+        dbContext.InvoiceProcessingLog.Add(InvoiceProcessingLog.CreateRequest(invoice.Id, InvoiceProcessingStatus.Requested, firmarDocumentoResponse.ToJson()));
+
+        feSvClient.ClientSettings = request.ThirdPartyClientParameters.GetByService(feSvClient.ServiceName).ToFesvClientSettings();
+
+        var recepcionRequest = new RecepcionDteRequest(invoice.Pos.Branch.Company.Environment, invoice.SchemaVersion, invoice.SchemaType, invoice.InvoiceGuid, firmarDocumentoResponse.Body);
+        await File.WriteAllTextAsync(processingSettings.GetRecepcionRequestJsonPath(invoice.AuditNumber), recepcionRequest.ToJson(), ct);
+
+        feSvClient.Jwt = request.ThirdPartyClientParameters.GetToken();
+
+        var recepcionResponse = await feSvClient.RecepcionDteAsync(recepcionRequest);
+
+        await File.WriteAllTextAsync(processingSettings.GetRecepcionResponseJsonPath(invoice.AuditNumber), recepcionResponse.ToJson(), ct);
+
+        if (recepcionResponse.IsSuccessful)
+        {
+            dbContext.InvoiceProcessingLog.Add(InvoiceProcessingLog.CreateResponse(invoice.Id, InvoiceProcessingStatus.Processed, recepcionRequest.ToJson()));
+
+            invoice.ProcessingStatusId = (short)InvoiceProcessingStatus.Processed;
+            invoice.EmitDateTime = DateTime.Now;
+            invoice.ReceiptStamp = recepcionResponse.SelloRecibido;
+            invoice.ExternalUrl = request.ThirdPartyClientParameters.GetPublicQuery()
+                .Replace("env", invoice.Pos.Branch.Company.Environment)
+                .Replace("guid", invoice.InvoiceGuid)
+                .Replace("emitDate", invoice.InvoiceDate?.ToString("yyyy-MM-dd"))
+                ;
+
+            dbContext.InvoiceProcessingStatusLog.Add(new(invoice.Id, invoice.ProcessingStatusId));
+
+            ReceiveInvoice(invoice, firmarDocumentoResponse.Body);
+
+            if (invoice.Pos.Branch.Company.HasWebhook)
+                await webhookNotificationHandler.HandleAsync(new(invoice), ct);
+        }
+        else
+        {
+            dbContext.InvoiceProcessingLog.Add(InvoiceProcessingLog.CreateResponse(invoice.Id, InvoiceProcessingStatus.Declined, recepcionRequest.ToJson()));
+
+            invoice.ProcessingStatusId = (short)InvoiceProcessingStatus.Declined;
+            invoice.SyncAttempts += 1;
+
+            dbContext.InvoiceProcessingStatusLog.Add(new(invoice.Id, invoice.ProcessingStatusId));
+        }
+
+        await dbContext.SaveChangesAsync(ct);
+
+        return recepcionResponse.IsSuccessful;
+    }
+
     private static void ReceiveInvoice(Invoice invoice, string eSignature)
     {
         if (invoice.InvoiceTypeId == FeFcv1.TypeId)
@@ -67,74 +133,5 @@ public sealed class InvoiceSyncHandler(IOptions<ProcessingSettings> processingOp
 
             invoice.Payload = receivedInvoice.ToJson();
         }
-    }
-
-    public async Task<bool> HandleAsync<TDte>(ICreateDteRequest<TDte> request, IInvoizRDbContext dbContext, CancellationToken ct = default) where TDte : Dte
-    {
-        var processingSettings = processingOptions.Value;
-
-        var invoice = await dbContext.GetInvoiceAsync(request.InvoiceId, true, true, ct);
-
-        if (!Directory.Exists(processingSettings.GetLogsPath(invoice.AuditNumber)))
-            Directory.CreateDirectory(processingSettings.GetLogsPath(invoice.AuditNumber));
-
-        firmadorClient.ClientSettings = request.ThirdPartyClientParameters.GetByService(firmadorClient.ServiceName).ToFirmadorClientSettings();
-
-        var firmarDocumentoRequest = new FirmarDocumentoRequest<TDte>(request.ThirdPartyClientParameters.GetUser(), true, request.ThirdPartyClientParameters.GetPrivateKey(), request.Dte);
-
-        await File.WriteAllTextAsync(processingSettings.GetFirmaRequestJsonPath(invoice.AuditNumber), firmarDocumentoRequest.ToJson(), ct);
-
-        var firmarDocumentoResponse = await firmadorClient.FirmarDocumentoAsync(firmarDocumentoRequest);
-        await File.WriteAllTextAsync(processingSettings.GetFirmaResponseJsonPath(invoice.AuditNumber), firmarDocumentoResponse.ToJson(), ct);
-
-        dbContext.InvoiceProcessingLog.Add(
-            InvoiceProcessingLog.CreateRequest(invoice.Id, InvoiceProcessingStatus.Requested, firmarDocumentoResponse.ToJson())
-        );
-
-        feSvClient.ClientSettings = request.ThirdPartyClientParameters.GetByService(feSvClient.ServiceName).ToFesvClientSettings();
-
-        var recepcionRequest = new RecepcionDteRequest(invoice.Pos.Branch.Company.Environment, invoice.SchemaVersion, invoice.SchemaType, invoice.InvoiceGuid, firmarDocumentoResponse.Body);
-        await File.WriteAllTextAsync(processingSettings.GetRecepcionRequestJsonPath(invoice.AuditNumber), recepcionRequest.ToJson(), ct);
-
-        feSvClient.Jwt = request.ThirdPartyClientParameters.GetToken();
-
-        var recepcionResponse = await feSvClient.RecepcionDteAsync(recepcionRequest);
-
-        await File.WriteAllTextAsync(processingSettings.GetRecepcionResponseJsonPath(invoice.AuditNumber), recepcionResponse.ToJson(), ct);
-
-        if (recepcionResponse.IsSuccessful)
-        {
-            dbContext.InvoiceProcessingLog.Add(
-                InvoiceProcessingLog.CreateResponse(invoice.Id, InvoiceProcessingStatus.Processed, recepcionRequest.ToJson())
-            );
-
-            invoice.ProcessingStatusId = (short)InvoiceProcessingStatus.Processed;
-            invoice.EmitDateTime = DateTime.Now;
-            invoice.ReceiptStamp = recepcionResponse.SelloRecibido;
-            invoice.ExternalUrl = request.ThirdPartyClientParameters.GetPublicQuery()
-                .Replace("env", invoice.Pos.Branch.Company.Environment)
-                .Replace("guid", invoice.InvoiceGuid)
-                .Replace("emitDate", invoice.InvoiceDate?.ToString("yyyy-MM-dd"))
-                ;
-
-            dbContext.InvoiceProcessingStatusLog.Add(new(invoice.Id, invoice.ProcessingStatusId));
-
-            ReceiveInvoice(invoice, firmarDocumentoResponse.Body);
-        }
-        else
-        {
-            dbContext.InvoiceProcessingLog.Add(
-                InvoiceProcessingLog.CreateResponse(invoice.Id, InvoiceProcessingStatus.Declined, recepcionRequest.ToJson())
-            );
-
-            invoice.ProcessingStatusId = (short)InvoiceProcessingStatus.Declined;
-            invoice.SyncAttempts += 1;
-
-            dbContext.InvoiceProcessingStatusLog.Add(new(invoice.Id, invoice.ProcessingStatusId));
-        }
-
-        await dbContext.SaveChangesAsync(ct);
-
-        return recepcionResponse.IsSuccessful;
     }
 }

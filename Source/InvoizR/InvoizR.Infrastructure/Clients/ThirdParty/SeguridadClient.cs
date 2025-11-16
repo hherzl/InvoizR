@@ -2,6 +2,7 @@
 using InvoizR.Clients.ThirdParty;
 using InvoizR.Clients.ThirdParty.Contracts;
 using InvoizR.Clients.ThirdParty.DataContracts;
+using InvoizR.SharedKernel;
 using Microsoft.Extensions.Options;
 
 namespace InvoizR.Infrastructure.Clients.ThirdParty;
@@ -29,6 +30,6 @@ public class SeguridadClient : MhClient, ISeguridadClient
         response.EnsureSuccessStatusCode();
 
         var responseContent = await response.Content.ReadAsStringAsync();
-        return JsonSerializer.Deserialize<AuthResponse>(responseContent, DefaultJsonSerializerOpts);
+        return JsonSerializer.Deserialize<AuthResponse>(responseContent, AbstractModel.DefaultJsonSerializerOpts);
     }
 }

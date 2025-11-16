@@ -32,6 +32,9 @@ public record ClientArgs
 
             if (Fallback && item == "--process")
                 FallbackProcess = true;
+
+            if (item == "--webhook")
+                Webhook = true;
         }
     }
 
@@ -50,6 +53,8 @@ public record ClientArgs
 
     public bool Fallback { get; set; }
     public bool FallbackProcess { get; set; }
+
+    public bool Webhook { get; set; }
 
     public static int MockDelay
         => 3000;

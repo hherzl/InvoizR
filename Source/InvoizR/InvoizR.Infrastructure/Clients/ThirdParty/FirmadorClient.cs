@@ -3,6 +3,7 @@ using InvoizR.Clients;
 using InvoizR.Clients.ThirdParty;
 using InvoizR.Clients.ThirdParty.Contracts;
 using InvoizR.Clients.ThirdParty.DataContracts;
+using InvoizR.SharedKernel;
 using InvoizR.SharedKernel.Mh;
 using Microsoft.Extensions.Options;
 
@@ -10,11 +11,7 @@ namespace InvoizR.Infrastructure.Clients.ThirdParty;
 
 public class FirmadorClient : MhClient, IFirmadorClient
 {
-    public FirmadorClient(IOptions<FirmadorClientSettings> options)
-        : base()
-    {
-        ClientSettings = options.Value;
-    }
+    public FirmadorClient(IOptions<FirmadorClientSettings> options) : base() { }
 
     public string ServiceName
         => "Firmador";
@@ -38,6 +35,6 @@ public class FirmadorClient : MhClient, IFirmadorClient
         var response = await client.PostAsync($"firmardocumento/", ContentHelper.Create(request.ToJson()));
         var responseContent = await response.Content.ReadAsStringAsync();
 
-        return JsonSerializer.Deserialize<FirmarDocumentoResponse>(responseContent, DefaultJsonSerializerOpts);
+        return JsonSerializer.Deserialize<FirmarDocumentoResponse>(responseContent, AbstractModel.DefaultJsonSerializerOpts);
     }
 }

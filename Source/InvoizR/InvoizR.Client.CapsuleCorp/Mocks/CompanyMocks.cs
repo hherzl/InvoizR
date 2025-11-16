@@ -20,6 +20,9 @@ public static class CompanyMocks
             Phone = "+81-555-0000",
             Email = "contact@capsulecorp.com",
             Logo = Convert.ToBase64String(File.ReadAllBytes(Path.Combine(AppContext.BaseDirectory, "Assets", "logo.png"))),
-            NonCustomerEmail = "dte@capsule-corp.com"
+            NonCustomerEmail = "dte@capsule-corp.com",
+            WebhookNotificationProtocol = "HTTP",
+            WebhookNotificationAddress = "http://localhost:5000/dte",
+            WebhookNotificationMisc1 = "PUT"
         };
 }

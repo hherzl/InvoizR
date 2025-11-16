@@ -36,7 +36,7 @@ public sealed class InvoiceExporter(ILogger<InvoiceExporter> logger, IServicePro
             logger.LogInformation($" Adding '{exportStrategy.FileExtension}' as bytes...");
 
             var onTheFlyFile = new InvoiceFile(invoice, bytes, exportStrategy.ContentType, exportStrategy.FileExtension);
-            var existingFile = await dbContext.InvoiceFile.FirstOrDefaultAsync(item => item.InvoiceId == invoice.Id && item.FileName == onTheFlyFile.FileName, ct);
+            var existingFile = await dbContext.GetInvoiceFileByAsync(invoice.Id, onTheFlyFile.FileName, ct: ct);
             if (existingFile == null)
                 dbContext.InvoiceFile.Add(onTheFlyFile);
             else

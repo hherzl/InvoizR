@@ -4,6 +4,7 @@ using InvoizR.Application.Common.Contracts;
 using InvoizR.Application.Reports.Templates;
 using InvoizR.Domain.Entities;
 using InvoizR.Infrastructure.Reports;
+using InvoizR.SharedKernel;
 using InvoizR.SharedKernel.Mh.FeCcf;
 using InvoizR.SharedKernel.Mh.FeFc;
 using InvoizR.SharedKernel.Mh.FeFse;
@@ -84,6 +85,6 @@ public class PdfInvoiceExportStrategy : IInvoiceExportStrategy
         return array;
     }
 
-    public string ContentType => "application/pdf";
-    public string FileExtension => "pdf";
+    public string ContentType => Tokens.ApplicationPdf;
+    public string FileExtension => Tokens.Pdf;
 }

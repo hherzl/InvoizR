@@ -6,27 +6,20 @@ using Microsoft.EntityFrameworkCore;
 
 namespace InvoizR.Application.Features.Invoices.Queries;
 
-public class GetInvoiceQueryHandler : IRequestHandler<GetInvoiceQuery, InvoiceDetailsModel>
+public sealed class GetInvoiceQueryHandler(IInvoizRDbContext dbContext) : IRequestHandler<GetInvoiceQuery, InvoiceDetailsModel>
 {
-    private readonly IInvoizRDbContext _dbContext;
-
-    public GetInvoiceQueryHandler(IInvoizRDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
-
     public async Task<InvoiceDetailsModel> Handle(GetInvoiceQuery request, CancellationToken cancellationToken)
     {
-        var entity = await _dbContext.GetInvoiceAsync(request.Id, ct: cancellationToken);
+        var entity = await dbContext.GetInvoiceAsync(request.Id, ct: cancellationToken);
         if (entity == null)
             return null;
 
-        var processingStatuses = await _dbContext.VInvoiceProcessingStatus.ToListAsync(cancellationToken);
+        var processingStatuses = await dbContext.VInvoiceProcessingStatus.ToListAsync(cancellationToken);
 
-        var processingStatusLogs = await _dbContext.GetInvoiceProcessingStatusLogs(entity.Id).ToListAsync(cancellationToken);
-        var processingLogs = await _dbContext.GetInvoiceProcessingLogs(entity.Id).ToListAsync(cancellationToken);
-        var files = await _dbContext.GetInvoiceFiles(entity.Id).ToListAsync(cancellationToken);
-        var notifications = await _dbContext.GetInvoiceNotifications(entity.Id).ToListAsync(cancellationToken);
+        var processingStatusLogs = await dbContext.GetInvoiceProcessingStatusLogs(entity.Id).ToListAsync(cancellationToken);
+        var processingLogs = await dbContext.GetInvoiceProcessingLogs(entity.Id).ToListAsync(cancellationToken);
+        var files = await dbContext.GetInvoiceFilesBy(entity.Id).ToListAsync(cancellationToken);
+        var notifications = await dbContext.GetInvoiceNotifications(entity.Id).ToListAsync(cancellationToken);
 
         var model = new InvoiceDetailsModel
         {

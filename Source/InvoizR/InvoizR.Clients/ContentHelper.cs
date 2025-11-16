@@ -1,14 +1,13 @@
 ﻿using System.Text;
+using InvoizR.SharedKernel;
 
 namespace InvoizR.Clients;
 
 public static class ContentHelper
 {
-    const string ApplicationJson = "application/json";
-
     public static StringContent Create(string content)
-        => new(content, Encoding.Default, ApplicationJson);
+        => new(content, Encoding.Default, Tokens.ApplicationJson);
 
     public static StringContent CreateEmpty()
-        => new("{}", Encoding.Default, ApplicationJson);
+        => new("{}", Encoding.Default, Tokens.ApplicationJson);
 }

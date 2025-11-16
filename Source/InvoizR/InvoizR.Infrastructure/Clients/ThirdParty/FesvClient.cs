@@ -4,17 +4,14 @@ using InvoizR.Clients;
 using InvoizR.Clients.ThirdParty;
 using InvoizR.Clients.ThirdParty.Contracts;
 using InvoizR.Clients.ThirdParty.DataContracts;
+using InvoizR.SharedKernel;
 using Microsoft.Extensions.Options;
 
 namespace InvoizR.Infrastructure.Clients.ThirdParty;
 
 public class FeSvClient : MhClient, IFeSvClient
 {
-    public FeSvClient(IOptions<FesvClientSettings> options)
-        : base()
-    {
-        ClientSettings = options.Value;
-    }
+    public FeSvClient(IOptions<FesvClientSettings> options) : base() { }
 
     public string ServiceName
         => "FE SV";
@@ -32,7 +29,7 @@ public class FeSvClient : MhClient, IFeSvClient
         var response = await client.PostAsync($"recepciondte", ContentHelper.Create(request.ToJson()));
         var responseContent = await response.Content.ReadAsStringAsync();
 
-        return JsonSerializer.Deserialize<RecepcionDteResponse>(responseContent, DefaultJsonSerializerOpts);
+        return JsonSerializer.Deserialize<RecepcionDteResponse>(responseContent, AbstractModel.DefaultJsonSerializerOpts);
     }
 
     public async Task<ConsultaDteResponse> ConsultaDteAsync(ConsultaDteRequest request)
@@ -44,7 +41,7 @@ public class FeSvClient : MhClient, IFeSvClient
         var response = await client.PostAsync($"consultadte", ContentHelper.Create(request.ToJson()));
         var responseContent = await response.Content.ReadAsStringAsync();
 
-        return JsonSerializer.Deserialize<ConsultaDteResponse>(responseContent, DefaultJsonSerializerOpts);
+        return JsonSerializer.Deserialize<ConsultaDteResponse>(responseContent, AbstractModel.DefaultJsonSerializerOpts);
     }
 
     public async Task<ContingenciaResponse> ContingenciaAsync(ContingenciaRequest request)
@@ -56,7 +53,7 @@ public class FeSvClient : MhClient, IFeSvClient
         var response = await client.PostAsync($"contingencia", ContentHelper.Create(request.ToJson()));
         var responseContent = await response.Content.ReadAsStringAsync();
 
-        return JsonSerializer.Deserialize<ContingenciaResponse>(responseContent, DefaultJsonSerializerOpts);
+        return JsonSerializer.Deserialize<ContingenciaResponse>(responseContent, AbstractModel.DefaultJsonSerializerOpts);
     }
 
     public async Task<RecepcionDteResponse> AnularDteAsync(AnularDteRequest request)
@@ -68,6 +65,6 @@ public class FeSvClient : MhClient, IFeSvClient
         var response = await client.PostAsync($"anulardte", ContentHelper.Create(request.ToJson()));
         var responseContent = await response.Content.ReadAsStringAsync();
 
-        return JsonSerializer.Deserialize<RecepcionDteResponse>(responseContent, DefaultJsonSerializerOpts);
+        return JsonSerializer.Deserialize<RecepcionDteResponse>(responseContent, AbstractModel.DefaultJsonSerializerOpts);
     }
 }

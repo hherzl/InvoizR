@@ -2,6 +2,10 @@
 
 public abstract class AuditableEntity : Entity
 {
+    protected AuditableEntity()
+    {
+    }
+
     public DateTime CreatedAt { get; set; }
     public string CreatedBy { get; set; }
     public DateTime? LastModifiedAt { get; set; }

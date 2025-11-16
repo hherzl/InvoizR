@@ -2,6 +2,9 @@
 
 public partial class Company
 {
+    public bool HasWebhook
+        => !string.IsNullOrEmpty(WebhookNotificationAddress);
+
     public Company(string name, string code, string businessName, string taxIdNumber, string taxpayerRegistrationNumber)
     {
         Name = name;

@@ -6,15 +6,8 @@ using MediatR;
 
 namespace InvoizR.Application.Features.Companies.Commands;
 
-public sealed class CreateCompanyCommandHandler : IRequestHandler<CreateCompanyCommand, CreatedResponse<short?>>
+public sealed class CreateCompanyCommandHandler(IInvoizRDbContext dbContext) : IRequestHandler<CreateCompanyCommand, CreatedResponse<short?>>
 {
-    private readonly IInvoizRDbContext _dbContext;
-
-    public CreateCompanyCommandHandler(IInvoizRDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
-
     public async Task<CreatedResponse<short?>> Handle(CreateCompanyCommand request, CancellationToken cancellationToken)
     {
         var company = new Company
@@ -32,15 +25,19 @@ public sealed class CreateCompanyCommandHandler : IRequestHandler<CreateCompanyC
             Phone = request.Phone,
             Email = request.Email,
             Headquarters = request.Headquarters,
-            NonCustomerEmail = request.NonCustomerEmail
+            NonCustomerEmail = request.NonCustomerEmail,
+            WebhookNotificationProtocol = request.WebhookNotificationProtocol,
+            WebhookNotificationAddress = request.WebhookNotificationAddress,
+            WebhookNotificationMisc1 = request.WebhookNotificationMisc1,
+            WebhookNotificationMisc2 = request.WebhookNotificationMisc2
         };
 
         if (request.HasLogo)
             company.Logo = Convert.FromBase64String(request.Logo);
 
-        _dbContext.Company.Add(company);
+        dbContext.Company.Add(company);
 
-        await _dbContext.SaveChangesAsync(cancellationToken);
+        await dbContext.SaveChangesAsync(cancellationToken);
 
         return new(company.Id);
     }

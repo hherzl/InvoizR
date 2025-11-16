@@ -1,5 +1,6 @@
 ﻿using InvoizR.Domain.Enums;
 using InvoizR.Domain.Notifications;
+using InvoizR.SharedKernel;
 
 namespace InvoizR.Domain.Entities;
 
@@ -11,8 +12,8 @@ public partial class FallbackProcessingLog
             FallbackId = fallbackId,
             CreatedAt = DateTime.Now,
             SyncStatusId = (short)syncStatus,
-            LogType = "REQUEST",
-            ContentType = "application/json",
+            LogType = Tokens.Request,
+            ContentType = Tokens.ApplicationJson,
             Content = content
         };
 
@@ -23,8 +24,8 @@ public partial class FallbackProcessingLog
             FallbackId = fallbackId,
             CreatedAt = DateTime.Now,
             SyncStatusId = (short)syncStatus,
-            LogType = "RESPONSE",
-            ContentType = "application/json",
+            LogType = Tokens.Response,
+            ContentType = Tokens.ApplicationJson,
             Content = content,
         };
 

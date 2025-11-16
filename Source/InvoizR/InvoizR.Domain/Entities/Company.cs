@@ -31,6 +31,10 @@ public partial class Company : AuditableEntity
     public byte[] Logo { get; set; }
     public int? Headquarters { get; set; }
     public string NonCustomerEmail { get; set; }
+    public string WebhookNotificationProtocol { get; set; }
+    public string WebhookNotificationAddress { get; set; }
+    public string WebhookNotificationMisc1 { get; set; }
+    public string WebhookNotificationMisc2 { get; set; }
 
     public virtual Collection<CompanyThirdPartyServiceParameter> CompanyThirdPartyServiceParameters { get; set; }
     public virtual Collection<Branch> Branches { get; set; }

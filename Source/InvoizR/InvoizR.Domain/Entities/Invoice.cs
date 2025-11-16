@@ -8,7 +8,6 @@ public partial class Invoice : AuditableEntity
     public Invoice()
         : base()
     {
-        CreatedAt = DateTime.Now;
         RetryIn = 0;
         SyncAttempts = 0;
     }
@@ -62,4 +61,5 @@ public partial class Invoice : AuditableEntity
     public virtual Collection<InvoiceFile> InvoiceFiles { get; set; }
     public virtual Collection<InvoiceNotification> InvoiceNotifications { get; set; }
     public virtual Collection<InvoiceCancellationLog> InvoiceCancellationLogs { get; set; }
+    public virtual Collection<InvoiceWebhookNotification> InvoiceWebhookNotifications { get; set; }
 }

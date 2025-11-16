@@ -1,4 +1,6 @@
-﻿using InvoizR.Client.CapsuleCorp;
+﻿using System.Net;
+using System.Text;
+using InvoizR.Client.CapsuleCorp;
 using InvoizR.Client.CapsuleCorp.Data;
 using InvoizR.Client.CapsuleCorp.Mocks;
 using InvoizR.Clients;
@@ -191,6 +193,17 @@ if (clientArgs.Mock)
     }
 }
 
+if (clientArgs.Webhook)
+{
+    var listener = new System.Net.HttpListener();
+    listener.Prefixes.Add("http://localhost:5000/");
+    listener.Start();
+
+    Console.WriteLine("Listening HTTP on 5000 port...");
+
+    await HandleIncomingConnectionsAsync(listener);
+}
+
 if (clientArgs.Fallback)
 {
     Console.WriteLine("Fallback mode...");
@@ -213,6 +226,48 @@ if (clientArgs.Fallback)
 
         await client.CreateFallbackAsync(request);
     }
+}
+
+static async Task HandleIncomingConnectionsAsync(HttpListener listener)
+{
+    bool runServer = true;
+    while (runServer)
+    {
+        var context = await listener.GetContextAsync();
+        var request = context.Request;
+        var response = context.Response;
+
+        Console.WriteLine($"Request received: {request.HttpMethod} {request.Url.AbsolutePath}");
+
+        if (request.HttpMethod == "GET")
+        {
+            if (request.Url.AbsolutePath == "/health")
+            {
+                var buffer = Encoding.UTF8.GetBytes($"{DateTime.Now}");
+                response.ContentLength64 = buffer.Length;
+                response.StatusCode = (int)HttpStatusCode.OK;
+                await response.OutputStream.WriteAsync(buffer, 0, buffer.Length);
+            }
+        }
+        else if (request.HttpMethod == "PUT")
+        {
+            if (request.Url.AbsolutePath == "/dte")
+            {
+                using var reader = new StreamReader(request.InputStream, request.ContentEncoding);
+                var body = await reader.ReadToEndAsync();
+                Console.WriteLine($"Processing invoice: {body}");
+                await Task.Delay(Random.Shared.Next(500, 2500));
+                response.StatusCode = (int)HttpStatusCode.OK;
+                Console.WriteLine($" Invoice was updated successfully");
+                Console.WriteLine();
+            }
+        }
+
+        response.Close();
+    }
+
+    listener.Stop();
+    listener.Close();
 }
 
 static async Task MockRtDte01(IInvoizRClient client)

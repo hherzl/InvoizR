@@ -2,6 +2,10 @@ IF OBJECT_ID('dbo.InvoiceCancellationLog') IS NOT NULL
 	DROP TABLE [dbo].[InvoiceCancellationLog]
 GO
 
+IF OBJECT_ID('dbo.InvoiceWebhookNotification') IS NOT NULL
+	DROP TABLE [dbo].[InvoiceWebhookNotification]
+GO
+
 IF OBJECT_ID('dbo.InvoiceNotification') IS NOT NULL
 	DROP TABLE [dbo].[InvoiceNotification]
 GO
@@ -105,6 +109,10 @@ CREATE TABLE [dbo].[Company]
 	[Logo] VARBINARY(MAX) NULL,
 	[Headquarters] INT NULL,
 	[NonCustomerEmail] NVARCHAR(50) NULL,
+	[WebhookNotificationProtocol] NVARCHAR(25) NULL,
+	[WebhookNotificationAddress] NVARCHAR(100) NULL,
+	[WebhookNotificationMisc1] NVARCHAR(50) NULL,
+	[WebhookNotificationMisc2] NVARCHAR(50) NULL,
 	[CreatedAt] DATETIME NOT NULL,
 	[CreatedBy] NVARCHAR(50) NOT NULL,
 	[LastModifiedAt] DATETIME NULL,
@@ -276,7 +284,7 @@ CREATE TABLE [dbo].[FallbackProcessingLog]
 	[FallbackId] SMALLINT NOT NULL,
 	[SyncStatusId] SMALLINT NOT NULL,
 	[LogType] NVARCHAR(25) NOT NULL,
-	[ContentType] NVARCHAR(100) NOT NULL,
+	[ContentType] NVARCHAR(50) NOT NULL,
 	[Content] NVARCHAR(MAX) NOT NULL,
 	[CreatedAt] DATETIME NOT NULL,
 	[CreatedBy] NVARCHAR(50) NOT NULL,
@@ -384,7 +392,7 @@ CREATE TABLE [dbo].[InvoiceProcessingLog]
 	[InvoiceId] BIGINT NOT NULL,
 	[ProcessingStatusId] SMALLINT NOT NULL,
 	[LogType] NVARCHAR(25) NOT NULL,
-	[ContentType] NVARCHAR(100) NOT NULL,
+	[ContentType] NVARCHAR(50) NOT NULL,
 	[Content] NVARCHAR(MAX) NOT NULL,
 	[CreatedAt] DATETIME NOT NULL,
 	[CreatedBy] NVARCHAR(50) NOT NULL,
@@ -428,13 +436,31 @@ CREATE TABLE [dbo].[InvoiceNotification]
 )
 GO
 
+CREATE TABLE [dbo].[InvoiceWebhookNotification]
+(
+	[Id] BIGINT NOT NULL IDENTITY(1, 1),
+	[InvoiceId] BIGINT NOT NULL,
+	[Protocol] NVARCHAR(25) NOT NULL,
+	[Address] NVARCHAR(100) NOT NULL,
+	[ContentType] NVARCHAR(50) NOT NULL,
+	[IsSuccess] BIT NOT NULL,
+	[Request] NVARCHAR(MAX) NOT NULL,
+	[Response] NVARCHAR(MAX) NOT NULL,
+	[CreatedAt] DATETIME NOT NULL,
+	[CreatedBy] NVARCHAR(50) NOT NULL,
+	[LastModifiedAt] DATETIME NULL,
+	[LastModifiedBy] NVARCHAR(50) NULL,
+	[RowVersion] ROWVERSION NULL
+)
+GO
+
 CREATE TABLE [dbo].[InvoiceCancellationLog]
 (
 	[Id] BIGINT NOT NULL IDENTITY(1, 1),
 	[InvoiceId] BIGINT NOT NULL,
 	[ProcessingStatusId] SMALLINT NOT NULL,
 	[LogType] NVARCHAR(25) NOT NULL,
-	[ContentType] NVARCHAR(100) NOT NULL,
+	[ContentType] NVARCHAR(50) NOT NULL,
 	[Payload] NVARCHAR(MAX) NOT NULL,
 	[CreatedAt] DATETIME NOT NULL,
 	[CreatedBy] NVARCHAR(50) NOT NULL,

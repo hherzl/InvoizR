@@ -5,14 +5,14 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace InvoizR.Infrastructure.Persistence.Configurations;
 
-internal class InvoiceProcessingLogConfiguration : AuditableEntityConfiguration<InvoiceProcessingLog>
+internal class InvoiceWebhookNotificationConfiguration : AuditableEntityConfiguration<InvoiceWebhookNotification>
 {
-    public override void Configure(EntityTypeBuilder<InvoiceProcessingLog> builder)
+    public override void Configure(EntityTypeBuilder<InvoiceWebhookNotification> builder)
     {
         base.Configure(builder);
 
         // Set configuration for entity
-        builder.ToTable("InvoiceProcessingLog", "dbo");
+        builder.ToTable("InvoiceWebhookNotification", "dbo");
 
         // Set key for entity
         builder.HasKey(p => p.Id);
@@ -34,15 +34,16 @@ internal class InvoiceProcessingLogConfiguration : AuditableEntityConfiguration<
             ;
 
         builder
-            .Property(p => p.ProcessingStatusId)
-            .HasColumnType("smallint")
+            .Property(p => p.Protocol)
+            .HasColumnType("nvarchar")
+            .HasMaxLength(25)
             .IsRequired()
             ;
 
         builder
-            .Property(p => p.LogType)
+            .Property(p => p.Address)
             .HasColumnType("nvarchar")
-            .HasMaxLength(25)
+            .HasMaxLength(100)
             .IsRequired()
             ;
 
@@ -54,9 +55,30 @@ internal class InvoiceProcessingLogConfiguration : AuditableEntityConfiguration<
             ;
 
         builder
-            .Property(p => p.Content)
+            .Property(p => p.IsSuccess)
+            .HasColumnType("bit")
+            .IsRequired()
+            ;
+
+        builder
+            .Property(p => p.Request)
             .HasColumnType("nvarchar(max)")
             .IsRequired()
+            ;
+
+        builder
+            .Property(p => p.Response)
+            .HasColumnType("nvarchar(max)")
+            .IsRequired()
+            ;
+
+        // Add configuration for foreign keys
+
+        builder
+            .HasOne(p => p.Invoice)
+            .WithMany(b => b.InvoiceWebhookNotifications)
+            .HasForeignKey(p => p.InvoiceId)
+            .HasConstraintName("FK_dbo_InvoiceWebhookNotification_InvoiceId_dbo_Invoice")
             ;
     }
 }

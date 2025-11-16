@@ -1,13 +1,11 @@
 ﻿using System.Net.Http.Headers;
 using System.Text.Json;
+using InvoizR.SharedKernel;
 
 namespace InvoizR.Clients;
 
 public class Client
 {
-    protected const string APPLICATION_JSON = "application/JSON";
-    protected const string USER_AGENT = "User-Agent";
-
     protected HttpClient _httpClient;
 
     public Client() { }
@@ -21,14 +19,14 @@ public class Client
             {
                 Accept =
                 {
-                    new MediaTypeWithQualityHeaderValue(APPLICATION_JSON)
+                    new MediaTypeWithQualityHeaderValue(Tokens.ApplicationJson)
                 }
             }
         };
 
-        _httpClient.DefaultRequestHeaders.Add(USER_AGENT, userAgent);
+        _httpClient.DefaultRequestHeaders.Add(Tokens.UserAgent, userAgent);
     }
 
     protected JsonSerializerOptions DefaultJsonSerializerOpts
-        => new() { PropertyNameCaseInsensitive = true, WriteIndented = true };
+        => AbstractModel.DefaultJsonSerializerOpts;
 }
