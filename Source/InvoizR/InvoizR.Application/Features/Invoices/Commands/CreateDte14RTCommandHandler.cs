@@ -1,8 +1,8 @@
 ﻿using InvoizR.Application.Common.Contracts;
 using InvoizR.Application.Services;
 using InvoizR.Application.Services.Models;
-using InvoizR.Clients.DataContracts.Common;
 using InvoizR.Clients.DataContracts.Dte14;
+using InvoizR.Clients.DataContracts.Invoices;
 using InvoizR.Clients.ThirdParty.Contracts;
 using InvoizR.Domain.Entities;
 using InvoizR.Domain.Enums;
@@ -18,9 +18,9 @@ using Microsoft.Extensions.Logging;
 namespace InvoizR.Application.Features.Invoices.Commands;
 
 public sealed class CreateDte14RTCommandHandler(ILogger<CreateDte14RTCommandHandler> logger, IServiceProvider serviceProvider)
-    : IRequestHandler<CreateDte14RTCommand, CreatedResponse<long?>>
+    : IRequestHandler<CreateDte14RTCommand, CreatedInvoiceResponse>
 {
-    public async Task<CreatedResponse<long?>> Handle(CreateDte14RTCommand request, CancellationToken ct)
+    public async Task<CreatedInvoiceResponse> Handle(CreateDte14RTCommand request, CancellationToken ct)
     {
         using var scope = serviceProvider.CreateScope();
 
@@ -93,7 +93,7 @@ public sealed class CreateDte14RTCommandHandler(ILogger<CreateDte14RTCommandHand
             dte.Identificacion.TipoOperacion = MhCatalog.Cat004.Contingencia;
 
             invoice.Payload = dte.ToJson();
-            
+
             logger.LogInformation($"Processing '{invoice.InvoiceNumber}' invoice, changing status from '{InvoiceProcessingStatus.Initialized}'...");
 
             invoice.FallbackId = fallback.Id;
@@ -126,6 +126,6 @@ public sealed class CreateDte14RTCommandHandler(ILogger<CreateDte14RTCommandHand
             }
         }
 
-        return new(invoice.Id);
+        return new(invoice.Id, invoice.InvoiceTypeId, invoice.SchemaType, invoice.SchemaVersion, invoice.InvoiceGuid, invoice.AuditNumber);
     }
 }

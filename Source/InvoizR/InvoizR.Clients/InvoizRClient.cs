@@ -12,6 +12,7 @@ using InvoizR.Clients.DataContracts.Dte05;
 using InvoizR.Clients.DataContracts.Dte06;
 using InvoizR.Clients.DataContracts.Dte14;
 using InvoizR.Clients.DataContracts.Fallback;
+using InvoizR.Clients.DataContracts.Invoices;
 using InvoizR.Clients.DataContracts.ThirdPartyServices;
 using Microsoft.Extensions.Options;
 
@@ -229,124 +230,124 @@ public class InvoizRClient : Client, IInvoizRClient
         return JsonSerializer.Deserialize<Response>(responseContent, DefaultJsonSerializerOpts);
     }
 
-    public async Task<CreatedResponse<long?>> CreateDte01InvoiceOWAsync(CreateDte01OWCommand request)
+    public async Task<CreatedInvoiceResponse> CreateDte01InvoiceOWAsync(CreateDte01OWCommand request)
     {
         var response = await _httpClient.PostAsync($"dte01-ow", ContentHelper.Create(request.ToJson()));
         response.EnsureSuccessStatusCode();
 
         var responseContent = await response.Content.ReadAsStringAsync();
 
-        return JsonSerializer.Deserialize<CreatedResponse<long?>>(responseContent, DefaultJsonSerializerOpts);
+        return JsonSerializer.Deserialize<CreatedInvoiceResponse>(responseContent, DefaultJsonSerializerOpts);
     }
 
-    public async Task<CreatedResponse<long?>> CreateDte01InvoiceRTAsync(CreateDte01RTCommand request)
+    public async Task<CreatedInvoiceResponse> CreateDte01InvoiceRTAsync(CreateDte01RTCommand request)
     {
         var response = await _httpClient.PostAsync($"dte01-rt", ContentHelper.Create(request.ToJson()));
         response.EnsureSuccessStatusCode();
 
         var responseContent = await response.Content.ReadAsStringAsync();
 
-        return JsonSerializer.Deserialize<CreatedResponse<long?>>(responseContent, DefaultJsonSerializerOpts);
+        return JsonSerializer.Deserialize<CreatedInvoiceResponse>(responseContent, DefaultJsonSerializerOpts);
     }
 
-    public async Task<CreatedResponse<long?>> CreateDte03InvoiceOWAsync(CreateDte03OWCommand request)
+    public async Task<CreatedInvoiceResponse> CreateDte03InvoiceOWAsync(CreateDte03OWCommand request)
     {
         var response = await _httpClient.PostAsync($"dte03-ow", ContentHelper.Create(request.ToJson()));
         response.EnsureSuccessStatusCode();
 
         var responseContent = await response.Content.ReadAsStringAsync();
 
-        return JsonSerializer.Deserialize<CreatedResponse<long?>>(responseContent, DefaultJsonSerializerOpts);
+        return JsonSerializer.Deserialize<CreatedInvoiceResponse>(responseContent, DefaultJsonSerializerOpts);
     }
 
-    public async Task<CreatedResponse<long?>> CreateDte03InvoiceRTAsync(CreateDte03RTCommand request)
+    public async Task<CreatedInvoiceResponse> CreateDte03InvoiceRTAsync(CreateDte03RTCommand request)
     {
         var response = await _httpClient.PostAsync($"dte03-rt", ContentHelper.Create(request.ToJson()));
         var responseContent = await response.Content.ReadAsStringAsync();
 
         response.EnsureSuccessStatusCode();
 
-        return JsonSerializer.Deserialize<CreatedResponse<long?>>(responseContent, DefaultJsonSerializerOpts);
+        return JsonSerializer.Deserialize<CreatedInvoiceResponse>(responseContent, DefaultJsonSerializerOpts);
     }
 
-    public async Task<CreatedResponse<long?>> CreateDte04OWAsync(CreateDte04OWCommand request)
+    public async Task<CreatedInvoiceResponse> CreateDte04OWAsync(CreateDte04OWCommand request)
     {
         var response = await _httpClient.PostAsync($"dte04-ow", ContentHelper.Create(request.ToJson()));
         response.EnsureSuccessStatusCode();
 
         var responseContent = await response.Content.ReadAsStringAsync();
 
-        return JsonSerializer.Deserialize<CreatedResponse<long?>>(responseContent, DefaultJsonSerializerOpts);
+        return JsonSerializer.Deserialize<CreatedInvoiceResponse>(responseContent, DefaultJsonSerializerOpts);
     }
 
-    public async Task<CreatedResponse<long?>> CreateDte04RTAsync(CreateDte04RTCommand request)
+    public async Task<CreatedInvoiceResponse> CreateDte04RTAsync(CreateDte04RTCommand request)
     {
         var response = await _httpClient.PostAsync($"dte04-rt", ContentHelper.Create(request.ToJson()));
         var responseContent = await response.Content.ReadAsStringAsync();
 
         response.EnsureSuccessStatusCode();
 
-        return JsonSerializer.Deserialize<CreatedResponse<long?>>(responseContent, DefaultJsonSerializerOpts);
+        return JsonSerializer.Deserialize<CreatedInvoiceResponse>(responseContent, DefaultJsonSerializerOpts);
     }
 
-    public async Task<CreatedResponse<long?>> CreateDte05RTAsync(CreateDte05RTCommand request)
+    public async Task<CreatedInvoiceResponse> CreateDte05RTAsync(CreateDte05RTCommand request)
     {
         var response = await _httpClient.PostAsync($"dte05-rt", ContentHelper.Create(request.ToJson()));
         var responseContent = await response.Content.ReadAsStringAsync();
 
         response.EnsureSuccessStatusCode();
 
-        return JsonSerializer.Deserialize<CreatedResponse<long?>>(responseContent, DefaultJsonSerializerOpts);
+        return JsonSerializer.Deserialize<CreatedInvoiceResponse>(responseContent, DefaultJsonSerializerOpts);
     }
 
-    public async Task<CreatedResponse<long?>> CreateDte05OWAsync(CreateDte05OWCommand request)
+    public async Task<CreatedInvoiceResponse> CreateDte05OWAsync(CreateDte05OWCommand request)
     {
         var response = await _httpClient.PostAsync($"dte05-ow", ContentHelper.Create(request.ToJson()));
         response.EnsureSuccessStatusCode();
 
         var responseContent = await response.Content.ReadAsStringAsync();
 
-        return JsonSerializer.Deserialize<CreatedResponse<long?>>(responseContent, DefaultJsonSerializerOpts);
+        return JsonSerializer.Deserialize<CreatedInvoiceResponse>(responseContent, DefaultJsonSerializerOpts);
     }
 
-    public async Task<CreatedResponse<long?>> CreateDte06RTAsync(CreateDte06RTCommand request)
+    public async Task<CreatedInvoiceResponse> CreateDte06RTAsync(CreateDte06RTCommand request)
     {
         var response = await _httpClient.PostAsync($"dte06-rt", ContentHelper.Create(request.ToJson()));
         var responseContent = await response.Content.ReadAsStringAsync();
 
         response.EnsureSuccessStatusCode();
 
-        return JsonSerializer.Deserialize<CreatedResponse<long?>>(responseContent, DefaultJsonSerializerOpts);
+        return JsonSerializer.Deserialize<CreatedInvoiceResponse>(responseContent, DefaultJsonSerializerOpts);
     }
 
-    public async Task<CreatedResponse<long?>> CreateDte06OWAsync(CreateDte06OWCommand request)
+    public async Task<CreatedInvoiceResponse> CreateDte06OWAsync(CreateDte06OWCommand request)
     {
         var response = await _httpClient.PostAsync($"dte06-ow", ContentHelper.Create(request.ToJson()));
         response.EnsureSuccessStatusCode();
 
         var responseContent = await response.Content.ReadAsStringAsync();
 
-        return JsonSerializer.Deserialize<CreatedResponse<long?>>(responseContent, DefaultJsonSerializerOpts);
+        return JsonSerializer.Deserialize<CreatedInvoiceResponse>(responseContent, DefaultJsonSerializerOpts);
     }
 
-    public async Task<CreatedResponse<long?>> CreateDte14OWAsync(CreateDte14OWCommand request)
+    public async Task<CreatedInvoiceResponse> CreateDte14OWAsync(CreateDte14OWCommand request)
     {
         var response = await _httpClient.PostAsync($"dte14-ow", ContentHelper.Create(request.ToJson()));
         response.EnsureSuccessStatusCode();
 
         var responseContent = await response.Content.ReadAsStringAsync();
 
-        return JsonSerializer.Deserialize<CreatedResponse<long?>>(responseContent, DefaultJsonSerializerOpts);
+        return JsonSerializer.Deserialize<CreatedInvoiceResponse>(responseContent, DefaultJsonSerializerOpts);
     }
 
-    public async Task<CreatedResponse<long?>> CreateDte14RTAsync(CreateDte14RTCommand request)
+    public async Task<CreatedInvoiceResponse> CreateDte14RTAsync(CreateDte14RTCommand request)
     {
         var response = await _httpClient.PostAsync($"dte14-rt", ContentHelper.Create(request.ToJson()));
         var responseContent = await response.Content.ReadAsStringAsync();
 
         response.EnsureSuccessStatusCode();
 
-        return JsonSerializer.Deserialize<CreatedResponse<long?>>(responseContent, DefaultJsonSerializerOpts);
+        return JsonSerializer.Deserialize<CreatedInvoiceResponse>(responseContent, DefaultJsonSerializerOpts);
     }
 
     public async Task<Response> DteCancellationAsync(DteCancellationCommand request)

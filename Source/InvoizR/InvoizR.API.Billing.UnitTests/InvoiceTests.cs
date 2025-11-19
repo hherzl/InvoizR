@@ -1,4 +1,4 @@
-﻿using InvoizR.Clients.DataContracts;
+﻿using InvoizR.Clients.DataContracts.Invoices;
 
 namespace InvoizR.API.Billing.UnitTests;
 

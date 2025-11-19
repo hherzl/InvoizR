@@ -1,5 +1,5 @@
 ﻿using InvoizR.Application.Common.Contracts;
-using InvoizR.Clients.DataContracts;
+using InvoizR.Clients.DataContracts.Invoices;
 using InvoizR.Domain.Enums;
 using MediatR;
 using Microsoft.EntityFrameworkCore;

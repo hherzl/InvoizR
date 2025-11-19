@@ -1,12 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 using InvoizR.Clients.DataContracts.Common;
+using InvoizR.Clients.DataContracts.Invoices;
 using InvoizR.SharedKernel.Mh.FeNd;
 using MediatR;
 
 namespace InvoizR.Clients.DataContracts.Dte06;
 
-public record CreateDte06Command : Request, IRequest<CreatedResponse<long?>>, IValidatableObject
+public record CreateDte06Command : Request, IRequest<CreatedInvoiceResponse>, IValidatableObject
 {
     public CreateDte06Command()
     {

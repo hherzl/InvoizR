@@ -1,5 +1,6 @@
 ﻿using InvoizR.Clients.DataContracts;
 using InvoizR.Clients.DataContracts.Fallback;
+using InvoizR.Clients.DataContracts.Invoices;
 using InvoizR.Clients.DataContracts.ThirdPartyServices;
 using InvoizR.Domain.Entities;
 using Microsoft.EntityFrameworkCore;

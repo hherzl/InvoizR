@@ -1,4 +1,4 @@
-﻿namespace InvoizR.Clients.DataContracts;
+﻿namespace InvoizR.Clients.DataContracts.Invoices;
 
 public record InvoiceProcessingLogItemModel
 {
