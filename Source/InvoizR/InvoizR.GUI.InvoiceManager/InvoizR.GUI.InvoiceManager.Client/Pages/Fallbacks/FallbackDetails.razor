@@ -6,7 +6,7 @@
 @using InvoizR.Clients.DataContracts.Common
 @using InvoizR.Clients.DataContracts.Fallback
 
-@inject IInvoizRClient invoizRClient
+@inject IInvoizRClient InvoizRClient
 @inject IDialogService dialogService
 
 <PageTitle>Fallback Details - @Id</PageTitle>
@@ -16,7 +16,7 @@
 
 <br />
 
-@if (DetailsResponse != null)
+@if (DetailsModel != null)
 {
     <MudCard>
         <MudCardHeader>
@@ -28,18 +28,18 @@
             </CardHeaderActions>
         </MudCardHeader>
         <MudCardContent>
-            <MudText Typo="Typo.body2">Company: <strong>@DetailsResponse?.Model.Company</strong></MudText>
-            <MudText Typo="Typo.body2">Name: <strong>@DetailsResponse?.Model.Name</strong></MudText>
-            <MudText Typo="Typo.body2">Start date time: <strong>@DetailsResponse?.Model.StartDateTime</strong></MudText>
-            <MudText Typo="Typo.body2">End date time: <strong>@DetailsResponse?.Model.EndDateTime</strong></MudText>
-            <MudText Typo="Typo.body2">GUID: <strong>@DetailsResponse?.Model.FallbackGuid</strong></MudText>
-            <MudText Typo="Typo.body2">Sync status: <strong>@DetailsResponse?.Model.SyncStatus</strong></MudText>
-            <MudText Typo="Typo.body2">Emit date timee: <strong>@DetailsResponse?.Model.EmitDateTime</strong></MudText>
-            <MudText Typo="Typo.body2">Receipt stamp: <strong>@DetailsResponse?.Model.ReceiptStamp</strong></MudText>
+            <MudText Typo="Typo.body2">Company: <strong>@DetailsModel?.Model.Company</strong></MudText>
+            <MudText Typo="Typo.body2">Name: <strong>@DetailsModel?.Model.Name</strong></MudText>
+            <MudText Typo="Typo.body2">Start date time: <strong>@DetailsModel?.Model.StartDateTime</strong></MudText>
+            <MudText Typo="Typo.body2">End date time: <strong>@DetailsModel?.Model.EndDateTime</strong></MudText>
+            <MudText Typo="Typo.body2">GUID: <strong>@DetailsModel?.Model.FallbackGuid</strong></MudText>
+            <MudText Typo="Typo.body2">Sync status: <strong>@DetailsModel?.Model.SyncStatus</strong></MudText>
+            <MudText Typo="Typo.body2">Emit date timee: <strong>@DetailsModel?.Model.EmitDateTime</strong></MudText>
+            <MudText Typo="Typo.body2">Receipt stamp: <strong>@DetailsModel?.Model.ReceiptStamp</strong></MudText>
         </MudCardContent>
     </MudCard>
 
-    @if (DetailsResponse?.Model.SyncStatusId == (short)InvoiceSyncStatus.Created)
+    @if (DetailsModel?.Model.SyncStatusId == (short)InvoiceSyncStatus.Created)
     {
         <br />
         <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="ProcessAsync">Process</MudButton>
@@ -50,8 +50,8 @@
     <br />
 
     <MudExpansionPanels>
-        <MudExpansionPanel Text="@($"Invoices ({DetailsResponse?.Model.Invoices.Count})")" Expanded="false">
-            <MudTable Items="DetailsResponse?.Model.Invoices">
+        <MudExpansionPanel Text="@($"Invoices ({DetailsModel?.Model.Invoices.Count})")" Expanded="false">
+            <MudTable Items="DetailsModel?.Model.Invoices">
                 <HeaderContent>
                     <MudTh>Invoice type</MudTh>
                     <MudTh>GUID</MudTh>
@@ -74,14 +74,14 @@
 
     <br />
 
-    @if (DetailsResponse.Model.ProcessingLogs?.Count > 0)
+    @if (DetailsModel.Model.ProcessingLogs?.Count > 0)
     {
         <h4>Processing Logs</h4>
 
         <br />
 
         <MudExpansionPanels>
-            @foreach (var processingLog in DetailsResponse.Model.ProcessingLogs)
+            @foreach (var processingLog in DetailsModel.Model.ProcessingLogs)
             {
                 <MudExpansionPanel Text="@processingLog.LogType" Expanded="false">
                     <MudText Typo="Typo.body2">Processing status: <strong>@processingLog.ProcessingStatus</strong></MudText>
@@ -97,7 +97,7 @@
 
     <br />
 
-    @if (DetailsResponse.Model.Files?.Count > 0)
+    @if (DetailsModel.Model.Files?.Count > 0)
     {
         <h4>Files</h4>
 
@@ -105,7 +105,7 @@
 
         <MudExpansionPanels>
 
-            @foreach (var file in DetailsResponse.Model.Files)
+            @foreach (var file in DetailsModel.Model.Files)
             {
                 if (file.IsJson)
                 {
@@ -140,12 +140,12 @@
 @code {
     [Parameter] public int? Id { get; set; }
     private bool Loading { get; set; }
-    private SingleResponse<FallbackDetailsModel> DetailsResponse { get; set; }
+    private SingleResponse<FallbackDetailsModel> DetailsModel { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         Loading = true;
-        DetailsResponse = await invoizRClient.GetFallbackAsync((short)Id);
+        DetailsModel = await InvoizRClient.GetFallbackAsync((short)Id);
 
         Loading = false;
     }
@@ -153,8 +153,8 @@
     async Task ProcessAsync()
     {
         Loading = true;
-        await invoizRClient.ProcessFallbackAsync((short)Id);
-        DetailsResponse = await invoizRClient.GetFallbackAsync((short)Id);
+        await InvoizRClient.ProcessFallbackAsync((short)Id);
+        DetailsModel = await InvoizRClient.GetFallbackAsync((short)Id);
 
         Loading = false;
     }
