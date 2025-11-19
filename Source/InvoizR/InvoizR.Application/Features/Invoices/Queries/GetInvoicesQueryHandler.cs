@@ -1,8 +1,8 @@
 ﻿using InvoizR.Application.Common;
 using InvoizR.Application.Common.Contracts;
 using InvoizR.Application.QuerySpecs;
-using InvoizR.Clients.DataContracts;
 using InvoizR.Clients.DataContracts.Common;
+using InvoizR.Clients.DataContracts.Invoices;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 

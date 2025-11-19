@@ -1,8 +1,8 @@
 ﻿using InvoizR.Application.Common.Contracts;
 using InvoizR.Application.Services;
 using InvoizR.Application.Services.Models;
-using InvoizR.Clients.DataContracts.Common;
 using InvoizR.Clients.DataContracts.Dte03;
+using InvoizR.Clients.DataContracts.Invoices;
 using InvoizR.Clients.ThirdParty.Contracts;
 using InvoizR.Domain.Entities;
 using InvoizR.Domain.Enums;
@@ -18,9 +18,9 @@ using Microsoft.Extensions.Logging;
 namespace InvoizR.Application.Features.Invoices.Commands;
 
 public sealed class CreateDte03RTCommandHandler(ILogger<CreateDte03RTCommandHandler> logger, IServiceProvider serviceProvider)
-    : IRequestHandler<CreateDte03RTCommand, CreatedResponse<long?>>
+    : IRequestHandler<CreateDte03RTCommand, CreatedInvoiceResponse>
 {
-    public async Task<CreatedResponse<long?>> Handle(CreateDte03RTCommand request, CancellationToken ct)
+    public async Task<CreatedInvoiceResponse> Handle(CreateDte03RTCommand request, CancellationToken ct)
     {
         using var scope = serviceProvider.CreateScope();
 
@@ -128,6 +128,6 @@ public sealed class CreateDte03RTCommandHandler(ILogger<CreateDte03RTCommandHand
             }
         }
 
-        return new(invoice.Id);
+        return new(invoice.Id, invoice.InvoiceTypeId, invoice.SchemaType, invoice.SchemaVersion, invoice.InvoiceGuid, invoice.AuditNumber);
     }
 }

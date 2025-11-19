@@ -8,6 +8,7 @@ using InvoizR.Clients.DataContracts.Dte05;
 using InvoizR.Clients.DataContracts.Dte06;
 using InvoizR.Clients.DataContracts.Dte14;
 using InvoizR.Clients.DataContracts.Fallback;
+using InvoizR.Clients.DataContracts.Invoices;
 using InvoizR.Clients.DataContracts.ThirdPartyServices;
 
 namespace InvoizR.Clients.Contracts;
@@ -41,23 +42,23 @@ public interface IInvoizRClient
     Task<InvoiceDetailsModel> GetInvoiceAsync(long? id);
     Task<Response> ChangeProcessingStatusAsync(ChangeProcessingStatusCommand request);
 
-    Task<CreatedResponse<long?>> CreateDte01InvoiceOWAsync(CreateDte01OWCommand request);
-    Task<CreatedResponse<long?>> CreateDte01InvoiceRTAsync(CreateDte01RTCommand request);
+    Task<CreatedInvoiceResponse> CreateDte01InvoiceOWAsync(CreateDte01OWCommand request);
+    Task<CreatedInvoiceResponse> CreateDte01InvoiceRTAsync(CreateDte01RTCommand request);
 
-    Task<CreatedResponse<long?>> CreateDte03InvoiceOWAsync(CreateDte03OWCommand request);
-    Task<CreatedResponse<long?>> CreateDte03InvoiceRTAsync(CreateDte03RTCommand request);
+    Task<CreatedInvoiceResponse> CreateDte03InvoiceOWAsync(CreateDte03OWCommand request);
+    Task<CreatedInvoiceResponse> CreateDte03InvoiceRTAsync(CreateDte03RTCommand request);
 
-    Task<CreatedResponse<long?>> CreateDte04OWAsync(CreateDte04OWCommand request);
-    Task<CreatedResponse<long?>> CreateDte04RTAsync(CreateDte04RTCommand request);
+    Task<CreatedInvoiceResponse> CreateDte04OWAsync(CreateDte04OWCommand request);
+    Task<CreatedInvoiceResponse> CreateDte04RTAsync(CreateDte04RTCommand request);
 
-    Task<CreatedResponse<long?>> CreateDte05OWAsync(CreateDte05OWCommand request);
-    Task<CreatedResponse<long?>> CreateDte05RTAsync(CreateDte05RTCommand request);
+    Task<CreatedInvoiceResponse> CreateDte05OWAsync(CreateDte05OWCommand request);
+    Task<CreatedInvoiceResponse> CreateDte05RTAsync(CreateDte05RTCommand request);
 
-    Task<CreatedResponse<long?>> CreateDte06OWAsync(CreateDte06OWCommand request);
-    Task<CreatedResponse<long?>> CreateDte06RTAsync(CreateDte06RTCommand request);
+    Task<CreatedInvoiceResponse> CreateDte06OWAsync(CreateDte06OWCommand request);
+    Task<CreatedInvoiceResponse> CreateDte06RTAsync(CreateDte06RTCommand request);
 
-    Task<CreatedResponse<long?>> CreateDte14OWAsync(CreateDte14OWCommand request);
-    Task<CreatedResponse<long?>> CreateDte14RTAsync(CreateDte14RTCommand request);
+    Task<CreatedInvoiceResponse> CreateDte14OWAsync(CreateDte14OWCommand request);
+    Task<CreatedInvoiceResponse> CreateDte14RTAsync(CreateDte14RTCommand request);
 
     Task<Response> DteCancellationAsync(DteCancellationCommand request);
 

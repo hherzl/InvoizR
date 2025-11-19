@@ -1,4 +1,4 @@
-﻿using InvoizR.Clients.DataContracts;
+﻿using InvoizR.Clients.DataContracts.Invoices;
 using InvoizR.Domain.Common;
 
 namespace InvoizR.Application.QuerySpecs;

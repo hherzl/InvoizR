@@ -1,5 +1,5 @@
 ﻿using InvoizR.Application.Common.Contracts;
-using InvoizR.Clients.DataContracts;
+using InvoizR.Clients.DataContracts.Invoices;
 using MediatR;
 
 namespace InvoizR.Application.Features.Invoices.Queries;

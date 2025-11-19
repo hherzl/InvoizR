@@ -1,7 +1,7 @@
 ﻿using InvoizR.Application.Common.Contracts;
 using InvoizR.Application.Services;
-using InvoizR.Clients.DataContracts.Common;
 using InvoizR.Clients.DataContracts.Dte01;
+using InvoizR.Clients.DataContracts.Invoices;
 using InvoizR.Clients.ThirdParty.Contracts;
 using InvoizR.Domain.Entities;
 using InvoizR.Domain.Enums;
@@ -16,9 +16,9 @@ using Microsoft.Extensions.Logging;
 namespace InvoizR.Application.Features.Invoices.Commands;
 
 public sealed class CreateDte01OWCommandHandler(ILogger<CreateDte01OWCommandHandler> logger, IServiceProvider serviceProvider)
-    : IRequestHandler<CreateDte01OWCommand, CreatedResponse<long?>>
+    : IRequestHandler<CreateDte01OWCommand, CreatedInvoiceResponse>
 {
-    public async Task<CreatedResponse<long?>> Handle(CreateDte01OWCommand request, CancellationToken st)
+    public async Task<CreatedInvoiceResponse> Handle(CreateDte01OWCommand request, CancellationToken ct)
     {
         using var scope = serviceProvider.CreateScope();
 
@@ -26,13 +26,13 @@ public sealed class CreateDte01OWCommandHandler(ILogger<CreateDte01OWCommandHand
         var dteSyncStatusChanger = scope.ServiceProvider.GetRequiredService<Dte01SyncStatusChanger>();
         var seguridadClient = scope.ServiceProvider.GetRequiredService<ISeguridadClient>();
 
-        _ = await dbContext.GetCurrentInvoiceTypeAsync(FeFcv1.TypeId, ct: st) ?? throw new InvalidCurrentInvoiceTypeException();
+        _ = await dbContext.GetCurrentInvoiceTypeAsync(FeFcv1.TypeId, ct: ct) ?? throw new InvalidCurrentInvoiceTypeException();
 
-        var txn = await dbContext.Database.BeginTransactionAsync(st);
+        var txn = await dbContext.Database.BeginTransactionAsync(ct);
 
         try
         {
-            var pos = await dbContext.GetPosAsync(request.PosId, includes: true, ct: st);
+            var pos = await dbContext.GetPosAsync(request.PosId, includes: true, ct: ct);
 
             var invoice = new Invoice
             {
@@ -60,20 +60,20 @@ public sealed class CreateDte01OWCommandHandler(ILogger<CreateDte01OWCommandHand
 
             dbContext.Invoice.Add(invoice);
 
-            await dbContext.SaveChangesAsync(st);
+            await dbContext.SaveChangesAsync(ct);
 
             dbContext.InvoiceProcessingStatusLog.Add(new(invoice.Id, invoice.ProcessingStatusId));
 
-            await dbContext.SaveChangesAsync(st);
+            await dbContext.SaveChangesAsync(ct);
 
-            await txn.CommitAsync(st);
+            await txn.CommitAsync(ct);
 
-            var fallback = await dbContext.GetCurrentFallbackAsync(pos.Branch.Company.Id, ct: st);
+            var fallback = await dbContext.GetCurrentFallbackAsync(pos.Branch.Company.Id, ct: ct);
             if (fallback?.Enable == true)
             {
                 logger.LogInformation($"Processing '{invoice.InvoiceNumber}' invoice, changing status from '{InvoiceProcessingStatus.Created}'...");
 
-                await dteSyncStatusChanger.SetInvoiceAsInitializedAsync(invoice.Id, dbContext, st);
+                await dteSyncStatusChanger.SetInvoiceAsInitializedAsync(invoice.Id, dbContext, ct);
 
                 var dte = FeFcv1.Deserialize(invoice.Payload);
                 dte.Identificacion.TipoModelo = MhCatalog.Cat003.Contingencia;
@@ -85,17 +85,17 @@ public sealed class CreateDte01OWCommandHandler(ILogger<CreateDte01OWCommandHand
 
                 invoice.FallbackId = fallback.Id;
 
-                await dteSyncStatusChanger.SetInvoiceAsFallbackAsync(invoice.Id, dbContext, st);
+                await dteSyncStatusChanger.SetInvoiceAsFallbackAsync(invoice.Id, dbContext, ct);
 
                 invoice.AddNotification(new ExportFallbackInvoiceNotification(invoice));
-                await dbContext.DispatchNotificationsAsync(st);
+                await dbContext.DispatchNotificationsAsync(ct);
             }
 
-            return new(invoice.Id);
+            return new(invoice.Id, invoice.InvoiceTypeId, invoice.SchemaType, invoice.SchemaVersion, invoice.InvoiceGuid, invoice.AuditNumber);
         }
         catch (Exception ex)
         {
-            await txn.RollbackAsync(st);
+            await txn.RollbackAsync(ct);
             logger.LogCritical(ex, "There was an error on Create DTE-01 in OW processing");
             return new();
         }

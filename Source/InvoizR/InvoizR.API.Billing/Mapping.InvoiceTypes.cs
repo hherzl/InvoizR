@@ -1,4 +1,5 @@
 ﻿using InvoizR.Clients.DataContracts;
+using InvoizR.Clients.DataContracts.Invoices;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

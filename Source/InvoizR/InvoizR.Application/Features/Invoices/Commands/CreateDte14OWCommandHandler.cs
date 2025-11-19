@@ -1,6 +1,6 @@
 ﻿using InvoizR.Application.Common.Contracts;
-using InvoizR.Clients.DataContracts.Common;
 using InvoizR.Clients.DataContracts.Dte14;
+using InvoizR.Clients.DataContracts.Invoices;
 using InvoizR.Domain.Entities;
 using InvoizR.Domain.Enums;
 using InvoizR.Domain.Exceptions;
@@ -10,26 +10,17 @@ using Microsoft.Extensions.Logging;
 
 namespace InvoizR.Application.Features.Invoices.Commands;
 
-public sealed class CreateDte14OWCommandHandler : IRequestHandler<CreateDte14OWCommand, CreatedResponse<long?>>
+public sealed class CreateDte14OWCommandHandler(ILogger<CreateDte14OWCommandHandler> logger, IInvoizRDbContext dbContext) : IRequestHandler<CreateDte14OWCommand, CreatedInvoiceResponse>
 {
-    private readonly ILogger _logger;
-    private readonly IInvoizRDbContext _dbContext;
-
-    public CreateDte14OWCommandHandler(ILogger<CreateDte14OWCommandHandler> logger, IInvoizRDbContext dbContext)
+    public async Task<CreatedInvoiceResponse> Handle(CreateDte14OWCommand request, CancellationToken ct)
     {
-        _logger = logger;
-        _dbContext = dbContext;
-    }
+        _ = await dbContext.GetCurrentInvoiceTypeAsync(FeFsev1.TypeId, ct: ct) ?? throw new InvalidCurrentInvoiceTypeException();
 
-    public async Task<CreatedResponse<long?>> Handle(CreateDte14OWCommand request, CancellationToken cancellationToken)
-    {
-        _ = await _dbContext.GetCurrentInvoiceTypeAsync(FeFsev1.TypeId, ct: cancellationToken) ?? throw new InvalidCurrentInvoiceTypeException();
-
-        var txn = await _dbContext.Database.BeginTransactionAsync(cancellationToken);
+        var txn = await dbContext.Database.BeginTransactionAsync(ct);
 
         try
         {
-            var pos = await _dbContext.GetPosAsync(request.PosId, ct: cancellationToken);
+            var pos = await dbContext.GetPosAsync(request.PosId, ct: ct);
 
             var invoice = new Invoice
             {
@@ -55,22 +46,22 @@ public sealed class CreateDte14OWCommandHandler : IRequestHandler<CreateDte14OWC
                 ProcessingStatusId = (short)InvoiceProcessingStatus.Created
             };
 
-            _dbContext.Invoice.Add(invoice);
+            dbContext.Invoice.Add(invoice);
 
-            await _dbContext.SaveChangesAsync(cancellationToken);
+            await dbContext.SaveChangesAsync(ct);
 
-            _dbContext.InvoiceProcessingStatusLog.Add(new(invoice.Id, invoice.ProcessingStatusId));
+            dbContext.InvoiceProcessingStatusLog.Add(new(invoice.Id, invoice.ProcessingStatusId));
 
-            await _dbContext.SaveChangesAsync(cancellationToken);
+            await dbContext.SaveChangesAsync(ct);
 
-            await txn.CommitAsync(cancellationToken);
+            await txn.CommitAsync(ct);
 
-            return new(invoice.Id);
+            return new(invoice.Id, invoice.InvoiceTypeId, invoice.SchemaType, invoice.SchemaVersion, invoice.InvoiceGuid, invoice.AuditNumber);
         }
         catch (Exception ex)
         {
-            await txn.RollbackAsync(cancellationToken);
-            _logger.LogCritical(ex, "There was an error on Create DTE-14 in OW processing");
+            await txn.RollbackAsync(ct);
+            logger.LogCritical(ex, "There was an error on Create DTE-14 in OW processing");
             return new();
         }
     }
