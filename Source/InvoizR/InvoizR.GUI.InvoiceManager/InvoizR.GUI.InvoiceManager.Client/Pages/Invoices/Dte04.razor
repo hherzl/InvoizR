@@ -1,0 +1,99 @@
+﻿@using InvoizR.SharedKernel.Mh
+@using InvoizR.SharedKernel.Mh.FeNr
+
+<MudCard>
+    <MudCardHeader>
+        <CardHeaderContent>
+            <MudText Typo="Typo.h6">Identificación</MudText>
+        </CardHeaderContent>
+    </MudCardHeader>
+    <MudCardContent>
+        <MudText Typo="Typo.body2">Versión: <strong>@Dte.Identificacion.Version</strong></MudText>
+        <MudText Typo="Typo.body2">Ambiente: <strong>@Dte.Identificacion.Ambiente</strong></MudText>
+        <MudText Typo="Typo.body2">Tipo: <strong>@Dte.Identificacion.TipoDte</strong></MudText>
+        <MudText Typo="Typo.body2">Número de control: <strong>@Dte.Identificacion.NumeroControl</strong></MudText>
+        <MudText Typo="Typo.body2">Código de generación: <strong>@Dte.Identificacion.CodigoGeneracion</strong></MudText>
+        <MudText Typo="Typo.body2">Tipo de modelo: <strong>@Dte.Identificacion.TipoModelo</strong></MudText>
+        <MudText Typo="Typo.body2">Tipo de operación: <strong>@Dte.Identificacion.TipoOperacion</strong></MudText>
+    </MudCardContent>
+</MudCard>
+
+<br />
+
+<MudCard>
+    <MudCardHeader>
+        <CardHeaderContent>
+            <MudText Typo="Typo.h6">Emisor</MudText>
+        </CardHeaderContent>
+    </MudCardHeader>
+    <MudCardContent>
+        <MudText Typo="Typo.body2">NIT: <strong>@Dte.Emisor.Nit</strong></MudText>
+        <MudText Typo="Typo.body2">NRC: <strong>@Dte.Emisor.Nrc</strong></MudText>
+        <MudText Typo="Typo.body2">Nombre: <strong>@Dte.Emisor.Nombre</strong></MudText>
+        <MudText Typo="Typo.body2">Actividad: <strong>@Dte.Emisor.CodActividad</strong> - <strong>@Dte.Emisor.DescActividad</strong></MudText>
+        <MudText Typo="Typo.body2">Nombre comercial: <strong>@Dte.Emisor.NombreComercial</strong></MudText>
+        <MudText Typo="Typo.body2">Tipo establecimiento: <strong>@Dte.Emisor.TipoEstablecimiento</strong></MudText>
+        <MudText Typo="Typo.body2">Dirección: <strong>@Dte.Emisor.Direccion.Departamento</strong> - <strong>@Dte.Emisor.Direccion.Municipio</strong>, <strong>@Dte.Emisor.Direccion.Complemento</strong></MudText>
+        <MudText Typo="Typo.body2">Teléfono: <strong>@Dte.Emisor.Telefono</strong></MudText>
+    </MudCardContent>
+</MudCard>
+
+<br />
+
+<MudCard>
+    <MudCardHeader>
+        <CardHeaderContent>
+            <MudText Typo="Typo.h6">Receptor</MudText>
+        </CardHeaderContent>
+    </MudCardHeader>
+    <MudCardContent>
+        <MudText Typo="Typo.body2">Nombre: <strong>@Dte.Receptor.Nombre</strong></MudText>
+        <MudText Typo="Typo.body2">Actividad: <strong>@Dte.Receptor.CodActividad</strong> - <strong>@Dte.Receptor.DescActividad</strong></MudText>
+        <MudText Typo="Typo.body2">Dirección: <strong>@Dte.Receptor.Direccion.Departamento</strong> - <strong>@Dte.Receptor.Direccion.Municipio</strong>, <strong>@Dte.Receptor.Direccion.Complemento</strong></MudText>
+        <MudText Typo="Typo.body2">Teléfono: <strong>@Dte.Receptor.Telefono</strong></MudText>
+    </MudCardContent>
+</MudCard>
+
+<br />
+
+<MudTable Items="@Dte.CuerpoDocumento">
+    <HeaderContent>
+        <MudTh>N°</MudTh>
+        <MudTh>Cantidad</MudTh>
+        <MudTh>Unidad</MudTh>
+        <MudTh>Descripción</MudTh>
+        <MudTh>Precio</MudTh>
+        <MudTh>Venta No Sujeta</MudTh>
+        <MudTh>Venta Exenta</MudTh>
+        <MudTh>Venta Gravada</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="N°">@context.NumItem</MudTd>
+        <MudTd DataLabel="Cantidad">@context.Cantidad</MudTd>
+        <MudTd DataLabel="Unidad">@context.UniMedida</MudTd>
+        <MudTd DataLabel="Descripción">@context.Descripcion</MudTd>
+        <MudTd DataLabel="Precio">@context.PrecioUni</MudTd>
+        <MudTd DataLabel="Venta No Sujeta">@context.VentaNoSuj</MudTd>
+        <MudTd DataLabel="Venta Exenta">@context.VentaExenta</MudTd>
+        <MudTd DataLabel="Venta Gravada">@context.VentaGravada</MudTd>
+    </RowTemplate>
+</MudTable>
+
+@code {
+    [Parameter] public string Json { get; set; }
+    public FeNrv3 Dte { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (string.IsNullOrEmpty(Json))
+            return;
+
+        try
+        {
+            Dte = FeNrv3.Deserialize(Json);
+        }
+        catch
+        {
+        }
+    }
+}
