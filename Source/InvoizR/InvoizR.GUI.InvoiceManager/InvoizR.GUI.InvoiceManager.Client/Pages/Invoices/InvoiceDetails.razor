@@ -85,6 +85,10 @@
         {
             <Dte04 Json="@DetailsModel.Payload" />
         }
+        else if (DetailsModel.IsDte14())
+        {
+            <Dte14 Json="@DetailsModel.Payload" />
+        }
     </MudExpansionPanel>
 </MudExpansionPanels>
 

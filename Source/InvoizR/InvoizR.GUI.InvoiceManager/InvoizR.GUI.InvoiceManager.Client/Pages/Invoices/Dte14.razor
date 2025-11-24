@@ -1,0 +1,96 @@
+﻿@using InvoizR.SharedKernel.Mh
+@using InvoizR.SharedKernel.Mh.FeFse
+
+<MudCard>
+    <MudCardHeader>
+        <CardHeaderContent>
+            <MudText Typo="Typo.h6">Identificación</MudText>
+        </CardHeaderContent>
+    </MudCardHeader>
+    <MudCardContent>
+        <MudText Typo="Typo.body2">Versión: <strong>@Dte.Identificacion.Version</strong></MudText>
+        <MudText Typo="Typo.body2">Ambiente: <strong>@Dte.Identificacion.Ambiente</strong></MudText>
+        <MudText Typo="Typo.body2">Tipo: <strong>@Dte.Identificacion.TipoDte</strong></MudText>
+        <MudText Typo="Typo.body2">Número de control: <strong>@Dte.Identificacion.NumeroControl</strong></MudText>
+        <MudText Typo="Typo.body2">Código de generación: <strong>@Dte.Identificacion.CodigoGeneracion</strong></MudText>
+        <MudText Typo="Typo.body2">Tipo de modelo: <strong>@Dte.Identificacion.TipoModelo</strong></MudText>
+        <MudText Typo="Typo.body2">Tipo de operación: <strong>@Dte.Identificacion.TipoOperacion</strong></MudText>
+    </MudCardContent>
+</MudCard>
+
+<br />
+
+<MudCard>
+    <MudCardHeader>
+        <CardHeaderContent>
+            <MudText Typo="Typo.h6">Emisor</MudText>
+        </CardHeaderContent>
+    </MudCardHeader>
+    <MudCardContent>
+        <MudText Typo="Typo.body2">NIT: <strong>@Dte.Emisor.Nit</strong></MudText>
+        <MudText Typo="Typo.body2">NRC: <strong>@Dte.Emisor.Nrc</strong></MudText>
+        <MudText Typo="Typo.body2">Nombre: <strong>@Dte.Emisor.Nombre</strong></MudText>
+        <MudText Typo="Typo.body2">Actividad: <strong>@Dte.Emisor.CodActividad</strong> - <strong>@Dte.Emisor.DescActividad</strong></MudText>
+        <MudText Typo="Typo.body2">Dirección: <strong>@Dte.Emisor.Direccion.Departamento</strong> - <strong>@Dte.Emisor.Direccion.Municipio</strong>, <strong>@Dte.Emisor.Direccion.Complemento</strong></MudText>
+        <MudText Typo="Typo.body2">Teléfono: <strong>@Dte.Emisor.Telefono</strong></MudText>
+    </MudCardContent>
+</MudCard>
+
+<br />
+
+<MudCard>
+    <MudCardHeader>
+        <CardHeaderContent>
+            <MudText Typo="Typo.h6">Sujeto Excluido</MudText>
+        </CardHeaderContent>
+    </MudCardHeader>
+    <MudCardContent>
+        <MudText Typo="Typo.body2">Número de documento: <strong>@Dte.SujetoExcluido.NumDocumento</strong></MudText>
+        <MudText Typo="Typo.body2">Nombre: <strong>@Dte.SujetoExcluido.Nombre</strong></MudText>
+        <MudText Typo="Typo.body2">Actividad: <strong>@Dte.SujetoExcluido.CodActividad</strong> - <strong>@Dte.SujetoExcluido.DescActividad</strong></MudText>
+        <MudText Typo="Typo.body2">Dirección: <strong>@Dte.SujetoExcluido.Direccion.Departamento</strong> - <strong>@Dte.SujetoExcluido.Direccion.Municipio</strong>, <strong>@Dte.SujetoExcluido.Direccion.Complemento</strong></MudText>
+        <MudText Typo="Typo.body2">Teléfono: <strong>@Dte.SujetoExcluido.Telefono</strong></MudText>
+    </MudCardContent>
+</MudCard>
+
+<br />
+
+<MudTable Items="@Dte.CuerpoDocumento">
+    <HeaderContent>
+        <MudTh>N°</MudTh>
+        <MudTh>Cantidad</MudTh>
+        <MudTh>Unidad</MudTh>
+        <MudTh>Descripción</MudTh>
+        <MudTh>Precio</MudTh>
+        <MudTh>Descuento</MudTh>
+        <MudTh>Compra</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="N°">@context.NumItem</MudTd>
+        <MudTd DataLabel="Cantidad">@context.Cantidad</MudTd>
+        <MudTd DataLabel="Unidad">@context.UniMedida</MudTd>
+        <MudTd DataLabel="Descripción">@context.Descripcion</MudTd>
+        <MudTd DataLabel="Precio">@context.PrecioUni</MudTd>
+        <MudTd DataLabel="Venta No Sujeta">@context.MontoDescu</MudTd>
+        <MudTd DataLabel="Venta Exenta">@context.Compra</MudTd>
+    </RowTemplate>
+</MudTable>
+
+@code {
+    [Parameter] public string Json { get; set; }
+    public FeFsev1 Dte { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (string.IsNullOrEmpty(Json))
+            return;
+
+        try
+        {
+            Dte = FeFsev1.Deserialize(Json);
+        }
+        catch
+        {
+        }
+    }
+}
