@@ -1,4 +1,7 @@
-﻿namespace InvoizR.Clients.DataContracts.Invoices;
+﻿using InvoizR.SharedKernel.Mh.FeCcf;
+using InvoizR.SharedKernel.Mh.FeFc;
+
+namespace InvoizR.Clients.DataContracts.Invoices;
 
 public record InvoiceDetailsModel
 {
@@ -16,14 +19,11 @@ public record InvoiceDetailsModel
     public string CustomerPhone { get; set; }
     public string CustomerEmail { get; set; }
     public DateTime? CustomerLastUpdated { get; set; }
-    public DateTime? CreatedAt { get; set; }
-
     public short? InvoiceTypeId { get; set; }
     public long? InvoiceNumber { get; set; }
     public DateTime? InvoiceDate { get; set; }
     public decimal? InvoiceTotal { get; set; }
     public int? Lines { get; set; }
-
     public string SchemaType { get; set; }
     public short? SchemaVersion { get; set; }
     public string InvoiceGuid { get; set; }
@@ -37,11 +37,20 @@ public record InvoiceDetailsModel
     public string ReceiptStamp { get; set; }
     public string ExternalUrl { get; set; }
     public string Notes { get; set; }
-
+    public DateTime? CreatedAt { get; set; }
     public bool Processed { get; set; }
 
     public List<InvoiceProcessingStatusLogItemModel> ProcessingStatusLogs { get; set; }
     public List<InvoiceProcessingLogItemModel> ProcessingLogs { get; set; }
     public List<InvoiceFileItemModel> Files { get; set; }
     public List<InvoiceNotificationItemModel> Notifications { get; set; }
+}
+
+public static class InvoiceDetailsExtensions
+{
+    public static bool IsDte01(this InvoiceDetailsModel detailsModel)
+        => detailsModel.InvoiceTypeId == FeFcv1.TypeId;
+
+    public static bool IsDte03(this InvoiceDetailsModel detailsModel)
+        => detailsModel.InvoiceTypeId == FeCcfv3.TypeId;
 }
