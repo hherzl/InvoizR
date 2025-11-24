@@ -1,5 +1,6 @@
 ﻿@using InvoizR.SharedKernel.Mh
 @using InvoizR.SharedKernel.Mh.FeCcf
+@using InvoizR.SharedKernel.Mh.FeNc
 
 <MudCard>
     <MudCardHeader>
@@ -85,16 +86,13 @@
     [Parameter]
     public string Json { get; set; }
 
-    public FeCcfv3 Dte { get; set; }
+    public FeNcv3 Dte { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        if (string.IsNullOrEmpty(Json))
-            return;
-
         try
         {
-            Dte = FeCcfv3.Deserialize(Json);
+            Dte = FeNcv3.Deserialize(Json);
         }
         catch
         {

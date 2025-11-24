@@ -85,6 +85,10 @@
         {
             <Dte04 Json="@DetailsModel.Payload" />
         }
+        else if (DetailsModel.IsDte05())
+        {
+            <Dte05 Json="@DetailsModel.Payload" />
+        }
         else if (DetailsModel.IsDte14())
         {
             <Dte14 Json="@DetailsModel.Payload" />
@@ -225,7 +229,8 @@
 </a>
 
 @code {
-    [Parameter] public long? Id { get; set; }
+    [Parameter]
+    public long? Id { get; set; }
 
     private InvoiceDetailsModel DetailsModel { get; set; }
 

@@ -10,20 +10,13 @@ using InvoizR.SharedKernel.Mh.FeNr;
 
 namespace InvoizR.API.Billing.Services;
 
-public class InvoizRInitializer
+public sealed class InvoizRInitializer(IInvoizRDbContext dbContext)
 {
-    private readonly IInvoizRDbContext _dbContext;
-
-    public InvoizRInitializer(IInvoizRDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
-
     public async Task SeedAsync()
     {
-        if (!_dbContext.ThirdPartyService.Any())
+        if (!dbContext.ThirdPartyService.Any())
         {
-            _dbContext.ThirdPartyService.Add(new("LC", "Seguridad", "Seguridad")
+            dbContext.ThirdPartyService.Add(new("LC", "Seguridad", "Seguridad")
             {
                 ThirdPartyServiceParameters =
                 [
@@ -34,9 +27,9 @@ public class InvoizRInitializer
                 ]
             });
 
-            await _dbContext.SaveChangesAsync();
+            await dbContext.SaveChangesAsync();
 
-            _dbContext.ThirdPartyService.Add(new("LC", "Firmador", "Firmador")
+            dbContext.ThirdPartyService.Add(new("LC", "Firmador", "Firmador")
             {
                 ThirdPartyServiceParameters =
                 [
@@ -46,9 +39,9 @@ public class InvoizRInitializer
                 ]
             });
 
-            await _dbContext.SaveChangesAsync();
+            await dbContext.SaveChangesAsync();
 
-            _dbContext.ThirdPartyService.Add(new("LC", "FE SV", "FE SV")
+            dbContext.ThirdPartyService.Add(new("LC", "FE SV", "FE SV")
             {
                 ThirdPartyServiceParameters =
                 [
@@ -58,38 +51,38 @@ public class InvoizRInitializer
                 ]
             });
 
-            await _dbContext.SaveChangesAsync();
+            await dbContext.SaveChangesAsync();
         }
 
-        if (!_dbContext.InvoiceType.Any())
+        if (!dbContext.InvoiceType.Any())
         {
-            _dbContext.InvoiceType.Add(new(FeFcv1.TypeId, "Consumidor Final", FeFcv1.SchemaType, FeFcv1.Version, true, 90));
-            _dbContext.InvoiceType.Add(new(FeCcfv3.TypeId, "Comprobante de Crédito Fiscal", FeCcfv3.SchemaType, FeCcfv3.Version, true, 1));
-            _dbContext.InvoiceType.Add(new(FeNrv3.TypeId, "Nota de Remisión", FeNrv3.SchemaType, FeNrv3.Version, true, 90));
-            _dbContext.InvoiceType.Add(new(FeNcv3.TypeId, "Nota de Crédito", FeNcv3.SchemaType, FeNcv3.Version, true, 90));
-            _dbContext.InvoiceType.Add(new(FeNdv3.TypeId, "Nota de Débito", FeNdv3.SchemaType, FeNdv3.Version, true, 90));
-            _dbContext.InvoiceType.Add(new(FeFsev1.TypeId, "Factura Sujeto Excluido", FeFsev1.SchemaType, FeFsev1.Version, true, 90));
+            dbContext.InvoiceType.Add(new(FeFcv1.TypeId, "Consumidor Final", FeFcv1.SchemaType, FeFcv1.Version, true, 90));
+            dbContext.InvoiceType.Add(new(FeCcfv3.TypeId, "Comprobante de Crédito Fiscal", FeCcfv3.SchemaType, FeCcfv3.Version, true, 1));
+            dbContext.InvoiceType.Add(new(FeNrv3.TypeId, "Nota de Remisión", FeNrv3.SchemaType, FeNrv3.Version, true, 90));
+            dbContext.InvoiceType.Add(new(FeNcv3.TypeId, "Nota de Crédito", FeNcv3.SchemaType, FeNcv3.Version, true, 90));
+            dbContext.InvoiceType.Add(new(FeNdv3.TypeId, "Nota de Débito", FeNdv3.SchemaType, FeNdv3.Version, true, 90));
+            dbContext.InvoiceType.Add(new(FeFsev1.TypeId, "Factura Sujeto Excluido", FeFsev1.SchemaType, FeFsev1.Version, true, 90));
 
-            await _dbContext.SaveChangesAsync();
+            await dbContext.SaveChangesAsync();
         }
 
-        if (!_dbContext.EnumDescription.Any())
+        if (!dbContext.EnumDescription.Any())
         {
-            _dbContext.EnumDescription.Add(new((short)InvoiceProcessingStatus.Created, "Creada", typeof(InvoiceProcessingStatus).FullName));
-            _dbContext.EnumDescription.Add(new((short)InvoiceProcessingStatus.InvalidSchema, "Esquema inválido", typeof(InvoiceProcessingStatus).FullName));
-            _dbContext.EnumDescription.Add(new((short)InvoiceProcessingStatus.InvalidData, "Datos inválidos", typeof(InvoiceProcessingStatus).FullName));
-            _dbContext.EnumDescription.Add(new((short)InvoiceProcessingStatus.Initialized, "Inicializada", typeof(InvoiceProcessingStatus).FullName));
-            _dbContext.EnumDescription.Add(new((short)InvoiceProcessingStatus.Fallback, "Contingencia", typeof(InvoiceProcessingStatus).FullName));
-            _dbContext.EnumDescription.Add(new((short)InvoiceProcessingStatus.Requested, "Solicitada", typeof(InvoiceProcessingStatus).FullName));
-            _dbContext.EnumDescription.Add(new((short)InvoiceProcessingStatus.Declined, "Rechazada", typeof(InvoiceProcessingStatus).FullName));
-            _dbContext.EnumDescription.Add(new((short)InvoiceProcessingStatus.Processed, "Procesada", typeof(InvoiceProcessingStatus).FullName));
-            _dbContext.EnumDescription.Add(new((short)InvoiceProcessingStatus.Cancelled, "Inválida", typeof(InvoiceProcessingStatus).FullName));
-            _dbContext.EnumDescription.Add(new((short)InvoiceProcessingStatus.Notified, "Notificada", typeof(InvoiceProcessingStatus).FullName));
+            dbContext.EnumDescription.Add(new((short)InvoiceProcessingStatus.Created, "Creada", typeof(InvoiceProcessingStatus).FullName));
+            dbContext.EnumDescription.Add(new((short)InvoiceProcessingStatus.InvalidSchema, "Esquema inválido", typeof(InvoiceProcessingStatus).FullName));
+            dbContext.EnumDescription.Add(new((short)InvoiceProcessingStatus.InvalidData, "Datos inválidos", typeof(InvoiceProcessingStatus).FullName));
+            dbContext.EnumDescription.Add(new((short)InvoiceProcessingStatus.Initialized, "Inicializada", typeof(InvoiceProcessingStatus).FullName));
+            dbContext.EnumDescription.Add(new((short)InvoiceProcessingStatus.Fallback, "Contingencia", typeof(InvoiceProcessingStatus).FullName));
+            dbContext.EnumDescription.Add(new((short)InvoiceProcessingStatus.Requested, "Solicitada", typeof(InvoiceProcessingStatus).FullName));
+            dbContext.EnumDescription.Add(new((short)InvoiceProcessingStatus.Declined, "Rechazada", typeof(InvoiceProcessingStatus).FullName));
+            dbContext.EnumDescription.Add(new((short)InvoiceProcessingStatus.Processed, "Procesada", typeof(InvoiceProcessingStatus).FullName));
+            dbContext.EnumDescription.Add(new((short)InvoiceProcessingStatus.Cancelled, "Inválida", typeof(InvoiceProcessingStatus).FullName));
+            dbContext.EnumDescription.Add(new((short)InvoiceProcessingStatus.Notified, "Notificada", typeof(InvoiceProcessingStatus).FullName));
 
-            _dbContext.EnumDescription.Add(new((short)InvoiceProcessingType.RoundTrip, "RT", typeof(InvoiceProcessingType).FullName));
-            _dbContext.EnumDescription.Add(new((short)InvoiceProcessingType.OneWay, "OW", typeof(InvoiceProcessingType).FullName));
+            dbContext.EnumDescription.Add(new((short)InvoiceProcessingType.RoundTrip, "RT", typeof(InvoiceProcessingType).FullName));
+            dbContext.EnumDescription.Add(new((short)InvoiceProcessingType.OneWay, "OW", typeof(InvoiceProcessingType).FullName));
 
-            await _dbContext.SaveChangesAsync();
+            await dbContext.SaveChangesAsync();
         }
     }
 }
