@@ -1,8 +1,4 @@
-﻿using InvoizR.SharedKernel.Mh.FeCcf;
-using InvoizR.SharedKernel.Mh.FeFc;
-using InvoizR.SharedKernel.Mh.FeNr;
-
-namespace InvoizR.Clients.DataContracts.Invoices;
+﻿namespace InvoizR.Clients.DataContracts.Invoices;
 
 public record InvoiceDetailsModel
 {
@@ -45,16 +41,4 @@ public record InvoiceDetailsModel
     public List<InvoiceProcessingLogItemModel> ProcessingLogs { get; set; }
     public List<InvoiceFileItemModel> Files { get; set; }
     public List<InvoiceNotificationItemModel> Notifications { get; set; }
-}
-
-public static class InvoiceDetailsExtensions
-{
-    public static bool IsDte01(this InvoiceDetailsModel detailsModel)
-        => detailsModel.InvoiceTypeId == FeFcv1.TypeId;
-
-    public static bool IsDte03(this InvoiceDetailsModel detailsModel)
-        => detailsModel.InvoiceTypeId == FeCcfv3.TypeId;
-
-    public static bool IsDte04(this InvoiceDetailsModel detailsModel)
-        => detailsModel.InvoiceTypeId == FeNrv3.TypeId;
 }
