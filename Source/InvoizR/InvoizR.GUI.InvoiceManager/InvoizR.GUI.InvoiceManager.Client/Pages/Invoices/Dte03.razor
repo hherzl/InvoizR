@@ -1,8 +1,5 @@
 ﻿@using InvoizR.SharedKernel.Mh
-@using InvoizR.SharedKernel.Mh.FeFc
-
-@if (Dte == null)
-    return;
+@using InvoizR.SharedKernel.Mh.FeCcf
 
 <MudCard>
     <MudCardHeader>
@@ -50,7 +47,7 @@
         </CardHeaderContent>
     </MudCardHeader>
     <MudCardContent>
-        <MudText Typo="Typo.body2">Documento: <strong>@Dte.Receptor.TipoDocumento</strong> - <strong>@Dte.Receptor.NumDocumento</strong></MudText>
+        <MudText Typo="Typo.body2">NIT: <strong>@Dte.Receptor.Nit</strong></MudText>
         <MudText Typo="Typo.body2">NRC: <strong>@Dte.Receptor.Nrc</strong></MudText>
         <MudText Typo="Typo.body2">Nombre: <strong>@Dte.Receptor.Nombre</strong></MudText>
         <MudText Typo="Typo.body2">Actividad: <strong>@Dte.Receptor.CodActividad</strong> - <strong>@Dte.Receptor.DescActividad</strong></MudText>
@@ -86,7 +83,7 @@
 
 @code {
     [Parameter] public string Json { get; set; }
-    public FeFcv1 Dte { get; set; }
+    public FeCcfv3 Dte { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -95,7 +92,7 @@
 
         try
         {
-            Dte = FeFcv1.Deserialize(Json);
+            Dte = FeCcfv3.Deserialize(Json);
         }
         catch
         {

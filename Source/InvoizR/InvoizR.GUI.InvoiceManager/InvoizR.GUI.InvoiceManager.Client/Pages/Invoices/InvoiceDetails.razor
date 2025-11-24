@@ -73,7 +73,14 @@
 
 <MudExpansionPanels>
     <MudExpansionPanel Text="DTE" Expanded="false">
-        <Dte01 Json="@DetailsModel.Payload" />
+        @if (DetailsModel.IsDte01())
+        {
+            <Dte01 Json="@DetailsModel.Payload" />
+        }
+        else if (DetailsModel.IsDte03())
+        {
+            <Dte03 Json="@DetailsModel.Payload" />
+        }
     </MudExpansionPanel>
 </MudExpansionPanels>
 
