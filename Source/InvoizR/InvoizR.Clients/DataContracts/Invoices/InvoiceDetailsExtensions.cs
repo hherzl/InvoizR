@@ -1,6 +1,7 @@
 ﻿using InvoizR.SharedKernel.Mh.FeCcf;
 using InvoizR.SharedKernel.Mh.FeFc;
 using InvoizR.SharedKernel.Mh.FeFse;
+using InvoizR.SharedKernel.Mh.FeNc;
 using InvoizR.SharedKernel.Mh.FeNr;
 
 namespace InvoizR.Clients.DataContracts.Invoices;
@@ -15,6 +16,9 @@ public static class InvoiceDetailsExtensions
 
     public static bool IsDte04(this InvoiceDetailsModel detailsModel)
         => detailsModel.InvoiceTypeId == FeNrv3.TypeId;
+
+    public static bool IsDte05(this InvoiceDetailsModel detailsModel)
+        => detailsModel.InvoiceTypeId == FeNcv3.TypeId;
 
     public static bool IsDte14(this InvoiceDetailsModel detailsModel)
         => detailsModel.InvoiceTypeId == FeFsev1.TypeId;

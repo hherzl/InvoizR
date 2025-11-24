@@ -20,8 +20,8 @@ public partial class FeNcv3 : Dte
     public static string Desc
         => "Nota de Crédito";
 
-    public static FeNcv3 Deserialize(string json)
-        => JsonSerializer.Deserialize<FeNcv3>(json, DefaultJsonSerializerOpts);
+    public static FeNcv3 Deserialize(string payload)
+        => string.IsNullOrEmpty(payload) ? null : JsonSerializer.Deserialize<FeNcv3>(payload, DefaultJsonSerializerOpts);
 }
 
 public partial class FeNcv3Received : FeNcv3
