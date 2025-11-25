@@ -89,6 +89,10 @@
         {
             <Dte05 Json="@DetailsModel.Payload" />
         }
+        else if (DetailsModel.IsDte06())
+        {
+            <Dte06 Json="@DetailsModel.Payload" />
+        }
         else if (DetailsModel.IsDte14())
         {
             <Dte14 Json="@DetailsModel.Payload" />
