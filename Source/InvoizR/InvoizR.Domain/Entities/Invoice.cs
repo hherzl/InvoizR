@@ -44,7 +44,7 @@ public partial class Invoice : AuditableEntity
     public string AuditNumber { get; set; }
     public string Payload { get; set; }
     public short? ProcessingTypeId { get; set; }
-    public short? ProcessingStatusId { get; set; }
+    public short? SyncStatusId { get; set; }
     public int? RetryIn { get; set; }
     public int? SyncAttempts { get; set; }
     public DateTime? EmitDateTime { get; set; }
@@ -56,8 +56,8 @@ public partial class Invoice : AuditableEntity
     public string Notes { get; set; }
 
     public virtual Pos Pos { get; set; }
-    public virtual Collection<InvoiceProcessingStatusLog> InvoiceSyncStatusLogs { get; set; }
-    public virtual Collection<InvoiceProcessingLog> InvoiceProcessingLogs { get; set; }
+    public virtual Collection<InvoiceSyncStatusLog> InvoiceSyncStatusLogs { get; set; }
+    public virtual Collection<InvoiceSyncLog> InvoiceSyncLogs { get; set; }
     public virtual Collection<InvoiceFile> InvoiceFiles { get; set; }
     public virtual Collection<InvoiceNotification> InvoiceNotifications { get; set; }
     public virtual Collection<InvoiceCancellationLog> InvoiceCancellationLogs { get; set; }

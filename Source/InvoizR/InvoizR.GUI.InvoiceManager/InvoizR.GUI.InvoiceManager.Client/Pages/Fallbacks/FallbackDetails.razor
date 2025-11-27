@@ -84,7 +84,7 @@
             @foreach (var processingLog in DetailsModel.Model.ProcessingLogs)
             {
                 <MudExpansionPanel Text="@processingLog.LogType" Expanded="false">
-                    <MudText Typo="Typo.body2">Processing status: <strong>@processingLog.ProcessingStatus</strong></MudText>
+                    <MudText Typo="Typo.body2">Sync status: <strong>@processingLog.SyncStatus</strong></MudText>
                     <MudText Typo="Typo.body2">Created at: <strong>@processingLog.CreatedAt</strong></MudText>
                     <MudText Typo="Typo.body2">Content type: <strong>@processingLog.ContentType</strong></MudText>
                     <div style="overflow-x: auto; white-space: pre-wrap; width: 100%;">

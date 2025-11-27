@@ -47,7 +47,7 @@ public sealed class ProcessFallbackCommandHandler(IInvoizRDbContext dbContext, I
 
         foreach (var invoice in invoices)
         {
-            invoice.ProcessingStatusId = (short)InvoiceProcessingStatus.Requested;
+            invoice.SyncStatusId = (short)SyncStatus.Requested;
             invoice.ProcessingTypeId = (short)InvoiceProcessingType.OneWay;
 
             UpdatePayload(invoice);
@@ -120,5 +120,7 @@ public sealed class ProcessFallbackCommandHandler(IInvoizRDbContext dbContext, I
 
             invoice.Payload = dte.ToJson();
         }
+        else
+            throw new NotImplementedException($"There is no implementation for {invoice.InvoiceTypeId} invoice type");
     }
 }

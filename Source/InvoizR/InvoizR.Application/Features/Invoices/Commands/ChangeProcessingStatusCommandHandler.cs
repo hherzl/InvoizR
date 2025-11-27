@@ -7,27 +7,20 @@ using MediatR;
 
 namespace InvoizR.Application.Features.Invoices.Commands;
 
-internal class ChangeProcessingStatusCommandHandler : IRequestHandler<ChangeProcessingStatusCommand, Response>
+public sealed class ChangeProcessingStatusCommandHandler(IInvoizRDbContext dbContext) : IRequestHandler<ChangeProcessingStatusCommand, Response>
 {
-    private readonly IInvoizRDbContext _dbContext;
-
-    public ChangeProcessingStatusCommandHandler(IInvoizRDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
-
     public async Task<Response> Handle(ChangeProcessingStatusCommand request, CancellationToken cancellationToken)
     {
-        var entity = await _dbContext.GetInvoiceAsync(request.InvoiceId, ct: cancellationToken);
+        var entity = await dbContext.GetInvoiceAsync(request.InvoiceId, ct: cancellationToken);
         if (entity == null)
             return null;
 
-        if (entity.ProcessingStatusId >= (short)InvoiceProcessingStatus.Processed)
+        if (entity.SyncStatusId >= (short)SyncStatus.Processed)
             throw new InvoizRException($"Change processing status for '{entity.Id}' ({entity.InvoiceNumber}) invoice can't be completed.");
 
-        entity.ProcessingStatusId = (short)InvoiceProcessingStatus.Requested;
+        entity.SyncStatusId = (short)SyncStatus.Requested;
 
-        await _dbContext.SaveChangesAsync(cancellationToken);
+        await dbContext.SaveChangesAsync(cancellationToken);
 
         return new();
     }

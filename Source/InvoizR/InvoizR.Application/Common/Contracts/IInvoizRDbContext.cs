@@ -31,14 +31,14 @@ public interface IInvoizRDbContext : IDisposable
 
     DbSet<InvoiceType> InvoiceType { get; set; }
     DbSet<Invoice> Invoice { get; set; }
-    DbSet<InvoiceProcessingStatusLog> InvoiceProcessingStatusLog { get; set; }
-    DbSet<InvoiceProcessingLog> InvoiceProcessingLog { get; set; }
+    DbSet<InvoiceSyncStatusLog> InvoiceSyncStatusLog { get; set; }
+    DbSet<InvoiceSyncLog> InvoiceSyncLog { get; set; }
     DbSet<InvoiceNotification> InvoiceNotification { get; set; }
     DbSet<InvoiceFile> InvoiceFile { get; set; }
     DbSet<InvoiceWebhookNotification> InvoiceWebhookNotification { get; set; }
     DbSet<InvoiceCancellationLog> InvoiceCancellationLog { get; set; }
 
-    DbSet<VInvoiceProcessingStatus> VInvoiceProcessingStatus { get; set; }
+    DbSet<VInvoiceSyncStatus> VInvoiceSyncStatus { get; set; }
     DbSet<VInvoiceProcessingType> VInvoiceProcessingType { get; set; }
 
     IQueryable<ThirdPartyService> GetThirdPartyServices(string environmentId, bool tracking = false, bool includes = false);
@@ -67,12 +67,12 @@ public interface IInvoizRDbContext : IDisposable
 
     IQueryable<BranchNotification> GetBranchNotificationsBy(short? branchId = null, short? invoiceTypeId = null);
 
-    IQueryable<InvoiceItemModel> GetInvoicesForProcessing(short? typeId = null, short? processingTypeId = null, short?[] processingStatuses = null);
+    IQueryable<InvoiceItemModel> GetInvoicesForProcessing(short? typeId = null, short? processingTypeId = null, short?[] syncStatuses = null);
     Task<Invoice> GetInvoiceAsync(long? id, bool tracking = false, bool includes = false, CancellationToken ct = default);
     IQueryable<Invoice> GetInvoicesBy(short? fallbackId);
 
-    IQueryable<InvoiceProcessingStatusLogItemModel> GetInvoiceProcessingStatusLogs(long? invoiceId);
-    IQueryable<InvoiceProcessingLogItemModel> GetInvoiceProcessingLogs(long? invoiceId);
+    IQueryable<InvoiceSyncStatusLogItemModel> GetInvoiceSyncStatusLogs(long? invoiceId);
+    IQueryable<InvoiceSyncLogItemModel> GetInvoiceSyncLogs(long? invoiceId);
     IQueryable<InvoiceFileItemModel> GetInvoiceFilesBy(long? invoiceId);
     Task<InvoiceFile> GetInvoiceFileByAsync(long? invoiceId, string fileName, bool tracking = false, bool includes = false, CancellationToken ct = default);
     IQueryable<InvoiceNotificationItemModel> GetInvoiceNotifications(long? invoiceId);

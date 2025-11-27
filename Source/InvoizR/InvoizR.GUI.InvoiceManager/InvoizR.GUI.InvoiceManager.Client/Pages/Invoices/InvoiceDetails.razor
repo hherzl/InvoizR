@@ -102,39 +102,39 @@
 
 <br />
 
-<h5>Processing Status Logs</h5>
+<h5>Sync Status Logs</h5>
 
 <br />
 
 <MudTimeline>
-    @foreach (var processingStatus in DetailsModel.ProcessingStatusLogs)
+    @foreach (var syncStatusLog in DetailsModel.SyncStatusLogs)
     {
-        @if (processingStatus.ProcessingStatusId >= 3000)
+        @if (syncStatusLog.IsProcessed())
         {
             <MudTimelineItem Color="Color.Success">
-                <MudText Color="Color.Success" Typo="Typo.body2">@processingStatus.ProcessingStatus</MudText>
-                <MudText Typo="Typo.body2">@processingStatus.CreatedAt</MudText>
+                <MudText Color="Color.Success" Typo="Typo.body2">@syncStatusLog.SyncStatus</MudText>
+                <MudText Typo="Typo.body2">@syncStatusLog.CreatedAt</MudText>
             </MudTimelineItem>
         }
-        else if (processingStatus.ProcessingStatusId == 2000)
+        else if (syncStatusLog.IsDeclined())
         {
             <MudTimelineItem Color="Color.Error">
-                <MudText Color="Color.Error" Typo="Typo.body2">@processingStatus.ProcessingStatus</MudText>
-                <MudText Typo="Typo.body2">@processingStatus.CreatedAt</MudText>
+                <MudText Color="Color.Error" Typo="Typo.body2">@syncStatusLog.SyncStatus</MudText>
+                <MudText Typo="Typo.body2">@syncStatusLog.CreatedAt</MudText>
             </MudTimelineItem>
         }
-        else if (processingStatus.ProcessingStatusId == 1000)
+        else if (syncStatusLog.IsRequested())
         {
             <MudTimelineItem Color="Color.Info">
-                <MudText Color="Color.Info" Typo="Typo.body2">@processingStatus.ProcessingStatus</MudText>
-                <MudText Typo="Typo.body2">@processingStatus.CreatedAt</MudText>
+                <MudText Color="Color.Info" Typo="Typo.body2">@syncStatusLog.SyncStatus</MudText>
+                <MudText Typo="Typo.body2">@syncStatusLog.CreatedAt</MudText>
             </MudTimelineItem>
         }
         else
         {
             <MudTimelineItem Color="Color.Default">
-                <MudText Color="Color.Default" Typo="Typo.body2">@processingStatus.ProcessingStatus</MudText>
-                <MudText Typo="Typo.body2">@processingStatus.CreatedAt</MudText>
+                <MudText Color="Color.Default" Typo="Typo.body2">@syncStatusLog.SyncStatus</MudText>
+                <MudText Typo="Typo.body2">@syncStatusLog.CreatedAt</MudText>
             </MudTimelineItem>
         }
     }
@@ -142,21 +142,21 @@
 
 <br />
 
-@if (DetailsModel.ProcessingLogs?.Count > 0)
+@if (DetailsModel.SyncLogs?.Count > 0)
 {
     <h5>Processing Logs</h5>
 
     <br />
 
     <MudExpansionPanels>
-        @foreach (var processingLog in DetailsModel.ProcessingLogs)
+        @foreach (var syncLog in DetailsModel.SyncLogs)
         {
-            <MudExpansionPanel Text="@processingLog.LogType" Expanded="false">
-                <MudText Typo="Typo.body2">Processing status: <strong>@processingLog.ProcessingStatus</strong></MudText>
-                <MudText Typo="Typo.body2">Created at: <strong>@processingLog.CreatedAt</strong></MudText>
-                <MudText Typo="Typo.body2">Content type: <strong>@processingLog.ContentType</strong></MudText>
+            <MudExpansionPanel Text="@syncLog.LogType" Expanded="false">
+                <MudText Typo="Typo.body2">Processing status: <strong>@syncLog.SyncStatus</strong></MudText>
+                <MudText Typo="Typo.body2">Created at: <strong>@syncLog.CreatedAt</strong></MudText>
+                <MudText Typo="Typo.body2">Content type: <strong>@syncLog.ContentType</strong></MudText>
                 <div style="overflow-x: auto; white-space: pre-wrap; width: 100%;">
-                    <pre>@processingLog.Content</pre>
+                    <pre>@syncLog.Content</pre>
                 </div>
             </MudExpansionPanel>
         }

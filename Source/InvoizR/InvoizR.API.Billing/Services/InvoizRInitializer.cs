@@ -68,16 +68,16 @@ public sealed class InvoizRInitializer(IInvoizRDbContext dbContext)
 
         if (!dbContext.EnumDescription.Any())
         {
-            dbContext.EnumDescription.Add(new((short)InvoiceProcessingStatus.Created, "Creada", typeof(InvoiceProcessingStatus).FullName));
-            dbContext.EnumDescription.Add(new((short)InvoiceProcessingStatus.InvalidSchema, "Esquema inválido", typeof(InvoiceProcessingStatus).FullName));
-            dbContext.EnumDescription.Add(new((short)InvoiceProcessingStatus.InvalidData, "Datos inválidos", typeof(InvoiceProcessingStatus).FullName));
-            dbContext.EnumDescription.Add(new((short)InvoiceProcessingStatus.Initialized, "Inicializada", typeof(InvoiceProcessingStatus).FullName));
-            dbContext.EnumDescription.Add(new((short)InvoiceProcessingStatus.Fallback, "Contingencia", typeof(InvoiceProcessingStatus).FullName));
-            dbContext.EnumDescription.Add(new((short)InvoiceProcessingStatus.Requested, "Solicitada", typeof(InvoiceProcessingStatus).FullName));
-            dbContext.EnumDescription.Add(new((short)InvoiceProcessingStatus.Declined, "Rechazada", typeof(InvoiceProcessingStatus).FullName));
-            dbContext.EnumDescription.Add(new((short)InvoiceProcessingStatus.Processed, "Procesada", typeof(InvoiceProcessingStatus).FullName));
-            dbContext.EnumDescription.Add(new((short)InvoiceProcessingStatus.Cancelled, "Inválida", typeof(InvoiceProcessingStatus).FullName));
-            dbContext.EnumDescription.Add(new((short)InvoiceProcessingStatus.Notified, "Notificada", typeof(InvoiceProcessingStatus).FullName));
+            dbContext.EnumDescription.Add(new((short)SyncStatus.Created, "Creada", typeof(SyncStatus).FullName));
+            dbContext.EnumDescription.Add(new((short)SyncStatus.InvalidSchema, "Esquema inválido", typeof(SyncStatus).FullName));
+            dbContext.EnumDescription.Add(new((short)SyncStatus.InvalidData, "Datos inválidos", typeof(SyncStatus).FullName));
+            dbContext.EnumDescription.Add(new((short)SyncStatus.Initialized, "Inicializada", typeof(SyncStatus).FullName));
+            dbContext.EnumDescription.Add(new((short)SyncStatus.Fallback, "Contingencia", typeof(SyncStatus).FullName));
+            dbContext.EnumDescription.Add(new((short)SyncStatus.Requested, "Solicitada", typeof(SyncStatus).FullName));
+            dbContext.EnumDescription.Add(new((short)SyncStatus.Declined, "Rechazada", typeof(SyncStatus).FullName));
+            dbContext.EnumDescription.Add(new((short)SyncStatus.Processed, "Procesada", typeof(SyncStatus).FullName));
+            dbContext.EnumDescription.Add(new((short)SyncStatus.Cancelled, "Inválida", typeof(SyncStatus).FullName));
+            dbContext.EnumDescription.Add(new((short)SyncStatus.Notified, "Notificada", typeof(SyncStatus).FullName));
 
             dbContext.EnumDescription.Add(new((short)InvoiceProcessingType.RoundTrip, "RT", typeof(InvoiceProcessingType).FullName));
             dbContext.EnumDescription.Add(new((short)InvoiceProcessingType.OneWay, "OW", typeof(InvoiceProcessingType).FullName));

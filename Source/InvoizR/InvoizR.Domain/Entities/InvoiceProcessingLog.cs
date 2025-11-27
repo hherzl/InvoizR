@@ -2,20 +2,20 @@
 
 namespace InvoizR.Domain.Entities;
 
-public partial class InvoiceProcessingLog : AuditableEntity
+public partial class InvoiceSyncLog : AuditableEntity
 {
-    public InvoiceProcessingLog()
+    public InvoiceSyncLog()
     {
     }
 
-    public InvoiceProcessingLog(long? id)
+    public InvoiceSyncLog(long? id)
     {
         Id = id;
     }
 
     public long? Id { get; set; }
     public long? InvoiceId { get; set; }
-    public short? ProcessingStatusId { get; set; }
+    public short? SyncStatusId { get; set; }
     public string LogType { get; set; }
     public string ContentType { get; set; }
     public string Content { get; set; }

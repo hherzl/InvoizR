@@ -43,7 +43,7 @@ public sealed class FallbackExporter(ILogger<FallbackExporter> logger, IServiceP
 
         fallback.EndDateTime = DateTime.Now;
         fallback.Enable = false;
-        fallback.SyncStatusId = (short)InvoiceProcessingStatus.Notified;
+        fallback.SyncStatusId = (short)SyncStatus.Notified;
 
         await dbContext.SaveChangesAsync(ct);
     }

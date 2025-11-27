@@ -72,9 +72,9 @@ public sealed class InvoiceExporter(ILogger<InvoiceExporter> logger, IServicePro
 
         smtpClient.Send(notificationTemplate.ToMailMessage());
 
-        invoice.ProcessingStatusId = (short)InvoiceProcessingStatus.Notified;
+        invoice.SyncStatusId = (short)SyncStatus.Notified;
 
-        dbContext.InvoiceProcessingStatusLog.Add(new(invoice.Id, invoice.ProcessingStatusId));
+        dbContext.InvoiceSyncStatusLog.Add(new(invoice.Id, invoice.SyncStatusId));
 
         await dbContext.SaveChangesAsync(ct);
     }

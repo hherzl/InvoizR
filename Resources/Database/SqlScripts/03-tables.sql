@@ -14,12 +14,12 @@ IF OBJECT_ID('dbo.InvoiceFile') IS NOT NULL
 	DROP TABLE [dbo].[InvoiceFile]
 GO
 
-IF OBJECT_ID('dbo.InvoiceProcessingLog') IS NOT NULL
-	DROP TABLE [dbo].[InvoiceProcessingLog]
+IF OBJECT_ID('dbo.InvoiceSyncLog') IS NOT NULL
+	DROP TABLE [dbo].[InvoiceSyncLog]
 GO
 
-IF OBJECT_ID('dbo.InvoiceProcessingStatusLog') IS NOT NULL
-	DROP TABLE [dbo].[InvoiceProcessingStatusLog]
+IF OBJECT_ID('dbo.InvoiceSyncStatusLog') IS NOT NULL
+	DROP TABLE [dbo].[InvoiceSyncStatusLog]
 GO
 
 IF OBJECT_ID('dbo.InvoiceValidation') IS NOT NULL
@@ -340,7 +340,7 @@ CREATE TABLE [dbo].[Invoice]
 	[AuditNumber] NVARCHAR(50) NULL,
 	[Payload] NVARCHAR(MAX) NULL,
 	[ProcessingTypeId] SMALLINT NOT NULL,
-	[ProcessingStatusId] SMALLINT NOT NULL,
+	[SyncStatusId] SMALLINT NOT NULL,
 	[RetryIn] INT NULL,
 	[SyncAttempts] INT NULL,
 	[EmitDateTime] DATETIME NULL,
@@ -373,11 +373,11 @@ CREATE TABLE [dbo].[InvoiceValidation]
 )
 GO
 
-CREATE TABLE [dbo].[InvoiceProcessingStatusLog]
+CREATE TABLE [dbo].[InvoiceSyncStatusLog]
 (
 	[Id] BIGINT NOT NULL IDENTITY(1, 1),
 	[InvoiceId] BIGINT NOT NULL,
-	[ProcessingStatusId] SMALLINT NOT NULL,
+	[SyncStatusId] SMALLINT NOT NULL,
 	[CreatedAt] DATETIME NOT NULL,
 	[CreatedBy] NVARCHAR(50) NOT NULL,
 	[LastModifiedAt] DATETIME NULL,
@@ -386,11 +386,11 @@ CREATE TABLE [dbo].[InvoiceProcessingStatusLog]
 )
 GO
 
-CREATE TABLE [dbo].[InvoiceProcessingLog]
+CREATE TABLE [dbo].[InvoiceSyncLog]
 (
 	[Id] BIGINT NOT NULL IDENTITY(1, 1),
 	[InvoiceId] BIGINT NOT NULL,
-	[ProcessingStatusId] SMALLINT NOT NULL,
+	[SyncStatusId] SMALLINT NOT NULL,
 	[LogType] NVARCHAR(25) NOT NULL,
 	[ContentType] NVARCHAR(50) NOT NULL,
 	[Content] NVARCHAR(MAX) NOT NULL,

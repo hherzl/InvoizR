@@ -1,10 +1,10 @@
-IF OBJECT_ID('dbo.VInvoiceProcessingStatus') IS NOT NULL
-	DROP VIEW [dbo].[VInvoiceProcessingStatus]
+IF OBJECT_ID('dbo.VInvoiceSyncStatus') IS NOT NULL
+	DROP VIEW [dbo].[VInvoiceSyncStatus]
 GO
 
-CREATE VIEW [VInvoiceProcessingStatus]
+CREATE VIEW [VInvoiceSyncStatus]
 AS
-	SELECT [Value] AS [Id], [Desc] FROM [EnumDescription] WHERE [FullName] = 'InvoizR.Domain.Enums.InvoiceProcessingStatus'
+	SELECT [Value] AS [Id], [Desc] FROM [EnumDescription] WHERE [FullName] = 'InvoizR.Domain.Enums.SyncStatus'
 GO
 
 IF OBJECT_ID('dbo.VInvoiceProcessingType') IS NOT NULL
@@ -22,5 +22,5 @@ GO
 
 CREATE VIEW [dbo].[VInvoice]
 AS
-    SELECT [Id], [InvoiceTypeId], [InvoiceDate], [AuditNumber] FROM [dbo].[Invoice]
+    SELECT [Id], [InvoiceTypeId], [InvoiceDate], [InvoiceGuid], [AuditNumber], [SyncStatusId] FROM [dbo].[Invoice]
 GO

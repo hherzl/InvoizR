@@ -173,7 +173,7 @@ internal class InvoiceConfiguration : AuditableEntityConfiguration<Invoice>
             ;
 
         builder
-            .Property(p => p.ProcessingStatusId)
+            .Property(p => p.SyncStatusId)
             .HasColumnType("smallint")
             .IsRequired()
             ;

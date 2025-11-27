@@ -1,10 +1,8 @@
-﻿using System;
-using InvoizR.Application.QuerySpecs;
+﻿using InvoizR.Application.QuerySpecs;
 using InvoizR.Clients.DataContracts;
 using InvoizR.Clients.DataContracts.Fallback;
 using InvoizR.Clients.DataContracts.Invoices;
 using InvoizR.Clients.DataContracts.ThirdPartyServices;
-using InvoizR.Domain.Common;
 using InvoizR.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -146,14 +144,14 @@ public partial class InvoizRDbContext
     {
         var query =
            from fallbackProcessingLog in FallbackProcessingLog
-           join vProcessingStatus in VInvoiceProcessingStatus on fallbackProcessingLog.SyncStatusId equals vProcessingStatus.Id
+           join vSyncStatus in VInvoiceSyncStatus on fallbackProcessingLog.SyncStatusId equals vSyncStatus.Id
            where fallbackProcessingLog.FallbackId == fallbackId
            orderby fallbackProcessingLog.CreatedAt descending
            select new FallbackProcessingLogItemModel
            {
                CreatedAt = fallbackProcessingLog.CreatedAt,
-               ProcessingStatusId = fallbackProcessingLog.SyncStatusId,
-               ProcessingStatus = vProcessingStatus.Desc,
+               SyncStatusId = fallbackProcessingLog.SyncStatusId,
+               SyncStatus = vSyncStatus.Desc,
                LogType = fallbackProcessingLog.LogType,
                ContentType = fallbackProcessingLog.ContentType,
                Content = fallbackProcessingLog.Content
@@ -276,14 +274,14 @@ public partial class InvoizRDbContext
     public IQueryable<BranchNotification> GetBranchNotificationsBy(short? branchId = null, short? invoiceTypeId = null)
         => BranchNotification.Where(item => item.BranchId == branchId && item.InvoiceTypeId == invoiceTypeId);
 
-    public IQueryable<InvoiceItemModel> GetInvoicesForProcessing(short? typeId = null, short? processingTypeId = null, short?[] processingStatuses = null)
+    public IQueryable<InvoiceItemModel> GetInvoicesForProcessing(short? typeId = null, short? processingTypeId = null, short?[] syncStatuses = null)
     {
         var query =
             from invoice in Invoice
             join pos in Pos on invoice.PosId equals pos.Id
             join branch in Branch on pos.BranchId equals branch.Id
             join company in Company on branch.CompanyId equals company.Id
-            where invoice.InvoiceTypeId == typeId && invoice.ProcessingTypeId == processingTypeId && processingStatuses.Contains(invoice.ProcessingStatusId)
+            where invoice.InvoiceTypeId == typeId && invoice.ProcessingTypeId == processingTypeId && syncStatuses.Contains(invoice.SyncStatusId)
             select new InvoiceItemModel
             {
                 Id = invoice.Id,
@@ -298,7 +296,7 @@ public partial class InvoizRDbContext
                 InvoiceTotal = invoice.InvoiceTotal,
                 AuditNumber = invoice.AuditNumber,
                 ProcessingTypeId = invoice.ProcessingTypeId,
-                SyncStatusId = invoice.ProcessingStatusId,
+                SyncStatusId = invoice.SyncStatusId,
                 Payload = invoice.Payload
             };
 
@@ -323,40 +321,40 @@ public partial class InvoizRDbContext
         return Invoice.Include(entity => entity.Pos).ThenInclude(entity => entity.Branch).ThenInclude(entity => entity.Company).Where(entity => entity.FallbackId == fallbackId);
     }
 
-    public IQueryable<InvoiceProcessingStatusLogItemModel> GetInvoiceProcessingStatusLogs(long? invoiceId)
+    public IQueryable<InvoiceSyncStatusLogItemModel> GetInvoiceSyncStatusLogs(long? invoiceId)
     {
         var query =
-           from invProcessingStatusLog in InvoiceProcessingStatusLog
-           join vInvProcessingStatus in VInvoiceProcessingStatus on invProcessingStatusLog.ProcessingStatusId equals vInvProcessingStatus.Id
-           where invProcessingStatusLog.InvoiceId == invoiceId
-           orderby invProcessingStatusLog.CreatedAt descending
-           select new InvoiceProcessingStatusLogItemModel
+           from invSyncStatusLog in InvoiceSyncStatusLog
+           join vInvSyncStatus in VInvoiceSyncStatus on invSyncStatusLog.SyncStatusId equals vInvSyncStatus.Id
+           where invSyncStatusLog.InvoiceId == invoiceId
+           orderby invSyncStatusLog.CreatedAt descending
+           select new InvoiceSyncStatusLogItemModel
            {
-               InvoiceId = invProcessingStatusLog.Id,
-               CreatedAt = invProcessingStatusLog.CreatedAt,
-               ProcessingStatusId = invProcessingStatusLog.ProcessingStatusId,
-               ProcessingStatus = vInvProcessingStatus.Desc
+               InvoiceId = invSyncStatusLog.Id,
+               CreatedAt = invSyncStatusLog.CreatedAt,
+               SyncStatusId = invSyncStatusLog.SyncStatusId,
+               SyncStatus = vInvSyncStatus.Desc
            };
 
         return query;
     }
 
-    public IQueryable<InvoiceProcessingLogItemModel> GetInvoiceProcessingLogs(long? invoiceId)
+    public IQueryable<InvoiceSyncLogItemModel> GetInvoiceSyncLogs(long? invoiceId)
     {
         var query =
-            from invProcessingLog in InvoiceProcessingLog
-            join vInvProcessingStatus in VInvoiceProcessingStatus on invProcessingLog.ProcessingStatusId equals vInvProcessingStatus.Id
-            where invProcessingLog.InvoiceId == invoiceId
-            orderby invProcessingLog.CreatedAt descending
-            select new InvoiceProcessingLogItemModel
+            from invSyncLog in InvoiceSyncLog
+            join vInvSyncStatus in VInvoiceSyncStatus on invSyncLog.SyncStatusId equals vInvSyncStatus.Id
+            where invSyncLog.InvoiceId == invoiceId
+            orderby invSyncLog.CreatedAt descending
+            select new InvoiceSyncLogItemModel
             {
-                InvoiceId = invProcessingLog.Id,
-                CreatedAt = invProcessingLog.CreatedAt,
-                ProcessingStatusId = invProcessingLog.ProcessingStatusId,
-                ProcessingStatus = vInvProcessingStatus.Desc,
-                LogType = invProcessingLog.LogType,
-                ContentType = invProcessingLog.ContentType,
-                Content = invProcessingLog.Content
+                InvoiceId = invSyncLog.Id,
+                CreatedAt = invSyncLog.CreatedAt,
+                SyncStatusId = invSyncLog.SyncStatusId,
+                SyncStatus = vInvSyncStatus.Desc,
+                LogType = invSyncLog.LogType,
+                ContentType = invSyncLog.ContentType,
+                Content = invSyncLog.Content
             };
 
         return query;

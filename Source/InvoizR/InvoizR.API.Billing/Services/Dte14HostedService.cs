@@ -29,10 +29,10 @@ public sealed class Dte14HostedService(ILogger<Dte14HostedService> logger, IServ
             {
                 var filters = new Filters(FeFsev1.TypeId)
                     .Set(InvoiceProcessingType.OneWay)
-                    .Add(InvoiceProcessingStatus.Created, InvoiceProcessingStatus.Initialized, InvoiceProcessingStatus.Requested)
+                    .Add(SyncStatus.Created, SyncStatus.Initialized, SyncStatus.Requested)
                     ;
 
-                var invoices = await dbContext.GetInvoicesForProcessing(filters.InvoiceTypeId, filters.ProcessingTypeId, [.. filters.ProcessingStatuses]).ToListAsync(st);
+                var invoices = await dbContext.GetInvoicesForProcessing(filters.InvoiceTypeId, filters.ProcessingTypeId, [.. filters.SyncStatuses]).ToListAsync(st);
                 if (invoices.Count == 0)
                 {
                     logger.LogInformation($"There are no invoices (OW) to sync...");
@@ -44,21 +44,21 @@ public sealed class Dte14HostedService(ILogger<Dte14HostedService> logger, IServ
 
                 foreach (var invoice in invoices)
                 {
-                    if (invoice.SyncStatusId == (short)InvoiceProcessingStatus.Created)
+                    if (invoice.SyncStatusId == (short)SyncStatus.Created)
                     {
-                        logger.LogInformation($"Processing '{invoice.InvoiceNumber}' invoice, changing status from '{InvoiceProcessingStatus.Created}'...");
+                        logger.LogInformation($"Processing '{invoice.InvoiceNumber}' invoice, changing status from '{SyncStatus.Created}'...");
 
                         await dteSyncStatusChanger.SetInvoiceAsInitializedAsync(invoice.Id, dbContext, st);
                     }
-                    else if (invoice.SyncStatusId == (short)InvoiceProcessingStatus.Initialized)
+                    else if (invoice.SyncStatusId == (short)SyncStatus.Initialized)
                     {
-                        logger.LogInformation($"Processing '{invoice.InvoiceNumber}' invoice, changing status from '{InvoiceProcessingStatus.Initialized}'...");
+                        logger.LogInformation($"Processing '{invoice.InvoiceNumber}' invoice, changing status from '{SyncStatus.Initialized}'...");
 
                         await dteSyncStatusChanger.SetInvoiceAsRequestedAsync(invoice.Id, dbContext, st);
                     }
-                    else if (invoice.SyncStatusId == (short)InvoiceProcessingStatus.Requested)
+                    else if (invoice.SyncStatusId == (short)SyncStatus.Requested)
                     {
-                        logger.LogInformation($"Processing '{invoice.InvoiceNumber}' invoice, changing status from '{InvoiceProcessingStatus.Requested}'...");
+                        logger.LogInformation($"Processing '{invoice.InvoiceNumber}' invoice, changing status from '{SyncStatus.Requested}'...");
 
                         var thirdPartyServices = await dbContext.GetThirdPartyServices(invoice.Environment, includes: true).ToListAsync(st);
                         if (thirdPartyServices.Count == 0)

@@ -190,19 +190,19 @@ ALTER TABLE [dbo].[InvoiceValidation] ADD CONSTRAINT [FK_dbo_InvoiceValidation_I
 	FOREIGN KEY ([InvoiceId]) REFERENCES [dbo].[Invoice]
 GO
 
-ALTER TABLE [dbo].[InvoiceProcessingStatusLog] ADD CONSTRAINT [PK_dbo_InvoiceProcessingStatusLog]
+ALTER TABLE [dbo].[InvoiceSyncStatusLog] ADD CONSTRAINT [PK_dbo_InvoiceSyncStatusLog]
 	PRIMARY KEY ([Id])
 GO
 
-ALTER TABLE [dbo].[InvoiceProcessingStatusLog] ADD CONSTRAINT [FK_dbo_InvoiceProcessingStatusLog_InvoiceId_dbo_Invoice]
+ALTER TABLE [dbo].[InvoiceSyncStatusLog] ADD CONSTRAINT [FK_dbo_InvoiceSyncStatusLog_InvoiceId_dbo_Invoice]
 	FOREIGN KEY ([InvoiceId]) REFERENCES [dbo].[Invoice]
 GO
 
-ALTER TABLE [dbo].[InvoiceProcessingLog] ADD CONSTRAINT [PK_dbo_InvoiceProcessingLog]
+ALTER TABLE [dbo].[InvoiceSyncLog] ADD CONSTRAINT [PK_dbo_InvoiceSyncLog]
 	PRIMARY KEY ([Id])
 GO
 
-ALTER TABLE [dbo].[InvoiceProcessingLog] ADD CONSTRAINT [FK_dbo_InvoiceProcessingLog_InvoiceId_dbo_Invoice]
+ALTER TABLE [dbo].[InvoiceSyncLog] ADD CONSTRAINT [FK_dbo_InvoiceSyncLog_InvoiceId_dbo_Invoice]
 	FOREIGN KEY ([InvoiceId]) REFERENCES [dbo].[Invoice]
 GO
 

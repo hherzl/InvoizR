@@ -9,18 +9,18 @@ namespace InvoizR.Application.Features.Invoices.Notifications;
 public sealed class CancelInvoiceNotificationHandler(ILogger<CancelInvoiceNotificationHandler> logger, IInvoizRDbContext dbContext)
     : INotificationHandler<CancelInvoiceNotification>
 {
-    public async Task Handle(CancelInvoiceNotification notification, CancellationToken st)
+    public async Task Handle(CancelInvoiceNotification notification, CancellationToken ct)
     {
         logger.LogInformation($"Cancelling '{notification.Id}' invoice");
 
-        var invoice = await dbContext.GetInvoiceAsync(notification.Id, true, true, st);
+        var invoice = await dbContext.GetInvoiceAsync(notification.Id, true, true, ct);
 
-        invoice.ProcessingStatusId = (short)InvoiceProcessingStatus.Cancelled;
+        invoice.SyncStatusId = (short)SyncStatus.Cancelled;
         invoice.CancellationPayload = notification.Payload;
         invoice.CancellationDateTime = DateTime.Now;
 
-        dbContext.InvoiceProcessingStatusLog.Add(new(invoice.Id, invoice.ProcessingStatusId));
+        dbContext.InvoiceSyncStatusLog.Add(new(invoice.Id, invoice.SyncStatusId));
 
-        await dbContext.SaveChangesAsync(st);
+        await dbContext.SaveChangesAsync(ct);
     }
 }
