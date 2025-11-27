@@ -5,14 +5,14 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace InvoizR.Infrastructure.Persistence.Configurations;
 
-internal class InvoiceProcessingStatusLogConfiguration : AuditableEntityConfiguration<InvoiceProcessingStatusLog>
+internal class InvoiceSyncLogConfiguration : AuditableEntityConfiguration<InvoiceSyncLog>
 {
-    public override void Configure(EntityTypeBuilder<InvoiceProcessingStatusLog> builder)
+    public override void Configure(EntityTypeBuilder<InvoiceSyncLog> builder)
     {
         base.Configure(builder);
 
         // Set configuration for entity
-        builder.ToTable("InvoiceProcessingStatusLog", "dbo");
+        builder.ToTable("InvoiceSyncLog", "dbo");
 
         // Set key for entity
         builder.HasKey(p => p.Id);
@@ -34,8 +34,28 @@ internal class InvoiceProcessingStatusLogConfiguration : AuditableEntityConfigur
             ;
 
         builder
-            .Property(p => p.ProcessingStatusId)
+            .Property(p => p.SyncStatusId)
             .HasColumnType("smallint")
+            .IsRequired()
+            ;
+
+        builder
+            .Property(p => p.LogType)
+            .HasColumnType("nvarchar")
+            .HasMaxLength(25)
+            .IsRequired()
+            ;
+
+        builder
+            .Property(p => p.ContentType)
+            .HasColumnType("nvarchar")
+            .HasMaxLength(50)
+            .IsRequired()
+            ;
+
+        builder
+            .Property(p => p.Content)
+            .HasColumnType("nvarchar(max)")
             .IsRequired()
             ;
     }

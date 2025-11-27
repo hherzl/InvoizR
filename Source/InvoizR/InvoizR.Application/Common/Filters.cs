@@ -7,7 +7,7 @@ public class Filters
 {
     public Filters()
     {
-        ProcessingStatuses = [];
+        SyncStatuses = [];
     }
 
     public Filters(short invoiceTypeId)
@@ -18,21 +18,21 @@ public class Filters
 
     public short? InvoiceTypeId { get; set; }
     public short? ProcessingTypeId { get; set; }
-    public Collection<short?> ProcessingStatuses { get; set; }
+    public Collection<short?> SyncStatuses { get; set; }
 
-    public Filters Add(params IEnumerable<InvoiceProcessingStatus> processingStatuses)
+    public Filters Add(params IEnumerable<SyncStatus> syncStatuses)
     {
-        foreach (var item in processingStatuses)
+        foreach (var item in syncStatuses)
         {
-            ProcessingStatuses.Add((short)item);
+            SyncStatuses.Add((short)item);
         }
 
         return this;
     }
 
-    public Filters Set(InvoiceProcessingType invoiceProcessingType)
+    public Filters Set(InvoiceProcessingType processingType)
     {
-        ProcessingTypeId = (short)invoiceProcessingType;
+        ProcessingTypeId = (short)processingType;
 
         return this;
     }

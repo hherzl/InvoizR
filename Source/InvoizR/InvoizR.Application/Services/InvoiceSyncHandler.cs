@@ -35,7 +35,7 @@ public sealed class InvoiceSyncHandler(IOptions<ProcessingSettings> processingOp
         var firmarDocumentoResponse = await firmadorClient.FirmarDocumentoAsync(firmarDocumentoRequest);
         await File.WriteAllTextAsync(processingSettings.GetFirmaResponseJsonPath(invoice.AuditNumber), firmarDocumentoResponse.ToJson(), ct);
 
-        dbContext.InvoiceProcessingLog.Add(InvoiceProcessingLog.CreateRequest(invoice.Id, InvoiceProcessingStatus.Requested, firmarDocumentoResponse.ToJson()));
+        dbContext.InvoiceSyncLog.Add(InvoiceSyncLog.CreateRequest(invoice.Id, SyncStatus.Requested, firmarDocumentoResponse.ToJson()));
 
         feSvClient.ClientSettings = request.ThirdPartyClientParameters.GetByService(feSvClient.ServiceName).ToFesvClientSettings();
 
@@ -50,9 +50,9 @@ public sealed class InvoiceSyncHandler(IOptions<ProcessingSettings> processingOp
 
         if (recepcionResponse.IsSuccessful)
         {
-            dbContext.InvoiceProcessingLog.Add(InvoiceProcessingLog.CreateResponse(invoice.Id, InvoiceProcessingStatus.Processed, recepcionRequest.ToJson()));
+            dbContext.InvoiceSyncLog.Add(InvoiceSyncLog.CreateResponse(invoice.Id, SyncStatus.Processed, recepcionRequest.ToJson()));
 
-            invoice.ProcessingStatusId = (short)InvoiceProcessingStatus.Processed;
+            invoice.SyncStatusId = (short)SyncStatus.Processed;
             invoice.EmitDateTime = DateTime.Now;
             invoice.ReceiptStamp = recepcionResponse.SelloRecibido;
             invoice.ExternalUrl = request.ThirdPartyClientParameters.GetPublicQuery()
@@ -61,7 +61,7 @@ public sealed class InvoiceSyncHandler(IOptions<ProcessingSettings> processingOp
                 .Replace("emitDate", invoice.InvoiceDate?.ToString("yyyy-MM-dd"))
                 ;
 
-            dbContext.InvoiceProcessingStatusLog.Add(new(invoice.Id, invoice.ProcessingStatusId));
+            dbContext.InvoiceSyncStatusLog.Add(new(invoice.Id, invoice.SyncStatusId));
 
             ReceiveInvoice(invoice, firmarDocumentoResponse.Body);
 
@@ -70,12 +70,12 @@ public sealed class InvoiceSyncHandler(IOptions<ProcessingSettings> processingOp
         }
         else
         {
-            dbContext.InvoiceProcessingLog.Add(InvoiceProcessingLog.CreateResponse(invoice.Id, InvoiceProcessingStatus.Declined, recepcionRequest.ToJson()));
+            dbContext.InvoiceSyncLog.Add(InvoiceSyncLog.CreateResponse(invoice.Id, SyncStatus.Declined, recepcionRequest.ToJson()));
 
-            invoice.ProcessingStatusId = (short)InvoiceProcessingStatus.Declined;
+            invoice.SyncStatusId = (short)SyncStatus.Declined;
             invoice.SyncAttempts += 1;
 
-            dbContext.InvoiceProcessingStatusLog.Add(new(invoice.Id, invoice.ProcessingStatusId));
+            dbContext.InvoiceSyncStatusLog.Add(new(invoice.Id, invoice.SyncStatusId));
         }
 
         await dbContext.SaveChangesAsync(ct);
@@ -133,5 +133,7 @@ public sealed class InvoiceSyncHandler(IOptions<ProcessingSettings> processingOp
 
             invoice.Payload = receivedInvoice.ToJson();
         }
+        else
+            throw new NotImplementedException($"There is no implementation for {invoice.InvoiceTypeId} invoice type");
     }
 }

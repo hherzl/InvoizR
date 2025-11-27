@@ -1,4 +1,5 @@
 ﻿using InvoizR.Application.Common.Contracts;
+using InvoizR.Clients.DataContracts.Common;
 using InvoizR.Clients.DataContracts.Invoices;
 using InvoizR.Domain.Enums;
 using MediatR;
@@ -6,20 +7,19 @@ using Microsoft.EntityFrameworkCore;
 
 namespace InvoizR.Application.Features.Invoices.Queries;
 
-public sealed class GetInvoiceQueryHandler(IInvoizRDbContext dbContext) : IRequestHandler<GetInvoiceQuery, InvoiceDetailsModel>
+public sealed class GetInvoiceQueryHandler(IInvoizRDbContext dbContext) : IRequestHandler<GetInvoiceQuery, SingleResponse<InvoiceDetailsModel>>
 {
-    public async Task<InvoiceDetailsModel> Handle(GetInvoiceQuery request, CancellationToken cancellationToken)
+    public async Task<SingleResponse<InvoiceDetailsModel>> Handle(GetInvoiceQuery request, CancellationToken ct = default)
     {
-        var entity = await dbContext.GetInvoiceAsync(request.Id, ct: cancellationToken);
+        var entity = await dbContext.GetInvoiceAsync(request.Id, ct: ct);
         if (entity == null)
             return null;
 
-        var processingStatuses = await dbContext.VInvoiceProcessingStatus.ToListAsync(cancellationToken);
-
-        var processingStatusLogs = await dbContext.GetInvoiceProcessingStatusLogs(entity.Id).ToListAsync(cancellationToken);
-        var processingLogs = await dbContext.GetInvoiceProcessingLogs(entity.Id).ToListAsync(cancellationToken);
-        var files = await dbContext.GetInvoiceFilesBy(entity.Id).ToListAsync(cancellationToken);
-        var notifications = await dbContext.GetInvoiceNotifications(entity.Id).ToListAsync(cancellationToken);
+        var syncStatuses = await dbContext.VInvoiceSyncStatus.ToListAsync(ct);
+        var syncStatusLogs = await dbContext.GetInvoiceSyncStatusLogs(entity.Id).ToListAsync(ct);
+        var syncLogs = await dbContext.GetInvoiceSyncLogs(entity.Id).ToListAsync(ct);
+        var files = await dbContext.GetInvoiceFilesBy(entity.Id).ToListAsync(ct);
+        var notifications = await dbContext.GetInvoiceNotifications(entity.Id).ToListAsync(ct);
 
         var model = new InvoiceDetailsModel
         {
@@ -45,8 +45,8 @@ public sealed class GetInvoiceQueryHandler(IInvoizRDbContext dbContext) : IReque
             InvoiceGuid = entity.InvoiceGuid,
             AuditNumber = entity.AuditNumber,
             Payload = entity.Payload,
-            ProcessingStatusId = entity.ProcessingStatusId,
-            ProcessingStatus = processingStatuses.First(item => item.Id == entity.ProcessingStatusId).Desc,
+            SyncStatusId = entity.SyncStatusId,
+            SyncStatus = syncStatuses.First(item => item.Id == entity.SyncStatusId).Desc,
             RetryIn = entity.RetryIn,
             SyncAttempts = entity.SyncAttempts,
             EmitDateTime = entity.EmitDateTime,
@@ -54,13 +54,13 @@ public sealed class GetInvoiceQueryHandler(IInvoizRDbContext dbContext) : IReque
             ExternalUrl = entity.ExternalUrl,
             Notes = entity.Notes,
             CreatedAt = entity.CreatedAt,
-            Processed = entity.ProcessingStatusId >= (short)InvoiceProcessingStatus.Processed,
-            ProcessingStatusLogs = processingStatusLogs,
-            ProcessingLogs = processingLogs,
+            Processed = entity.SyncStatusId >= (short)SyncStatus.Processed,
+            SyncStatusLogs = syncStatusLogs,
+            SyncLogs = syncLogs,
             Files = files,
             Notifications = notifications
         };
 
-        return model;
+        return new(model);
     }
 }

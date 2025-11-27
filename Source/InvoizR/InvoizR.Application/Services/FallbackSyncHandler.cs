@@ -30,7 +30,7 @@ public sealed class FallbackSyncHandler(IOptions<ProcessingSettings> processingO
         var firmarDocumentoResponse = await firmadorClient.FirmarDocumentoAsync(firmarDocumentoRequest);
         await File.WriteAllTextAsync(_processingSettings.GetFirmaResponseJsonPath(fallback.FallbackGuid), firmarDocumentoResponse.ToJson(), ct);
 
-        dbContext.FallbackProcessingLog.Add(FallbackProcessingLog.CreateRequest(fallback.Id, InvoiceProcessingStatus.Requested, firmarDocumentoResponse.ToJson()));
+        dbContext.FallbackProcessingLog.Add(FallbackProcessingLog.CreateRequest(fallback.Id, SyncStatus.Requested, firmarDocumentoResponse.ToJson()));
 
         var contingenciaRequest = new ContingenciaRequest("NIT", firmarDocumentoResponse.Body);
         await File.WriteAllTextAsync(_processingSettings.GetRecepcionRequestJsonPath(fallback.FallbackGuid), contingenciaRequest.ToJson(), ct);
@@ -42,17 +42,17 @@ public sealed class FallbackSyncHandler(IOptions<ProcessingSettings> processingO
 
         if (contingenciaResponse.IsSuccessful)
         {
-            dbContext.FallbackProcessingLog.Add(FallbackProcessingLog.CreateResponse(fallback.Id, InvoiceProcessingStatus.Processed, contingenciaRequest.ToJson()));
+            dbContext.FallbackProcessingLog.Add(FallbackProcessingLog.CreateResponse(fallback.Id, SyncStatus.Processed, contingenciaRequest.ToJson()));
 
-            fallback.SyncStatusId = (short)InvoiceProcessingStatus.Processed;
+            fallback.SyncStatusId = (short)SyncStatus.Processed;
             fallback.EmitDateTime = DateTime.Now;
             fallback.ReceiptStamp = contingenciaResponse.SelloRecibido;
         }
         else
         {
-            dbContext.FallbackProcessingLog.Add(FallbackProcessingLog.CreateResponse(fallback.Id, InvoiceProcessingStatus.Declined, contingenciaResponse.ToJson()));
+            dbContext.FallbackProcessingLog.Add(FallbackProcessingLog.CreateResponse(fallback.Id, SyncStatus.Declined, contingenciaResponse.ToJson()));
 
-            fallback.SyncStatusId = (short)InvoiceProcessingStatus.Declined;
+            fallback.SyncStatusId = (short)SyncStatus.Declined;
             fallback.SyncAttempts += 1;
         }
 

@@ -55,14 +55,14 @@ public sealed class CreateDte01OWCommandHandler(ILogger<CreateDte01OWCommandHand
                 Lines = request.Lines,
                 Payload = request.Dte.ToJson(),
                 ProcessingTypeId = (short)InvoiceProcessingType.OneWay,
-                ProcessingStatusId = (short)InvoiceProcessingStatus.Created
+                SyncStatusId = (short)SyncStatus.Created
             };
 
             dbContext.Invoice.Add(invoice);
 
             await dbContext.SaveChangesAsync(ct);
 
-            dbContext.InvoiceProcessingStatusLog.Add(new(invoice.Id, invoice.ProcessingStatusId));
+            dbContext.InvoiceSyncStatusLog.Add(new(invoice.Id, invoice.SyncStatusId));
 
             await dbContext.SaveChangesAsync(ct);
 
@@ -71,7 +71,7 @@ public sealed class CreateDte01OWCommandHandler(ILogger<CreateDte01OWCommandHand
             var fallback = await dbContext.GetCurrentFallbackAsync(pos.Branch.Company.Id, ct: ct);
             if (fallback?.Enable == true)
             {
-                logger.LogInformation($"Processing '{invoice.InvoiceNumber}' invoice, changing status from '{InvoiceProcessingStatus.Created}'...");
+                logger.LogInformation($"Processing '{invoice.InvoiceNumber}' invoice, changing status from '{SyncStatus.Created}'...");
 
                 await dteSyncStatusChanger.SetInvoiceAsInitializedAsync(invoice.Id, dbContext, ct);
 
@@ -81,7 +81,7 @@ public sealed class CreateDte01OWCommandHandler(ILogger<CreateDte01OWCommandHand
 
                 invoice.Payload = dte.ToJson();
 
-                logger.LogInformation($"Processing '{invoice.InvoiceNumber}' invoice, changing status from '{InvoiceProcessingStatus.Initialized}'...");
+                logger.LogInformation($"Processing '{invoice.InvoiceNumber}' invoice, changing status from '{SyncStatus.Initialized}'...");
 
                 invoice.FallbackId = fallback.Id;
 

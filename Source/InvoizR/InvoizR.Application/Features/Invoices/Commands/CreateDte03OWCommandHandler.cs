@@ -13,7 +13,7 @@ namespace InvoizR.Application.Features.Invoices.Commands;
 public sealed class CreateDte03OWCommandHandler(ILogger<CreateDte03OWCommandHandler> logger, IInvoizRDbContext dbContext)
     : IRequestHandler<CreateDte03OWCommand, CreatedInvoiceResponse>
 {
-    public async Task<CreatedInvoiceResponse> Handle(CreateDte03OWCommand request, CancellationToken ct)
+    public async Task<CreatedInvoiceResponse> Handle(CreateDte03OWCommand request, CancellationToken ct = default)
     {
         _ = await dbContext.GetCurrentInvoiceTypeAsync(FeCcfv3.TypeId, ct: ct) ?? throw new InvalidCurrentInvoiceTypeException();
 
@@ -45,14 +45,14 @@ public sealed class CreateDte03OWCommandHandler(ILogger<CreateDte03OWCommandHand
                 Lines = request.Lines,
                 Payload = request.Dte.ToJson(),
                 ProcessingTypeId = (short)InvoiceProcessingType.OneWay,
-                ProcessingStatusId = (short)InvoiceProcessingStatus.Created
+                SyncStatusId = (short)SyncStatus.Created
             };
 
             dbContext.Invoice.Add(invoice);
 
             await dbContext.SaveChangesAsync(ct);
 
-            dbContext.InvoiceProcessingStatusLog.Add(new(invoice.Id, invoice.ProcessingStatusId));
+            dbContext.InvoiceSyncStatusLog.Add(new(invoice.Id, invoice.SyncStatusId));
 
             await dbContext.SaveChangesAsync(ct);
 

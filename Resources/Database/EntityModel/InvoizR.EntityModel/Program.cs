@@ -355,7 +355,7 @@ var invoice = db
         AuditNumber = "",
         Payload = "",
         ProcessingTypeId = (short)0,
-        ProcessingStatusId = (short)0,
+        SyncStatusId = (short)0,
         RetryIn = 0,
         SyncAttempts = 0,
         EmitDateTime = now,
@@ -421,30 +421,30 @@ var invoiceValidation = db
     .AddForeignKey(e => e.InvoiceId, invoice.Table)
     ;
 
-var invoiceProcessingStatusLog = db
+var invoiceSyncStatusLog = db
     .DefineEntity(new
     {
         Id = (long)0,
         InvoiceId = (long)0,
-        ProcessingStatusId = (short)0
+        SyncStatusId = (short)0
     })
-    .SetNaming("InvoiceProcessingStatusLog")
+    .SetNaming("InvoiceSyncStatusLog")
     .SetIdentity(e => e.Id)
     .SetPrimaryKey(e => e.Id)
     .AddForeignKey(e => e.InvoiceId, invoice.Table)
     ;
 
-var invoiceProcessingLog = db
+var invoiceSyncLog = db
     .DefineEntity(new
     {
         Id = (long)0,
         InvoiceId = (long)0,
-        ProcessingStatusId = (short)0,
+        SyncStatusId = (short)0,
         LogType = "",
         ContentType = "",
         Content = ""
     })
-    .SetNaming("InvoiceProcessingLog")
+    .SetNaming("InvoiceSyncLog")
     .SetColumnFor(e => e.LogType, 25)
     .SetColumnFor(e => e.ContentType, 50)
     .SetIdentity(e => e.Id)

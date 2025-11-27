@@ -1,6 +1,6 @@
 ﻿namespace InvoizR.Domain.Enums;
 
-public enum InvoiceProcessingStatus : short
+public enum SyncStatus : short
 {
     Created = 0,
     InvalidSchema = 100,

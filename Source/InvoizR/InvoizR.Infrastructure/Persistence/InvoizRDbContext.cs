@@ -20,24 +20,27 @@ public partial class InvoizRDbContext : DbContext, IInvoizRDbContext
     public DbSet<ThirdPartyService> ThirdPartyService { get; set; }
     public DbSet<ThirdPartyServiceParameter> ThirdPartyServiceParameter { get; set; }
     public DbSet<EnumDescription> EnumDescription { get; set; }
+
     public DbSet<Fallback> Fallback { get; set; }
     public DbSet<FallbackProcessingLog> FallbackProcessingLog { get; set; }
     public DbSet<FallbackFile> FallbackFile { get; set; }
+
     public DbSet<Responsible> Responsible { get; set; }
     public DbSet<Company> Company { get; set; }
     public DbSet<Branch> Branch { get; set; }
     public DbSet<BranchNotification> BranchNotification { get; set; }
     public DbSet<Pos> Pos { get; set; }
+
     public DbSet<InvoiceType> InvoiceType { get; set; }
     public DbSet<Invoice> Invoice { get; set; }
-    public DbSet<InvoiceProcessingStatusLog> InvoiceProcessingStatusLog { get; set; }
-    public DbSet<InvoiceProcessingLog> InvoiceProcessingLog { get; set; }
+    public DbSet<InvoiceSyncStatusLog> InvoiceSyncStatusLog { get; set; }
+    public DbSet<InvoiceSyncLog> InvoiceSyncLog { get; set; }
     public DbSet<InvoiceNotification> InvoiceNotification { get; set; }
     public DbSet<InvoiceFile> InvoiceFile { get; set; }
     public DbSet<InvoiceWebhookNotification> InvoiceWebhookNotification { get; set; }
     public DbSet<InvoiceCancellationLog> InvoiceCancellationLog { get; set; }
 
-    public DbSet<VInvoiceProcessingStatus> VInvoiceProcessingStatus { get; set; }
+    public DbSet<VInvoiceSyncStatus> VInvoiceSyncStatus { get; set; }
     public DbSet<VInvoiceProcessingType> VInvoiceProcessingType { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

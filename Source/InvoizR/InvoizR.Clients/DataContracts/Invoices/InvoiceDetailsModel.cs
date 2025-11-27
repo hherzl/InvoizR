@@ -16,6 +16,7 @@ public record InvoiceDetailsModel
     public string CustomerPhone { get; set; }
     public string CustomerEmail { get; set; }
     public DateTime? CustomerLastUpdated { get; set; }
+
     public short? InvoiceTypeId { get; set; }
     public long? InvoiceNumber { get; set; }
     public DateTime? InvoiceDate { get; set; }
@@ -26,8 +27,8 @@ public record InvoiceDetailsModel
     public string InvoiceGuid { get; set; }
     public string AuditNumber { get; set; }
     public string Payload { get; set; }
-    public short? ProcessingStatusId { get; set; }
-    public string ProcessingStatus { get; set; }
+    public short? SyncStatusId { get; set; }
+    public string SyncStatus { get; set; }
     public int? RetryIn { get; set; }
     public int? SyncAttempts { get; set; }
     public DateTime? EmitDateTime { get; set; }
@@ -37,8 +38,8 @@ public record InvoiceDetailsModel
     public DateTime? CreatedAt { get; set; }
     public bool Processed { get; set; }
 
-    public List<InvoiceProcessingStatusLogItemModel> ProcessingStatusLogs { get; set; }
-    public List<InvoiceProcessingLogItemModel> ProcessingLogs { get; set; }
+    public List<InvoiceSyncStatusLogItemModel> SyncStatusLogs { get; set; }
+    public List<InvoiceSyncLogItemModel> SyncLogs { get; set; }
     public List<InvoiceFileItemModel> Files { get; set; }
     public List<InvoiceNotificationItemModel> Notifications { get; set; }
 }

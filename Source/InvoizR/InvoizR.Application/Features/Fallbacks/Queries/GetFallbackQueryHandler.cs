@@ -8,16 +8,16 @@ namespace InvoizR.Application.Features.Fallbacks.Queries;
 
 public sealed class GetFallbackQueryHandler(IInvoizRDbContext dbContext) : IRequestHandler<GetFallbackQuery, SingleResponse<FallbackDetailsModel>>
 {
-    public async Task<SingleResponse<FallbackDetailsModel>> Handle(GetFallbackQuery request, CancellationToken st)
+    public async Task<SingleResponse<FallbackDetailsModel>> Handle(GetFallbackQuery request, CancellationToken ct = default)
     {
-        var entity = await dbContext.GetFallbackAsync(request.Id, includes: true, ct: st);
+        var entity = await dbContext.GetFallbackAsync(request.Id, includes: true, ct: ct);
         if (entity == null)
             return null;
 
-        var processingStatuses = await dbContext.VInvoiceProcessingStatus.ToListAsync(st);
-        var invoices = await dbContext.GetInvoicesByFallback(entity.Id).ToListAsync(st);
-        var processingLogs = await dbContext.GetFallbackProcessingLogs(entity.Id).ToListAsync(st);
-        var files = await dbContext.GetFallbackFiles(entity.Id).ToListAsync(st);
+        var syncStatuses = await dbContext.VInvoiceSyncStatus.ToListAsync(ct);
+        var invoices = await dbContext.GetInvoicesByFallback(entity.Id).ToListAsync(ct);
+        var processingLogs = await dbContext.GetFallbackProcessingLogs(entity.Id).ToListAsync(ct);
+        var files = await dbContext.GetFallbackFiles(entity.Id).ToListAsync(ct);
 
         var model = new FallbackDetailsModel
         {
@@ -30,7 +30,7 @@ public sealed class GetFallbackQueryHandler(IInvoizRDbContext dbContext) : IRequ
             Enable = entity.Enable,
             FallbackGuid = entity.FallbackGuid,
             SyncStatusId = entity.SyncStatusId,
-            SyncStatus = processingStatuses.FirstOrDefault(item => item.Id == entity.SyncStatusId)?.Desc,
+            SyncStatus = syncStatuses.FirstOrDefault(item => item.Id == entity.SyncStatusId)?.Desc,
             Payload = entity.Payload,
             RetryIn = entity.RetryIn,
             SyncAttempts = entity.SyncAttempts,

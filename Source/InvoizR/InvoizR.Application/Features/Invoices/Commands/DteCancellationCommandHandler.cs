@@ -8,60 +8,41 @@ using InvoizR.Domain.Enums;
 using InvoizR.Domain.Exceptions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace InvoizR.Application.Features.Invoices.Commands;
 
-public sealed class DteCancellationCommandHandler : IRequestHandler<DteCancellationCommand, Response>
+public sealed class DteCancellationCommandHandler(IInvoizRDbContext dbContext, ISeguridadClient seguridadClient, InvoiceCancellationHandler dteCancellationHandler)
+    : IRequestHandler<DteCancellationCommand, Response>
 {
-    private readonly ILogger _logger;
-    private readonly IInvoizRDbContext _dbContext;
-    private readonly ISeguridadClient _seguridadClient;
-    private readonly InvoiceCancellationHandler _dteCancellationHandler;
-
-    public DteCancellationCommandHandler
-    (
-        ILogger<DteCancellationCommandHandler> logger,
-        IInvoizRDbContext dbContext,
-        ISeguridadClient seguridadClient,
-        InvoiceCancellationHandler dteCancellationHandler
-    )
+    public async Task<Response> Handle(DteCancellationCommand request, CancellationToken ct)
     {
-        _logger = logger;
-        _dbContext = dbContext;
-        _seguridadClient = seguridadClient;
-        _dteCancellationHandler = dteCancellationHandler;
-    }
-
-    public async Task<Response> Handle(DteCancellationCommand request, CancellationToken st)
-    {
-        var invoice = await _dbContext.GetInvoiceAsync(request.InvoiceId, includes: true, ct: st);
+        var invoice = await dbContext.GetInvoiceAsync(request.InvoiceId, includes: true, ct: ct);
         if (invoice == null)
             return null;
 
-        var processingStatuses = new short?[] { (short)InvoiceProcessingStatus.Processed, (short)InvoiceProcessingStatus.Notified };
-        if (!processingStatuses.Contains(invoice.ProcessingStatusId))
+        var syncStatuses = new short?[] { (short)SyncStatus.Processed, (short)SyncStatus.Notified };
+        if (!syncStatuses.Contains(invoice.SyncStatusId))
             throw new InvalidInvoiceCancellationException();
 
-        var invoiceType = await _dbContext.GetCurrentInvoiceTypeAsync(invoice.InvoiceTypeId, ct: st);
+        var invoiceType = await dbContext.GetCurrentInvoiceTypeAsync(invoice.InvoiceTypeId, ct: ct);
         if (DateTime.Now.Subtract(invoice.EmitDateTime.Value).TotalDays > invoiceType.CancellationPeriodInDays)
             throw new InvalidInvoiceCancellationException();
 
-        var responsible = await _dbContext.GetResponsibleByCompanyIdAsync(invoice.Pos.Branch.Company.Id, ct: st);
+        var responsible = await dbContext.GetResponsibleByCompanyIdAsync(invoice.Pos.Branch.Company.Id, ct: ct);
         if (responsible == null || responsible.AuthorizeCancellation == false)
             throw new NoResponsibleForInvoiceCancellationException();
 
-        var thirdPartyServices = await _dbContext.GetThirdPartyServices(invoice.Pos.Branch.Company.Environment, includes: true).ToListAsync(st);
+        var thirdPartyServices = await dbContext.GetThirdPartyServices(invoice.Pos.Branch.Company.Environment, includes: true).ToListAsync(ct);
         if (thirdPartyServices.Count == 0)
             throw new NoThirdPartyServicesException(invoice.Pos.Branch.Company.Name, invoice.Pos.Branch.Company.Environment);
 
         var thirdPartyServicesParameters = thirdPartyServices.GetThirdPartyClientParameters().ToList();
-        _seguridadClient.ClientSettings = thirdPartyServicesParameters.GetByService(_seguridadClient.ServiceName).ToSeguridadClientSettings();
-        var authResponse = await _seguridadClient.AuthAsync();
+        seguridadClient.ClientSettings = thirdPartyServicesParameters.GetByService(seguridadClient.ServiceName).ToSeguridadClientSettings();
+        var authResponse = await seguridadClient.AuthAsync();
         thirdPartyServicesParameters.AddJwt(invoice.Pos.Branch.Company.Environment, authResponse.Body.Token);
 
-        if (await _dteCancellationHandler.HandleAsync(new CancelDteRequest(thirdPartyServicesParameters, invoice.Id, request.Anulacion, responsible), _dbContext, st: st))
-            await _dbContext.DispatchNotificationsAsync(st);
+        if (await dteCancellationHandler.HandleAsync(new CancelDteRequest(thirdPartyServicesParameters, invoice.Id, request.Anulacion, responsible), dbContext, ct: ct))
+            await dbContext.DispatchNotificationsAsync(ct);
 
         return new();
     }

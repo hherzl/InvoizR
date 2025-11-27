@@ -20,14 +20,14 @@ namespace InvoizR.Application.Features.Invoices.Commands;
 public sealed class CreateDte06RTCommandHandler(ILogger<CreateDte06RTCommandHandler> logger, IServiceProvider serviceProvider)
     : IRequestHandler<CreateDte06RTCommand, CreatedInvoiceResponse>
 {
-    public async Task<CreatedInvoiceResponse> Handle(CreateDte06RTCommand request, CancellationToken ct)
+    public async Task<CreatedInvoiceResponse> Handle(CreateDte06RTCommand request, CancellationToken ct = default)
     {
-        using var scope = serviceProvider.CreateScope();
+        using var serviceScope = serviceProvider.CreateScope();
 
-        using var dbContext = scope.ServiceProvider.GetRequiredService<IInvoizRDbContext>();
-        var dteSyncStatusChanger = scope.ServiceProvider.GetRequiredService<Dte06SyncStatusChanger>();
-        var seguridadClient = scope.ServiceProvider.GetRequiredService<ISeguridadClient>();
-        var dteSyncHandler = scope.ServiceProvider.GetRequiredService<InvoiceSyncHandler>();
+        using var dbContext = serviceScope.ServiceProvider.GetRequiredService<IInvoizRDbContext>();
+        var dteSyncStatusChanger = serviceScope.ServiceProvider.GetRequiredService<Dte06SyncStatusChanger>();
+        var seguridadClient = serviceScope.ServiceProvider.GetRequiredService<ISeguridadClient>();
+        var dteSyncHandler = serviceScope.ServiceProvider.GetRequiredService<InvoiceSyncHandler>();
 
         _ = await dbContext.GetCurrentInvoiceTypeAsync(FeNdv3.TypeId, ct: ct) ?? throw new InvalidCurrentInvoiceTypeException();
 
@@ -61,14 +61,14 @@ public sealed class CreateDte06RTCommandHandler(ILogger<CreateDte06RTCommandHand
                 Lines = request.Lines,
                 Payload = request.Dte.ToJson(),
                 ProcessingTypeId = (short)InvoiceProcessingType.RoundTrip,
-                ProcessingStatusId = (short)InvoiceProcessingStatus.Created
+                SyncStatusId = (short)SyncStatus.Created
             };
 
             dbContext.Invoice.Add(invoice);
 
             await dbContext.SaveChangesAsync(ct);
 
-            dbContext.InvoiceProcessingStatusLog.Add(new(invoice.Id, invoice.ProcessingStatusId));
+            dbContext.InvoiceSyncStatusLog.Add(new(invoice.Id, invoice.SyncStatusId));
 
             await dbContext.SaveChangesAsync(ct);
 
@@ -81,7 +81,7 @@ public sealed class CreateDte06RTCommandHandler(ILogger<CreateDte06RTCommandHand
             return new();
         }
 
-        logger.LogInformation($"Processing '{invoice.InvoiceNumber}' invoice, changing status from '{InvoiceProcessingStatus.Created}'...");
+        logger.LogInformation($"Processing '{invoice.InvoiceNumber}' invoice, changing status from '{SyncStatus.Created}'...");
 
         await dteSyncStatusChanger.SetInvoiceAsInitializedAsync(invoice.Id, dbContext, ct);
 
@@ -94,7 +94,7 @@ public sealed class CreateDte06RTCommandHandler(ILogger<CreateDte06RTCommandHand
 
             invoice.Payload = dte.ToJson();
 
-            logger.LogInformation($"Processing '{invoice.InvoiceNumber}' invoice, changing status from '{InvoiceProcessingStatus.Initialized}'...");
+            logger.LogInformation($"Processing '{invoice.InvoiceNumber}' invoice, changing status from '{SyncStatus.Initialized}'...");
 
             invoice.FallbackId = fallback.Id;
             await dteSyncStatusChanger.SetInvoiceAsFallbackAsync(invoice.Id, dbContext, ct);
@@ -104,11 +104,11 @@ public sealed class CreateDte06RTCommandHandler(ILogger<CreateDte06RTCommandHand
         }
         else
         {
-            logger.LogInformation($"Processing '{invoice.InvoiceNumber}' invoice, changing status from '{InvoiceProcessingStatus.Initialized}'...");
+            logger.LogInformation($"Processing '{invoice.InvoiceNumber}' invoice, changing status from '{SyncStatus.Initialized}'...");
 
             await dteSyncStatusChanger.SetInvoiceAsRequestedAsync(invoice.Id, dbContext, ct);
 
-            logger.LogInformation($"Processing '{invoice.InvoiceNumber}' invoice, changing status from '{InvoiceProcessingStatus.Requested}'...");
+            logger.LogInformation($"Processing '{invoice.InvoiceNumber}' invoice, changing status from '{SyncStatus.Requested}'...");
 
             var thirdPartyServices = await dbContext.GetThirdPartyServices(pos.Branch.Company.Environment, includes: true).ToListAsync(ct);
             if (thirdPartyServices.Count == 0)

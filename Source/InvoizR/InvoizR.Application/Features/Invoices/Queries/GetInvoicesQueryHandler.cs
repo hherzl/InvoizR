@@ -10,7 +10,7 @@ namespace InvoizR.Application.Features.Invoices.Queries;
 
 public sealed class GetInvoicesQueryHandler(IInvoizRDbContext dbContext) : IRequestHandler<GetInvoicesQuery, PagedResponse<InvoiceItemModel>>
 {
-    public async Task<PagedResponse<InvoiceItemModel>> Handle(GetInvoicesQuery request, CancellationToken ct)
+    public async Task<PagedResponse<InvoiceItemModel>> Handle(GetInvoicesQuery request, CancellationToken ct = default)
     {
         var query =
             from invoice in dbContext.Invoice
@@ -19,7 +19,7 @@ public sealed class GetInvoicesQueryHandler(IInvoizRDbContext dbContext) : IRequ
             join company in dbContext.Company on branch.CompanyId equals company.Id
             join invoiceType in dbContext.InvoiceType on invoice.InvoiceTypeId equals invoiceType.Id
             join vProcessingType in dbContext.VInvoiceProcessingType on invoice.ProcessingTypeId equals vProcessingType.Id
-            join vInvoiceSyncStatus in dbContext.VInvoiceProcessingStatus on invoice.ProcessingStatusId equals vInvoiceSyncStatus.Id
+            join vInvoiceSyncStatus in dbContext.VInvoiceSyncStatus on invoice.SyncStatusId equals vInvoiceSyncStatus.Id
             orderby invoice.InvoiceDate descending
             select new InvoiceItemModel
             {
@@ -41,7 +41,7 @@ public sealed class GetInvoicesQueryHandler(IInvoizRDbContext dbContext) : IRequ
                 AuditNumber = invoice.AuditNumber,
                 ProcessingTypeId = invoice.ProcessingTypeId,
                 ProcessingType = vProcessingType.Desc,
-                SyncStatusId = invoice.ProcessingStatusId,
+                SyncStatusId = invoice.SyncStatusId,
                 SyncStatus = vInvoiceSyncStatus.Desc
             };
 

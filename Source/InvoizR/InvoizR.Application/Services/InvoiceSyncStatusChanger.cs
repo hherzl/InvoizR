@@ -9,10 +9,10 @@ public abstract class InvoiceSyncStatusChanger(ILogger logger)
 {
     protected abstract bool Init(Invoice invoice);
 
-    public async Task SetInvoiceAsInitializedAsync(long? invoiceId, IInvoizRDbContext dbContext, CancellationToken cancellationToken = default)
+    public async Task SetInvoiceAsInitializedAsync(long? invoiceId, IInvoizRDbContext dbContext, CancellationToken ct = default)
     {
-        var invoice = await dbContext.GetInvoiceAsync(invoiceId, includes: true, tracking: true, ct: cancellationToken);
-        var invoiceType = await dbContext.GetInvoiceTypeAsync(invoice.InvoiceTypeId, ct: cancellationToken);
+        var invoice = await dbContext.GetInvoiceAsync(invoiceId, includes: true, tracking: true, ct: ct);
+        var invoiceType = await dbContext.GetInvoiceTypeAsync(invoice.InvoiceTypeId, ct: ct);
 
         var invoiceCodes = new InvoiceCodeGenerator().Generate(invoiceType.Id, invoice.Pos.Branch.TaxAuthId, invoice.Pos.TaxAuthId, invoice.InvoiceNumber);
 
@@ -20,13 +20,13 @@ public abstract class InvoiceSyncStatusChanger(ILogger logger)
         invoice.SchemaVersion = invoiceType.SchemaVersion;
         invoice.InvoiceGuid = invoiceCodes.InvoiceGuid;
         invoice.AuditNumber = invoiceCodes.AuditNumber;
-        invoice.ProcessingStatusId = (short)InvoiceProcessingStatus.Initialized;
+        invoice.SyncStatusId = (short)SyncStatus.Initialized;
 
-        dbContext.InvoiceProcessingStatusLog.Add(new(invoice.Id, invoice.ProcessingStatusId));
+        dbContext.InvoiceSyncStatusLog.Add(new(invoice.Id, invoice.SyncStatusId));
 
         logger.LogInformation($" Updating '{invoice.InvoiceNumber}' invoice: '{invoice.SchemaType}{invoice.SchemaVersion}', '{invoice.InvoiceGuid}', '{invoice.AuditNumber}'...");
 
-        await dbContext.SaveChangesAsync(cancellationToken);
+        await dbContext.SaveChangesAsync(ct);
     }
 
     public async Task SetInvoiceAsFallbackAsync(long? invoiceId, IInvoizRDbContext dbContext, CancellationToken cancellationToken = default)
@@ -34,9 +34,9 @@ public abstract class InvoiceSyncStatusChanger(ILogger logger)
         var invoice = await dbContext.GetInvoiceAsync(invoiceId, tracking: true, ct: cancellationToken);
 
         invoice.ProcessingTypeId = (short)InvoiceProcessingType.OneWay;
-        invoice.ProcessingStatusId = (short)InvoiceProcessingStatus.Fallback;
+        invoice.SyncStatusId = (short)SyncStatus.Fallback;
 
-        dbContext.InvoiceProcessingStatusLog.Add(new(invoice.Id, invoice.ProcessingStatusId));
+        dbContext.InvoiceSyncStatusLog.Add(new(invoice.Id, invoice.SyncStatusId));
 
         logger.LogInformation($" Updating '{invoice.InvoiceNumber}' invoice: '{invoice.SchemaType}{invoice.SchemaVersion}', '{invoice.InvoiceGuid}', '{invoice.AuditNumber}'...");
 
@@ -48,11 +48,11 @@ public abstract class InvoiceSyncStatusChanger(ILogger logger)
         var invoice = await dbContext.GetInvoiceAsync(invoiceId, tracking: true, ct: cancellationToken);
 
         if (Init(invoice))
-            invoice.ProcessingStatusId = (short)InvoiceProcessingStatus.Requested;
+            invoice.SyncStatusId = (short)SyncStatus.Requested;
         else
-            invoice.ProcessingStatusId = (short)InvoiceProcessingStatus.InvalidSchema;
+            invoice.SyncStatusId = (short)SyncStatus.InvalidSchema;
 
-        dbContext.InvoiceProcessingStatusLog.Add(new(invoice.Id, invoice.ProcessingStatusId));
+        dbContext.InvoiceSyncStatusLog.Add(new(invoice.Id, invoice.SyncStatusId));
 
         logger.LogInformation($" Updating '{invoice.InvoiceNumber}' invoice: '{invoice.SchemaType}{invoice.SchemaVersion}', '{invoice.InvoiceGuid}', '{invoice.AuditNumber}'...");
 

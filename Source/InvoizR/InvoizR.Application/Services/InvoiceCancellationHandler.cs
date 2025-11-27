@@ -11,47 +11,47 @@ namespace InvoizR.Application.Services;
 
 public sealed class InvoiceCancellationHandler(IOptions<ProcessingSettings> processingOptions, IFirmadorClient firmadorClient, IFeSvClient feSvClient)
 {
-    public async Task<bool> HandleAsync(ICancelDteRequest request, IInvoizRDbContext dbContext, CancellationToken st = default)
+    public async Task<bool> HandleAsync(ICancelDteRequest request, IInvoizRDbContext dbContext, CancellationToken ct = default)
     {
-        var _processingSettings = processingOptions.Value;
+        var processingSettings = processingOptions.Value;
 
-        var invoice = await dbContext.GetInvoiceAsync(request.InvoiceId, true, true, st);
+        var invoice = await dbContext.GetInvoiceAsync(request.InvoiceId, true, true, ct);
 
-        if (!Directory.Exists(_processingSettings.GetLogsPath(invoice.AuditNumber)))
-            Directory.CreateDirectory(_processingSettings.GetLogsPath(invoice.AuditNumber));
+        if (!Directory.Exists(processingSettings.GetLogsPath(invoice.AuditNumber)))
+            Directory.CreateDirectory(processingSettings.GetLogsPath(invoice.AuditNumber));
 
         firmadorClient.ClientSettings = request.ThirdPartyClientParameters.GetByService(firmadorClient.ServiceName).ToFirmadorClientSettings();
 
         var firmarDocumentoRequest = new FirmarDocumentoRequest<Anulacionv2>(request.ThirdPartyClientParameters.GetUser(), true, request.ThirdPartyClientParameters.GetPrivateKey(), request.Anulacion);
-        await File.WriteAllTextAsync(_processingSettings.GetInvoiceCancellationFirmaRequestJsonPath(invoice.AuditNumber), firmarDocumentoRequest.ToJson(), st);
+        await File.WriteAllTextAsync(processingSettings.GetInvoiceCancellationFirmaRequestJsonPath(invoice.AuditNumber), firmarDocumentoRequest.ToJson(), ct);
 
         var firmarDocumentoResponse = await firmadorClient.FirmarDocumentoAsync(firmarDocumentoRequest);
-        await File.WriteAllTextAsync(_processingSettings.GetInvoiceCancellationFirmaResponseJsonPath(invoice.AuditNumber), firmarDocumentoResponse.ToJson(), st);
+        await File.WriteAllTextAsync(processingSettings.GetInvoiceCancellationFirmaResponseJsonPath(invoice.AuditNumber), firmarDocumentoResponse.ToJson(), ct);
 
         dbContext.InvoiceCancellationLog.Add(InvoiceCancellationLog.CreateRequest(invoice.Id, firmarDocumentoResponse.ToJson()));
 
         var anularDteRequest = new AnularDteRequest(invoice.Pos.Branch.Company.Environment, firmarDocumentoResponse.Body);
-        await File.WriteAllTextAsync(_processingSettings.GetInvoiceCancellationRequestJsonPath(invoice.AuditNumber), anularDteRequest.ToJson(), st);
+        await File.WriteAllTextAsync(processingSettings.GetInvoiceCancellationRequestJsonPath(invoice.AuditNumber), anularDteRequest.ToJson(), ct);
 
         feSvClient.Jwt = request.ThirdPartyClientParameters.GetToken();
 
         var anularDteResponse = await feSvClient.AnularDteAsync(anularDteRequest);
-        await File.WriteAllTextAsync(_processingSettings.GetInvoiceCancellationResponseJsonPath(invoice.AuditNumber), anularDteResponse.ToJson(), st);
+        await File.WriteAllTextAsync(processingSettings.GetInvoiceCancellationResponseJsonPath(invoice.AuditNumber), anularDteResponse.ToJson(), ct);
 
         if (anularDteResponse.IsSuccessful)
         {
-            dbContext.InvoiceCancellationLog.Add(InvoiceCancellationLog.CreateResponse(invoice.Id, anularDteResponse.ToJson(), InvoiceProcessingStatus.Processed));
+            dbContext.InvoiceCancellationLog.Add(InvoiceCancellationLog.CreateResponse(invoice.Id, anularDteResponse.ToJson(), SyncStatus.Processed));
 
-            invoice.CancellationProcessingStatusId = (short)InvoiceProcessingStatus.Processed;
+            invoice.CancellationProcessingStatusId = (short)SyncStatus.Processed;
         }
         else
         {
-            dbContext.InvoiceCancellationLog.Add(InvoiceCancellationLog.CreateResponse(invoice.Id, anularDteResponse.ToJson(), InvoiceProcessingStatus.Declined));
+            dbContext.InvoiceCancellationLog.Add(InvoiceCancellationLog.CreateResponse(invoice.Id, anularDteResponse.ToJson(), SyncStatus.Declined));
 
-            invoice.CancellationProcessingStatusId = (short)InvoiceProcessingStatus.Declined;
+            invoice.CancellationProcessingStatusId = (short)SyncStatus.Declined;
         }
 
-        await dbContext.SaveChangesAsync(st);
+        await dbContext.SaveChangesAsync(ct);
 
         return anularDteResponse.IsSuccessful;
     }

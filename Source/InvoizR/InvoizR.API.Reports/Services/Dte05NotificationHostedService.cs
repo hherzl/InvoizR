@@ -27,10 +27,10 @@ public sealed class Dte05NotificationHostedService(ILogger<Dte05NotificationHost
             {
                 var filters = new Filters(FeNcv3.TypeId)
                     .Set(InvoiceProcessingType.OneWay)
-                    .Add(InvoiceProcessingStatus.Processed)
+                    .Add(SyncStatus.Processed)
                     ;
 
-                var invoices = await dbContext.GetInvoicesForProcessing(filters.InvoiceTypeId, filters.ProcessingTypeId, [.. filters.ProcessingStatuses]).ToListAsync(st);
+                var invoices = await dbContext.GetInvoicesForProcessing(filters.InvoiceTypeId, filters.ProcessingTypeId, [.. filters.SyncStatuses]).ToListAsync(st);
                 if (invoices.Count == 0)
                 {
                     logger.LogInformation($"There are no '{FeNcv3.SchemaType}' invoices to process...");

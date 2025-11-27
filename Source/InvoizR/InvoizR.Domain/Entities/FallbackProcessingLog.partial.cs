@@ -6,7 +6,7 @@ namespace InvoizR.Domain.Entities;
 
 public partial class FallbackProcessingLog
 {
-    public static FallbackProcessingLog CreateRequest(short? fallbackId, InvoiceProcessingStatus syncStatus, string content)
+    public static FallbackProcessingLog CreateRequest(short? fallbackId, SyncStatus syncStatus, string content)
         => new()
         {
             FallbackId = fallbackId,
@@ -17,7 +17,7 @@ public partial class FallbackProcessingLog
             Content = content
         };
 
-    public static FallbackProcessingLog CreateResponse(short? fallbackId, InvoiceProcessingStatus syncStatus, string content)
+    public static FallbackProcessingLog CreateResponse(short? fallbackId, SyncStatus syncStatus, string content)
     {
         var entity = new FallbackProcessingLog
         {
@@ -29,7 +29,7 @@ public partial class FallbackProcessingLog
             Content = content,
         };
 
-        if (syncStatus == InvoiceProcessingStatus.Processed)
+        if (syncStatus == SyncStatus.Processed)
             entity.AddNotification(new ExportFallbackNotification(fallbackId));
 
         return entity;
