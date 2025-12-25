@@ -1,9 +1,7 @@
-﻿using System.Dynamic;
-using CatFactory.EntityFrameworkCore;
+﻿using CatFactory.EntityFrameworkCore;
 using CatFactory.ObjectRelationalMapping;
 using CatFactory.SqlServer;
 using CatFactory.SqlServer.CodeFactory;
-using CatFactory.SqlServer.DatabaseObjectModel;
 using CatFactory.SqlServer.ObjectRelationalMapping;
 
 var db = SqlServerDatabase.CreateWithDefaults("InvoizR");
@@ -531,14 +529,11 @@ var invoiceCancellationLog = db
     .AddForeignKey(e => e.InvoiceId, invoice.Table)
     ;
 
-dynamic importBag = new ExpandoObject();
-importBag.ExtendedProperties = new List<ExtendedProperty>();
-
-db.AddColumnForTables(new Column { Name = "CreatedAt", Type = "datetime", ImportBag = importBag }, enumDescription.Table.FullName);
-db.AddColumnForTables(new Column { Name = "CreatedBy", Type = "nvarchar", Length = 50, ImportBag = importBag }, enumDescription.Table.FullName);
-db.AddColumnForTables(new Column { Name = "LastModifiedAt", Type = "datetime", Nullable = true, ImportBag = importBag }, enumDescription.Table.FullName);
-db.AddColumnForTables(new Column { Name = "LastModifiedBy", Type = "nvarchar", Length = 50, Nullable = true, ImportBag = importBag }, enumDescription.Table.FullName);
-db.AddColumnForTables(new Column { Name = "RowVersion", Type = "rowversion", Nullable = true, ImportBag = importBag }, enumDescription.Table.FullName);
+db.AddColumnForTables(new("CreatedAt", "datetime"), enumDescription.Table.FullName);
+db.AddColumnForTables(new("CreatedBy", "nvarchar", 50), enumDescription.Table.FullName);
+db.AddColumnForTables(new("LastModifiedAt", "datetime", true), enumDescription.Table.FullName);
+db.AddColumnForTables(new("LastModifiedBy", "nvarchar", 50, true), enumDescription.Table.FullName);
+db.AddColumnForTables(new("RowVersion", "rowversion", true), enumDescription.Table.FullName);
 
 // Add table for special customers
 SqlServerDatabaseScriptCodeBuilder.CreateScript(db, @"C:\Temp\Databases", true, true);
@@ -553,7 +548,6 @@ efCoreProject.GlobalSelection(settings =>
     settings.DeclareNavigationProperties = true;
     settings.DeclareNavigationPropertiesAsVirtual = true;
     settings.AddConfigurationForForeignKeysInFluentAPI = true;
-    settings.DeclareNavigationPropertiesAsVirtual = true;
 });
 
 // Build features for project, group all entities by schema into a feature
