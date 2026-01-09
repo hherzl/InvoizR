@@ -9,7 +9,7 @@ internal class VInvoiceSyncStatusConfiguration : IEntityTypeConfiguration<VInvoi
     public void Configure(EntityTypeBuilder<VInvoiceSyncStatus> builder)
     {
         // Set configuration for entity
-        builder.ToView("VInvoiceProcessingStatus", "dbo");
+        builder.ToView("VInvoiceSyncStatus", "dbo");
 
         builder.HasNoKey();
 

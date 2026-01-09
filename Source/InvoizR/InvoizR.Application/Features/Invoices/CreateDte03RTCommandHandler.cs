@@ -128,6 +128,6 @@ public sealed class CreateDte03RTCommandHandler(ILogger<CreateDte03RTCommandHand
             }
         }
 
-        return new(invoice.Id, invoice.InvoiceTypeId, invoice.SchemaType, invoice.SchemaVersion, invoice.InvoiceGuid, invoice.AuditNumber);
+        return invoice.ToCreateResponse();
     }
 }

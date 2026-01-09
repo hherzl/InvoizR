@@ -237,7 +237,7 @@ static async Task HandleIncomingConnectionsAsync(HttpListener listener)
         var request = context.Request;
         var response = context.Response;
 
-        Console.WriteLine($"Request received: {request.HttpMethod} {request.Url.AbsolutePath}");
+        Console.WriteLine($"{DateTime.Now}: Request received: {request.HttpMethod} {request.Url.AbsolutePath}");
 
         if (request.HttpMethod == "GET")
         {
@@ -258,7 +258,7 @@ static async Task HandleIncomingConnectionsAsync(HttpListener listener)
                 Console.WriteLine($"Processing invoice: {body}");
                 await Task.Delay(Random.Shared.Next(500, 2500));
                 response.StatusCode = (int)HttpStatusCode.OK;
-                Console.WriteLine($" Invoice was updated successfully");
+                Console.WriteLine($" {DateTime.Now}: Invoice was updated successfully");
                 Console.WriteLine();
             }
         }

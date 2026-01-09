@@ -6,15 +6,19 @@ using InvoizR.Domain.Enums;
 using InvoizR.Domain.Exceptions;
 using InvoizR.SharedKernel.Mh.FeCcf;
 using MediatR;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace InvoizR.Application.Features.Invoices;
 
-public sealed class CreateDte03OWCommandHandler(ILogger<CreateDte03OWCommandHandler> logger, IInvoizRDbContext dbContext)
+public sealed class CreateDte03OWCommandHandler(ILogger<CreateDte03OWCommandHandler> logger, IServiceProvider serviceProvider)
     : IRequestHandler<CreateDte03OWCommand, CreatedInvoiceResponse>
 {
     public async Task<CreatedInvoiceResponse> Handle(CreateDte03OWCommand request, CancellationToken ct = default)
     {
+        using var serviceScope = serviceProvider.CreateScope();
+
+        using var dbContext = serviceScope.ServiceProvider.GetRequiredService<IInvoizRDbContext>();
         _ = await dbContext.GetCurrentInvoiceTypeAsync(FeCcfv3.TypeId, ct: ct) ?? throw new InvalidCurrentInvoiceTypeException();
 
         var txn = await dbContext.Database.BeginTransactionAsync(ct);
@@ -58,7 +62,7 @@ public sealed class CreateDte03OWCommandHandler(ILogger<CreateDte03OWCommandHand
 
             await txn.CommitAsync(ct);
 
-            return new(invoice.Id, invoice.InvoiceTypeId, invoice.SchemaType, invoice.SchemaVersion, invoice.InvoiceGuid, invoice.AuditNumber);
+            return invoice.ToCreateResponse();
         }
         catch (Exception ex)
         {

@@ -20,11 +20,11 @@ public sealed class CreateDte01OWCommandHandler(ILogger<CreateDte01OWCommandHand
 {
     public async Task<CreatedInvoiceResponse> Handle(CreateDte01OWCommand request, CancellationToken ct)
     {
-        using var scope = serviceProvider.CreateScope();
+        using var serviceScope = serviceProvider.CreateScope();
 
-        using var dbContext = scope.ServiceProvider.GetRequiredService<IInvoizRDbContext>();
-        var dteSyncStatusChanger = scope.ServiceProvider.GetRequiredService<Dte01SyncStatusChanger>();
-        var seguridadClient = scope.ServiceProvider.GetRequiredService<ISeguridadClient>();
+        using var dbContext = serviceScope.ServiceProvider.GetRequiredService<IInvoizRDbContext>();
+        var dteSyncStatusChanger = serviceScope.ServiceProvider.GetRequiredService<Dte01SyncStatusChanger>();
+        var seguridadClient = serviceScope.ServiceProvider.GetRequiredService<ISeguridadClient>();
 
         _ = await dbContext.GetCurrentInvoiceTypeAsync(FeFcv1.TypeId, ct: ct) ?? throw new InvalidCurrentInvoiceTypeException();
 
@@ -91,7 +91,7 @@ public sealed class CreateDte01OWCommandHandler(ILogger<CreateDte01OWCommandHand
                 await dbContext.DispatchNotificationsAsync(ct);
             }
 
-            return new(invoice.Id, invoice.InvoiceTypeId, invoice.SchemaType, invoice.SchemaVersion, invoice.InvoiceGuid, invoice.AuditNumber);
+            return invoice.ToCreateResponse();
         }
         catch (Exception ex)
         {

@@ -46,10 +46,10 @@ public sealed class GetInvoicesQueryHandler(IInvoizRDbContext dbContext) : IRequ
             };
 
         query = query
-            .Spec(new GetInvoicesByPosQuerySpec(request.PosId))
-            .Spec(new GetInvoicesByInvoiceTypeQuerySpec(request.InvoiceTypeId))
-            .Spec(new GetInvoicesByProcessingTypeQuerySpec(request.ProcessingTypeId))
-            .Spec(new GetInvoicesBySyncStatusQuerySpec(request.SyncStatusId))
+            .AddQuerySpec(new GetInvoicesByPosQuerySpec(request.PosId))
+            .AddQuerySpec(new GetInvoicesByInvoiceTypeQuerySpec(request.InvoiceTypeId))
+            .AddQuerySpec(new GetInvoicesByProcessingTypeQuerySpec(request.ProcessingTypeId))
+            .AddQuerySpec(new GetInvoicesBySyncStatusQuerySpec(request.SyncStatusId))
             ;
 
         var itemsCount = await query.CountAsync(ct);
