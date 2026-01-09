@@ -57,7 +57,7 @@ public sealed class CreateDte04OWCommandHandler(ILogger<CreateDte04OWCommandHand
 
             await txn.CommitAsync(ct);
 
-            return new(invoice.Id, invoice.InvoiceTypeId, invoice.SchemaType, invoice.SchemaVersion, invoice.InvoiceGuid, invoice.AuditNumber);
+            return invoice.ToCreateResponse();
         }
         catch (Exception ex)
         {

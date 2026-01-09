@@ -5,7 +5,7 @@ namespace InvoizR.Application.QuerySpecs;
 
 public static class QuerySpecExtensions
 {
-    public static IQueryable<TQueryModel> Spec<TQueryModel>(this IQueryable<TQueryModel> query, ISpecification<TQueryModel> spec) where TQueryModel : class
+    public static IQueryable<TQueryModel> AddQuerySpec<TQueryModel>(this IQueryable<TQueryModel> query, ISpecification<TQueryModel> spec) where TQueryModel : class
     {
         // fetch a Queryable that includes all expression-based includes
         var queryableResultWithIncludes = spec.Includes.Aggregate(query, (current, include) => current.Include(include));

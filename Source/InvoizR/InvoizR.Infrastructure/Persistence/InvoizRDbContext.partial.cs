@@ -72,7 +72,7 @@ public partial class InvoizRDbContext
 
     public async Task<Company> GetCompanyAsync(short? id, bool tracking = false, bool includes = false, CancellationToken ct = default)
     {
-        var query = Company.Spec(new GetCompanyQuerySpec(id));
+        var query = Company.AddQuerySpec(new GetCompanyQuerySpec(id));
 
         if (!tracking)
             query = query.AsNoTracking();
@@ -82,7 +82,7 @@ public partial class InvoizRDbContext
 
     public async Task<Fallback> GetCurrentFallbackAsync(short? companyId, bool tracking = false, bool includes = false, CancellationToken ct = default)
     {
-        var query = Fallback.Spec(new GetCurrentFallbackQuerySpec(companyId));
+        var query = Fallback.AddQuerySpec(new GetCurrentFallbackQuerySpec(companyId));
 
         if (!tracking)
             query = query.AsNoTracking();
@@ -95,7 +95,7 @@ public partial class InvoizRDbContext
 
     public async Task<Fallback> GetFallbackAsync(short? id, bool tracking = false, bool includes = false, CancellationToken ct = default)
     {
-        var query = Fallback.Spec(new GetFallbackQuerySpec(id));
+        var query = Fallback.AddQuerySpec(new GetFallbackQuerySpec(id));
 
         if (!tracking)
             query = query.AsNoTracking();
@@ -199,7 +199,7 @@ public partial class InvoizRDbContext
 
     public async Task<Branch> GetBranchAsync(short? id, bool tracking = false, bool includes = false, CancellationToken ct = default)
     {
-        var query = Branch.Spec(new GetBranchQuerySpec(id));
+        var query = Branch.AddQuerySpec(new GetBranchQuerySpec(id));
 
         if (!tracking)
             query = query.AsNoTracking();
@@ -209,7 +209,7 @@ public partial class InvoizRDbContext
 
     public async Task<Pos> GetPosAsync(short? id, bool tracking = false, bool includes = false, CancellationToken ct = default)
     {
-        var query = Pos.Spec(new GetPosQuerySpec(id));
+        var query = Pos.AddQuerySpec(new GetPosQuerySpec(id));
 
         if (!tracking)
             query = query.AsNoTracking();
@@ -242,7 +242,7 @@ public partial class InvoizRDbContext
 
     public async Task<Responsible> GetResponsibleByCompanyIdAsync(short? companyId, bool tracking = false, bool includes = false, CancellationToken ct = default)
     {
-        var query = Responsible.Spec(new GetResponsibleByCompanyIdQuerySpec(companyId));
+        var query = Responsible.AddQuerySpec(new GetResponsibleByCompanyIdQuerySpec(companyId));
 
         if (!tracking)
             query = query.AsNoTracking();
@@ -305,7 +305,7 @@ public partial class InvoizRDbContext
 
     public async Task<Invoice> GetInvoiceAsync(long? id, bool tracking = false, bool includes = false, CancellationToken ct = default)
     {
-        var query = Invoice.Spec(new GetInvoiceQuerySpec(id));
+        var query = Invoice.AddQuerySpec(new GetInvoiceQuerySpec(id));
 
         if (!tracking)
             query = query.AsNoTracking();
