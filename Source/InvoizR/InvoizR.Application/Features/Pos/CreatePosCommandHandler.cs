@@ -25,7 +25,7 @@ public class CreatePosCommandHandler : IRequestHandler<CreatePosCommand, Created
             Description = request.Description
         };
 
-        _dbContext.Pos.Add(entity);
+        _dbContext.PointOfSales.Add(entity);
 
         await _dbContext.SaveChangesAsync(cancellationToken);
 

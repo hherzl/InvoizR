@@ -12,7 +12,7 @@ public partial class InvoizRDbContext
 {
     public IQueryable<ThirdPartyService> GetThirdPartyServices(string environmentId, bool tracking = false, bool includes = false)
     {
-        var query = ThirdPartyService.AsQueryable();
+        var query = ThirdPartyServices.AsQueryable();
 
         if (tracking)
             query = query.AsNoTracking();
@@ -25,7 +25,7 @@ public partial class InvoizRDbContext
 
     public async Task<ThirdPartyService> GetThirdPartyServiceAsync(short? id, bool tracking = false, bool includes = false, CancellationToken ct = default)
     {
-        var query = ThirdPartyService.AsQueryable();
+        var query = ThirdPartyServices.AsQueryable();
 
         if (!tracking)
             query = query.AsNoTracking();
@@ -36,7 +36,7 @@ public partial class InvoizRDbContext
     public IQueryable<ThirdPartyServiceParameterItemModel> GetThirdPartyServiceParameters(short? thirdPartyServiceId)
     {
         var query =
-            from thirdPartyServiceParameter in ThirdPartyServiceParameter
+            from thirdPartyServiceParameter in ThirdPartyServiceParameters
             where thirdPartyServiceParameter.ThirdPartyServiceId == thirdPartyServiceId
             select new ThirdPartyServiceParameterItemModel
             {
@@ -52,7 +52,7 @@ public partial class InvoizRDbContext
 
     public async Task<InvoiceType> GetInvoiceTypeAsync(short? id, bool tracking = false, bool includes = false, CancellationToken ct = default)
     {
-        var query = InvoiceType.AsQueryable();
+        var query = InvoiceTypes.AsQueryable();
 
         if (!tracking)
             query = query.AsNoTracking();
@@ -62,7 +62,7 @@ public partial class InvoizRDbContext
 
     public async Task<InvoiceType> GetCurrentInvoiceTypeAsync(short? id, bool tracking = false, bool includes = false, CancellationToken ct = default)
     {
-        var query = InvoiceType.AsQueryable();
+        var query = InvoiceTypes.AsQueryable();
 
         if (!tracking)
             query = query.AsNoTracking();
@@ -72,7 +72,7 @@ public partial class InvoizRDbContext
 
     public async Task<Company> GetCompanyAsync(short? id, bool tracking = false, bool includes = false, CancellationToken ct = default)
     {
-        var query = Company.AddQuerySpec(new GetCompanyQuerySpec(id));
+        var query = Companies.AddQuerySpec(new GetCompanyQuerySpec(id));
 
         if (!tracking)
             query = query.AsNoTracking();
@@ -82,7 +82,7 @@ public partial class InvoizRDbContext
 
     public async Task<Fallback> GetCurrentFallbackAsync(short? companyId, bool tracking = false, bool includes = false, CancellationToken ct = default)
     {
-        var query = Fallback.AddQuerySpec(new GetCurrentFallbackQuerySpec(companyId));
+        var query = Fallbacks.AddQuerySpec(new GetCurrentFallbackQuerySpec(companyId));
 
         if (!tracking)
             query = query.AsNoTracking();
@@ -95,7 +95,7 @@ public partial class InvoizRDbContext
 
     public async Task<Fallback> GetFallbackAsync(short? id, bool tracking = false, bool includes = false, CancellationToken ct = default)
     {
-        var query = Fallback.AddQuerySpec(new GetFallbackQuerySpec(id));
+        var query = Fallbacks.AddQuerySpec(new GetFallbackQuerySpec(id));
 
         if (!tracking)
             query = query.AsNoTracking();
@@ -108,7 +108,7 @@ public partial class InvoizRDbContext
 
     public async Task<Fallback> GetFallbackByCompanyAndNameAsync(short? companyId, string name, bool tracking = false, bool includes = false, CancellationToken ct = default)
     {
-        var query = Fallback.Where(item => item.CompanyId == companyId && item.Name == name);
+        var query = Fallbacks.Where(item => item.CompanyId == companyId && item.Name == name);
 
         if (!tracking)
             query = query.AsNoTracking();
@@ -122,11 +122,11 @@ public partial class InvoizRDbContext
     public IQueryable<FallbackInvoiceItemModel> GetInvoicesByFallback(short? fallbackId)
     {
         var query =
-            from invoice in Invoice
-            join invoiceType in InvoiceType on invoice.InvoiceTypeId equals invoiceType.Id
-            join pos in Pos on invoice.PosId equals pos.Id
-            join branch in Branch on pos.BranchId equals branch.Id
-            join company in Company on branch.CompanyId equals company.Id
+            from invoice in Invoices
+            join invoiceType in InvoiceTypes on invoice.InvoiceTypeId equals invoiceType.Id
+            join pos in PointOfSales on invoice.PosId equals pos.Id
+            join branch in Branches on pos.BranchId equals branch.Id
+            join company in Companies on branch.CompanyId equals company.Id
             where invoice.FallbackId == fallbackId
             select new FallbackInvoiceItemModel
             {
@@ -143,8 +143,8 @@ public partial class InvoizRDbContext
     public IQueryable<FallbackProcessingLogItemModel> GetFallbackProcessingLogs(short? fallbackId)
     {
         var query =
-           from fallbackProcessingLog in FallbackProcessingLog
-           join vSyncStatus in VInvoiceSyncStatus on fallbackProcessingLog.SyncStatusId equals vSyncStatus.Id
+           from fallbackProcessingLog in FallbackProcessingLogs
+           join vSyncStatus in VInvoiceSyncStatuses on fallbackProcessingLog.SyncStatusId equals vSyncStatus.Id
            where fallbackProcessingLog.FallbackId == fallbackId
            orderby fallbackProcessingLog.CreatedAt descending
            select new FallbackProcessingLogItemModel
@@ -163,7 +163,7 @@ public partial class InvoizRDbContext
     public IQueryable<FallbackFileItemModel> GetFallbackFiles(short? fallbackId)
     {
         var query =
-            from fallbackFile in FallbackFile
+            from fallbackFile in FallbackFiles
             where fallbackFile.FallbackId == fallbackId
             select new FallbackFileItemModel
             {
@@ -182,8 +182,8 @@ public partial class InvoizRDbContext
     public IQueryable<BranchItemModel> GetBranchesBy(short? companyId = null)
     {
         var query =
-            from branch in Branch
-            join company in Company on branch.CompanyId equals company.Id
+            from branch in Branches
+            join company in Companies on branch.CompanyId equals company.Id
             where branch.CompanyId == companyId
             select new BranchItemModel
             {
@@ -199,7 +199,7 @@ public partial class InvoizRDbContext
 
     public async Task<Branch> GetBranchAsync(short? id, bool tracking = false, bool includes = false, CancellationToken ct = default)
     {
-        var query = Branch.AddQuerySpec(new GetBranchQuerySpec(id));
+        var query = Branches.AddQuerySpec(new GetBranchQuerySpec(id));
 
         if (!tracking)
             query = query.AsNoTracking();
@@ -209,7 +209,7 @@ public partial class InvoizRDbContext
 
     public async Task<Pos> GetPosAsync(short? id, bool tracking = false, bool includes = false, CancellationToken ct = default)
     {
-        var query = Pos.AddQuerySpec(new GetPosQuerySpec(id));
+        var query = PointOfSales.AddQuerySpec(new GetPosQuerySpec(id));
 
         if (!tracking)
             query = query.AsNoTracking();
@@ -223,8 +223,8 @@ public partial class InvoizRDbContext
     public IQueryable<PosItemModel> GetPosBy(short? branchId = null)
     {
         var query =
-            from pos in Pos
-            join branch in Branch on pos.BranchId equals branch.Id
+            from pos in PointOfSales
+            join branch in Branches on pos.BranchId equals branch.Id
             where pos.BranchId == branchId
             select new PosItemModel
             {
@@ -242,7 +242,7 @@ public partial class InvoizRDbContext
 
     public async Task<Responsible> GetResponsibleByCompanyIdAsync(short? companyId, bool tracking = false, bool includes = false, CancellationToken ct = default)
     {
-        var query = Responsible.AddQuerySpec(new GetResponsibleByCompanyIdQuerySpec(companyId));
+        var query = Responsibles.AddQuerySpec(new GetResponsibleByCompanyIdQuerySpec(companyId));
 
         if (!tracking)
             query = query.AsNoTracking();
@@ -253,7 +253,7 @@ public partial class InvoizRDbContext
     public IQueryable<ResponsibleItemModel> GetResponsiblesBy(short? companyId)
     {
         var query =
-            from responsible in Responsible
+            from responsible in Responsibles
             where responsible.CompanyId == companyId
             orderby responsible.Name
             select new ResponsibleItemModel
@@ -272,15 +272,15 @@ public partial class InvoizRDbContext
     }
 
     public IQueryable<BranchNotification> GetBranchNotificationsBy(short? branchId = null, short? invoiceTypeId = null)
-        => BranchNotification.Where(item => item.BranchId == branchId && item.InvoiceTypeId == invoiceTypeId);
+        => BranchNotifications.Where(item => item.BranchId == branchId && item.InvoiceTypeId == invoiceTypeId);
 
     public IQueryable<InvoiceItemModel> GetInvoicesForProcessing(short? typeId = null, short? processingTypeId = null, short?[] syncStatuses = null)
     {
         var query =
-            from invoice in Invoice
-            join pos in Pos on invoice.PosId equals pos.Id
-            join branch in Branch on pos.BranchId equals branch.Id
-            join company in Company on branch.CompanyId equals company.Id
+            from invoice in Invoices
+            join pos in PointOfSales on invoice.PosId equals pos.Id
+            join branch in Branches on pos.BranchId equals branch.Id
+            join company in Companies on branch.CompanyId equals company.Id
             where invoice.InvoiceTypeId == typeId && invoice.ProcessingTypeId == processingTypeId && syncStatuses.Contains(invoice.SyncStatusId)
             select new InvoiceItemModel
             {
@@ -305,7 +305,7 @@ public partial class InvoizRDbContext
 
     public async Task<Invoice> GetInvoiceAsync(long? id, bool tracking = false, bool includes = false, CancellationToken ct = default)
     {
-        var query = Invoice.AddQuerySpec(new GetInvoiceQuerySpec(id));
+        var query = Invoices.AddQuerySpec(new GetInvoiceQuerySpec(id));
 
         if (!tracking)
             query = query.AsNoTracking();
@@ -318,14 +318,14 @@ public partial class InvoizRDbContext
 
     public IQueryable<Invoice> GetInvoicesBy(short? fallbackId)
     {
-        return Invoice.Include(entity => entity.Pos).ThenInclude(entity => entity.Branch).ThenInclude(entity => entity.Company).Where(entity => entity.FallbackId == fallbackId);
+        return Invoices.Include(entity => entity.Pos).ThenInclude(entity => entity.Branch).ThenInclude(entity => entity.Company).Where(entity => entity.FallbackId == fallbackId);
     }
 
     public IQueryable<InvoiceSyncStatusLogItemModel> GetInvoiceSyncStatusLogs(long? invoiceId)
     {
         var query =
-           from invSyncStatusLog in InvoiceSyncStatusLog
-           join vInvSyncStatus in VInvoiceSyncStatus on invSyncStatusLog.SyncStatusId equals vInvSyncStatus.Id
+           from invSyncStatusLog in InvoiceSyncStatusLogs
+           join vInvSyncStatus in VInvoiceSyncStatuses on invSyncStatusLog.SyncStatusId equals vInvSyncStatus.Id
            where invSyncStatusLog.InvoiceId == invoiceId
            orderby invSyncStatusLog.CreatedAt descending
            select new InvoiceSyncStatusLogItemModel
@@ -342,8 +342,8 @@ public partial class InvoizRDbContext
     public IQueryable<InvoiceSyncLogItemModel> GetInvoiceSyncLogs(long? invoiceId)
     {
         var query =
-            from invSyncLog in InvoiceSyncLog
-            join vInvSyncStatus in VInvoiceSyncStatus on invSyncLog.SyncStatusId equals vInvSyncStatus.Id
+            from invSyncLog in InvoiceSyncLogs
+            join vInvSyncStatus in VInvoiceSyncStatuses on invSyncLog.SyncStatusId equals vInvSyncStatus.Id
             where invSyncLog.InvoiceId == invoiceId
             orderby invSyncLog.CreatedAt descending
             select new InvoiceSyncLogItemModel
@@ -363,7 +363,7 @@ public partial class InvoizRDbContext
     public IQueryable<InvoiceFileItemModel> GetInvoiceFilesBy(long? invoiceId)
     {
         var query =
-            from invFile in InvoiceFile
+            from invFile in InvoiceFiles
             where invFile.InvoiceId == invoiceId
             select new InvoiceFileItemModel
             {
@@ -381,7 +381,7 @@ public partial class InvoizRDbContext
 
     public async Task<InvoiceFile> GetInvoiceFileByAsync(long? invoiceId, string fileName, bool tracking = false, bool includes = false, CancellationToken ct = default)
     {
-        var query = InvoiceFile.AsQueryable();
+        var query = InvoiceFiles.AsQueryable();
 
         if (tracking)
             query = query.AsNoTracking();
@@ -392,7 +392,7 @@ public partial class InvoizRDbContext
     public IQueryable<InvoiceNotificationItemModel> GetInvoiceNotifications(long? invoiceId)
     {
         var query =
-            from invNotification in InvoiceNotification
+            from invNotification in InvoiceNotifications
             where invNotification.InvoiceId == invoiceId
             select new InvoiceNotificationItemModel
             {

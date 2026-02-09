@@ -12,8 +12,8 @@ public sealed class GetFallbacksQueryHandler(IInvoizRDbContext dbContext) : IReq
     public async Task<PagedResponse<FallbackItemModel>> Handle(GetFallbacksQuery request, CancellationToken cancellationToken)
     {
         var query =
-            from fallback in dbContext.Fallback
-            join company in dbContext.Company on fallback.CompanyId equals company.Id
+            from fallback in dbContext.Fallbacks
+            join company in dbContext.Companies on fallback.CompanyId equals company.Id
             select new FallbackItemModel
             {
                 Id = fallback.Id,

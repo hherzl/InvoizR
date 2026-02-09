@@ -25,7 +25,7 @@ public sealed class CreateBranchCommandHandler(IInvoizRDbContext dbContext) : IR
         if (request.HasLogo)
             entity.Logo = Convert.FromBase64String(request.Logo);
 
-        dbContext.Branch.Add(entity);
+        dbContext.Branches.Add(entity);
 
         await dbContext.SaveChangesAsync(ct);
 

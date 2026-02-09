@@ -35,7 +35,7 @@ public sealed class InvoiceSyncHandler(IOptions<ProcessingSettings> processingOp
         var firmarDocumentoResponse = await firmadorClient.FirmarDocumentoAsync(firmarDocumentoRequest);
         await File.WriteAllTextAsync(processingSettings.GetFirmaResponseJsonPath(invoice.AuditNumber), firmarDocumentoResponse.ToJson(), ct);
 
-        dbContext.InvoiceSyncLog.Add(InvoiceSyncLog.CreateRequest(invoice.Id, SyncStatus.Requested, firmarDocumentoResponse.ToJson()));
+        dbContext.InvoiceSyncLogs.Add(InvoiceSyncLog.CreateRequest(invoice.Id, SyncStatus.Requested, firmarDocumentoResponse.ToJson()));
 
         feSvClient.ClientSettings = request.ThirdPartyClientParameters.GetByService(feSvClient.ServiceName).ToFesvClientSettings();
 
@@ -50,7 +50,7 @@ public sealed class InvoiceSyncHandler(IOptions<ProcessingSettings> processingOp
 
         if (recepcionResponse.IsSuccessful)
         {
-            dbContext.InvoiceSyncLog.Add(InvoiceSyncLog.CreateResponse(invoice.Id, SyncStatus.Processed, recepcionRequest.ToJson()));
+            dbContext.InvoiceSyncLogs.Add(InvoiceSyncLog.CreateResponse(invoice.Id, SyncStatus.Processed, recepcionRequest.ToJson()));
 
             invoice.SyncStatusId = (short)SyncStatus.Processed;
             invoice.EmitDateTime = DateTime.Now;
@@ -61,7 +61,7 @@ public sealed class InvoiceSyncHandler(IOptions<ProcessingSettings> processingOp
                 .Replace("emitDate", invoice.InvoiceDate?.ToString("yyyy-MM-dd"))
                 ;
 
-            dbContext.InvoiceSyncStatusLog.Add(new(invoice.Id, invoice.SyncStatusId));
+            dbContext.InvoiceSyncStatusLogs.Add(new(invoice.Id, invoice.SyncStatusId));
 
             ReceiveInvoice(invoice, firmarDocumentoResponse.Body);
 
@@ -70,12 +70,12 @@ public sealed class InvoiceSyncHandler(IOptions<ProcessingSettings> processingOp
         }
         else
         {
-            dbContext.InvoiceSyncLog.Add(InvoiceSyncLog.CreateResponse(invoice.Id, SyncStatus.Declined, recepcionRequest.ToJson()));
+            dbContext.InvoiceSyncLogs.Add(InvoiceSyncLog.CreateResponse(invoice.Id, SyncStatus.Declined, recepcionRequest.ToJson()));
 
             invoice.SyncStatusId = (short)SyncStatus.Declined;
             invoice.SyncAttempts += 1;
 
-            dbContext.InvoiceSyncStatusLog.Add(new(invoice.Id, invoice.SyncStatusId));
+            dbContext.InvoiceSyncStatusLogs.Add(new(invoice.Id, invoice.SyncStatusId));
         }
 
         await dbContext.SaveChangesAsync(ct);

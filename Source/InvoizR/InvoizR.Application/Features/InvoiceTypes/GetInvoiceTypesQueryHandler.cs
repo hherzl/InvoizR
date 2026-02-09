@@ -18,7 +18,7 @@ public class GetInvoiceTypesQueryHandler : IRequestHandler<GetInvoiceTypesQuery,
     public async Task<ListResponse<InvoiceTypeItemModel>> Handle(GetInvoiceTypesQuery request, CancellationToken cancellationToken)
     {
         var query =
-            from invoiceType in _dbContext.InvoiceType
+            from invoiceType in _dbContext.InvoiceTypes
             select new InvoiceTypeItemModel
             {
                 Id = invoiceType.Id,

@@ -47,11 +47,11 @@ public sealed class CreateDte14OWCommandHandler(ILogger<CreateDte14OWCommandHand
                 SyncStatusId = (short)SyncStatus.Created
             };
 
-            dbContext.Invoice.Add(invoice);
+            dbContext.Invoices.Add(invoice);
 
             await dbContext.SaveChangesAsync(ct);
 
-            dbContext.InvoiceSyncStatusLog.Add(new(invoice.Id, invoice.SyncStatusId));
+            dbContext.InvoiceSyncStatusLogs.Add(new(invoice.Id, invoice.SyncStatusId));
 
             await dbContext.SaveChangesAsync(ct);
 

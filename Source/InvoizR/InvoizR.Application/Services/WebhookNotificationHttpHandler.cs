@@ -27,7 +27,7 @@ public sealed class WebhookNotificationHttpHandler(IInvoizRDbContext dbContext)
         var flag = response.IsSuccessStatusCode;
         var content = await response.Content.ReadAsStringAsync(ct);
 
-        dbContext.InvoiceWebhookNotification.Add(new InvoiceWebhookNotification
+        dbContext.InvoiceWebhookNotifications.Add(new InvoiceWebhookNotification
         {
             InvoiceId = model.Invoice.InvoiceId,
             Protocol = model.WebhookNotificationProtocol,

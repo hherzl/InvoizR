@@ -17,31 +17,31 @@ public partial class InvoizRDbContext : DbContext, IInvoizRDbContext
         _mediator = mediator;
     }
 
-    public DbSet<ThirdPartyService> ThirdPartyService { get; set; }
-    public DbSet<ThirdPartyServiceParameter> ThirdPartyServiceParameter { get; set; }
-    public DbSet<EnumDescription> EnumDescription { get; set; }
+    public DbSet<ThirdPartyService> ThirdPartyServices { get; set; }
+    public DbSet<ThirdPartyServiceParameter> ThirdPartyServiceParameters { get; set; }
+    public DbSet<EnumDescription> EnumDescriptions { get; set; }
 
-    public DbSet<Fallback> Fallback { get; set; }
-    public DbSet<FallbackProcessingLog> FallbackProcessingLog { get; set; }
-    public DbSet<FallbackFile> FallbackFile { get; set; }
+    public DbSet<Fallback> Fallbacks { get; set; }
+    public DbSet<FallbackProcessingLog> FallbackProcessingLogs { get; set; }
+    public DbSet<FallbackFile> FallbackFiles { get; set; }
 
-    public DbSet<Responsible> Responsible { get; set; }
-    public DbSet<Company> Company { get; set; }
-    public DbSet<Branch> Branch { get; set; }
-    public DbSet<BranchNotification> BranchNotification { get; set; }
-    public DbSet<Pos> Pos { get; set; }
+    public DbSet<Responsible> Responsibles { get; set; }
+    public DbSet<Company> Companies { get; set; }
+    public DbSet<Branch> Branches { get; set; }
+    public DbSet<BranchNotification> BranchNotifications { get; set; }
+    public DbSet<Pos> PointOfSales { get; set; }
 
-    public DbSet<InvoiceType> InvoiceType { get; set; }
-    public DbSet<Invoice> Invoice { get; set; }
-    public DbSet<InvoiceSyncStatusLog> InvoiceSyncStatusLog { get; set; }
-    public DbSet<InvoiceSyncLog> InvoiceSyncLog { get; set; }
-    public DbSet<InvoiceNotification> InvoiceNotification { get; set; }
-    public DbSet<InvoiceFile> InvoiceFile { get; set; }
-    public DbSet<InvoiceWebhookNotification> InvoiceWebhookNotification { get; set; }
-    public DbSet<InvoiceCancellationLog> InvoiceCancellationLog { get; set; }
+    public DbSet<InvoiceType> InvoiceTypes { get; set; }
+    public DbSet<Invoice> Invoices { get; set; }
+    public DbSet<InvoiceSyncStatusLog> InvoiceSyncStatusLogs { get; set; }
+    public DbSet<InvoiceSyncLog> InvoiceSyncLogs { get; set; }
+    public DbSet<InvoiceNotification> InvoiceNotifications { get; set; }
+    public DbSet<InvoiceFile> InvoiceFiles { get; set; }
+    public DbSet<InvoiceWebhookNotification> InvoiceWebhookNotifications { get; set; }
+    public DbSet<InvoiceCancellationLog> InvoiceCancellationLogs { get; set; }
 
-    public DbSet<VInvoiceSyncStatus> VInvoiceSyncStatus { get; set; }
-    public DbSet<VInvoiceProcessingType> VInvoiceProcessingType { get; set; }
+    public DbSet<VInvoiceSyncStatus> VInvoiceSyncStatuses { get; set; }
+    public DbSet<VInvoiceProcessingType> VInvoiceProcessingTypes { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

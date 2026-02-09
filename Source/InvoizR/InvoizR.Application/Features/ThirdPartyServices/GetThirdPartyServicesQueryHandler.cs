@@ -11,7 +11,7 @@ public sealed class GetThirdPartyServicesQueryHandler(IInvoizRDbContext dbContex
     public async Task<ListResponse<ThirdPartyServiceItemModel>> Handle(GetThirdPartyServicesQuery request, CancellationToken cancellationToken)
     {
         var query =
-            from thirdPartyService in dbContext.ThirdPartyService
+            from thirdPartyService in dbContext.ThirdPartyServices
             orderby thirdPartyService.Name ascending
             select new ThirdPartyServiceItemModel
             {

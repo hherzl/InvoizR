@@ -13,13 +13,13 @@ public sealed class GetInvoicesQueryHandler(IInvoizRDbContext dbContext) : IRequ
     public async Task<PagedResponse<InvoiceItemModel>> Handle(GetInvoicesQuery request, CancellationToken ct = default)
     {
         var query =
-            from invoice in dbContext.Invoice
-            join pos in dbContext.Pos on invoice.PosId equals pos.Id
-            join branch in dbContext.Branch on pos.BranchId equals branch.Id
-            join company in dbContext.Company on branch.CompanyId equals company.Id
-            join invoiceType in dbContext.InvoiceType on invoice.InvoiceTypeId equals invoiceType.Id
-            join vProcessingType in dbContext.VInvoiceProcessingType on invoice.ProcessingTypeId equals vProcessingType.Id
-            join vInvoiceSyncStatus in dbContext.VInvoiceSyncStatus on invoice.SyncStatusId equals vInvoiceSyncStatus.Id
+            from invoice in dbContext.Invoices
+            join pos in dbContext.PointOfSales on invoice.PosId equals pos.Id
+            join branch in dbContext.Branches on pos.BranchId equals branch.Id
+            join company in dbContext.Companies on branch.CompanyId equals company.Id
+            join invoiceType in dbContext.InvoiceTypes on invoice.InvoiceTypeId equals invoiceType.Id
+            join vProcessingType in dbContext.VInvoiceProcessingTypes on invoice.ProcessingTypeId equals vProcessingType.Id
+            join vInvoiceSyncStatus in dbContext.VInvoiceSyncStatuses on invoice.SyncStatusId equals vInvoiceSyncStatus.Id
             orderby invoice.InvoiceDate descending
             select new InvoiceItemModel
             {

@@ -19,7 +19,7 @@ public sealed class CancelInvoiceNotificationHandler(ILogger<CancelInvoiceNotifi
         invoice.CancellationPayload = notification.Payload;
         invoice.CancellationDateTime = DateTime.Now;
 
-        dbContext.InvoiceSyncStatusLog.Add(new(invoice.Id, invoice.SyncStatusId));
+        dbContext.InvoiceSyncStatusLogs.Add(new(invoice.Id, invoice.SyncStatusId));
 
         await dbContext.SaveChangesAsync(ct);
     }

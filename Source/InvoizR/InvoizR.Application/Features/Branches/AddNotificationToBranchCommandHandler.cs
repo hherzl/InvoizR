@@ -25,7 +25,7 @@ public class AddNotificationToBranchCommandHandler : IRequestHandler<AddNotifica
             Bcc = request.Bcc
         };
 
-        _dbContext.BranchNotification.Add(entity);
+        _dbContext.BranchNotifications.Add(entity);
 
         await _dbContext.SaveChangesAsync(cancellationToken);
 

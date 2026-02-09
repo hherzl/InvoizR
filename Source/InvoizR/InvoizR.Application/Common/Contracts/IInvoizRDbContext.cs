@@ -11,35 +11,35 @@ namespace InvoizR.Application.Common.Contracts;
 public interface IInvoizRDbContext : IDisposable
 {
     DatabaseFacade Database { get; }
-    Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
+    Task<int> SaveChangesAsync(CancellationToken ct = default);
 
-    Task DispatchNotificationsAsync(CancellationToken cancellationToken = default);
+    Task DispatchNotificationsAsync(CancellationToken ct = default);
 
-    DbSet<ThirdPartyService> ThirdPartyService { get; set; }
-    DbSet<ThirdPartyServiceParameter> ThirdPartyServiceParameter { get; set; }
-    DbSet<EnumDescription> EnumDescription { get; set; }
+    DbSet<ThirdPartyService> ThirdPartyServices { get; set; }
+    DbSet<ThirdPartyServiceParameter> ThirdPartyServiceParameters { get; set; }
+    DbSet<EnumDescription> EnumDescriptions { get; set; }
 
-    DbSet<Fallback> Fallback { get; set; }
-    DbSet<FallbackProcessingLog> FallbackProcessingLog { get; set; }
-    DbSet<FallbackFile> FallbackFile { get; set; }
+    DbSet<Fallback> Fallbacks { get; set; }
+    DbSet<FallbackProcessingLog> FallbackProcessingLogs { get; set; }
+    DbSet<FallbackFile> FallbackFiles { get; set; }
 
-    DbSet<Responsible> Responsible { get; set; }
-    DbSet<Company> Company { get; set; }
-    DbSet<Branch> Branch { get; set; }
-    DbSet<BranchNotification> BranchNotification { get; set; }
-    DbSet<Pos> Pos { get; set; }
+    DbSet<Responsible> Responsibles { get; set; }
+    DbSet<Company> Companies { get; set; }
+    DbSet<Branch> Branches { get; set; }
+    DbSet<BranchNotification> BranchNotifications { get; set; }
+    DbSet<Pos> PointOfSales { get; set; }
 
-    DbSet<InvoiceType> InvoiceType { get; set; }
-    DbSet<Invoice> Invoice { get; set; }
-    DbSet<InvoiceSyncStatusLog> InvoiceSyncStatusLog { get; set; }
-    DbSet<InvoiceSyncLog> InvoiceSyncLog { get; set; }
-    DbSet<InvoiceNotification> InvoiceNotification { get; set; }
-    DbSet<InvoiceFile> InvoiceFile { get; set; }
-    DbSet<InvoiceWebhookNotification> InvoiceWebhookNotification { get; set; }
-    DbSet<InvoiceCancellationLog> InvoiceCancellationLog { get; set; }
+    DbSet<InvoiceType> InvoiceTypes { get; set; }
+    DbSet<Invoice> Invoices { get; set; }
+    DbSet<InvoiceSyncStatusLog> InvoiceSyncStatusLogs { get; set; }
+    DbSet<InvoiceSyncLog> InvoiceSyncLogs { get; set; }
+    DbSet<InvoiceNotification> InvoiceNotifications { get; set; }
+    DbSet<InvoiceFile> InvoiceFiles { get; set; }
+    DbSet<InvoiceWebhookNotification> InvoiceWebhookNotifications { get; set; }
+    DbSet<InvoiceCancellationLog> InvoiceCancellationLogs { get; set; }
 
-    DbSet<VInvoiceSyncStatus> VInvoiceSyncStatus { get; set; }
-    DbSet<VInvoiceProcessingType> VInvoiceProcessingType { get; set; }
+    DbSet<VInvoiceSyncStatus> VInvoiceSyncStatuses { get; set; }
+    DbSet<VInvoiceProcessingType> VInvoiceProcessingTypes { get; set; }
 
     IQueryable<ThirdPartyService> GetThirdPartyServices(string environmentId, bool tracking = false, bool includes = false);
     Task<ThirdPartyService> GetThirdPartyServiceAsync(short? id, bool tracking = false, bool includes = false, CancellationToken ct = default);

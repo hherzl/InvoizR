@@ -35,7 +35,7 @@ public sealed class CreateCompanyCommandHandler(IInvoizRDbContext dbContext) : I
         if (request.HasLogo)
             company.Logo = Convert.FromBase64String(request.Logo);
 
-        dbContext.Company.Add(company);
+        dbContext.Companies.Add(company);
 
         await dbContext.SaveChangesAsync(cancellationToken);
 

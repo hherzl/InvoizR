@@ -28,7 +28,7 @@ public sealed class InvoiceCancellationHandler(IOptions<ProcessingSettings> proc
         var firmarDocumentoResponse = await firmadorClient.FirmarDocumentoAsync(firmarDocumentoRequest);
         await File.WriteAllTextAsync(processingSettings.GetInvoiceCancellationFirmaResponseJsonPath(invoice.AuditNumber), firmarDocumentoResponse.ToJson(), ct);
 
-        dbContext.InvoiceCancellationLog.Add(InvoiceCancellationLog.CreateRequest(invoice.Id, firmarDocumentoResponse.ToJson()));
+        dbContext.InvoiceCancellationLogs.Add(InvoiceCancellationLog.CreateRequest(invoice.Id, firmarDocumentoResponse.ToJson()));
 
         var anularDteRequest = new AnularDteRequest(invoice.Pos.Branch.Company.Environment, firmarDocumentoResponse.Body);
         await File.WriteAllTextAsync(processingSettings.GetInvoiceCancellationRequestJsonPath(invoice.AuditNumber), anularDteRequest.ToJson(), ct);
@@ -40,13 +40,13 @@ public sealed class InvoiceCancellationHandler(IOptions<ProcessingSettings> proc
 
         if (anularDteResponse.IsSuccessful)
         {
-            dbContext.InvoiceCancellationLog.Add(InvoiceCancellationLog.CreateResponse(invoice.Id, anularDteResponse.ToJson(), SyncStatus.Processed));
+            dbContext.InvoiceCancellationLogs.Add(InvoiceCancellationLog.CreateResponse(invoice.Id, anularDteResponse.ToJson(), SyncStatus.Processed));
 
             invoice.CancellationProcessingStatusId = (short)SyncStatus.Processed;
         }
         else
         {
-            dbContext.InvoiceCancellationLog.Add(InvoiceCancellationLog.CreateResponse(invoice.Id, anularDteResponse.ToJson(), SyncStatus.Declined));
+            dbContext.InvoiceCancellationLogs.Add(InvoiceCancellationLog.CreateResponse(invoice.Id, anularDteResponse.ToJson(), SyncStatus.Declined));
 
             invoice.CancellationProcessingStatusId = (short)SyncStatus.Declined;
         }

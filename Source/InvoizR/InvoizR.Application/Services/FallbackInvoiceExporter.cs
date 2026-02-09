@@ -33,7 +33,7 @@ public sealed class FallbackInvoiceExporter(ILogger<FallbackInvoiceExporter> log
 
             logger.LogInformation($" Adding '{item.FileExtension}' as bytes...");
 
-            dbContext.InvoiceFile.Add(new(invoice, bytes, item.ContentType, item.FileExtension));
+            dbContext.InvoiceFiles.Add(new(invoice, bytes, item.ContentType, item.FileExtension));
         }
 
         var notificationTemplate = new DteNotificationTemplatev1(new(invoice.Pos.Branch, invoiceType, invoice));
@@ -46,7 +46,7 @@ public sealed class FallbackInvoiceExporter(ILogger<FallbackInvoiceExporter> log
         if (!invoice.HasCustomerEmail)
             invoice.CustomerEmail = invoice.Pos.Branch.NonCustomerEmail;
 
-        dbContext.InvoiceNotification.Add(new(invoice.Id, invoice.CustomerEmail, false, (short)invoiceExportStrategies.Count(), true));
+        dbContext.InvoiceNotifications.Add(new(invoice.Id, invoice.CustomerEmail, false, (short)invoiceExportStrategies.Count(), true));
 
         var branchNotifications = await dbContext.GetBranchNotificationsBy(invoice.Pos.BranchId, invoice.InvoiceTypeId).ToListAsync(ct);
         foreach (var branchNotification in branchNotifications)
@@ -56,7 +56,7 @@ public sealed class FallbackInvoiceExporter(ILogger<FallbackInvoiceExporter> log
             else
                 notificationTemplate.Model.Copies.Add(branchNotification.Email);
 
-            dbContext.InvoiceNotification.Add(new(invoice.Id, branchNotification.Email, branchNotification.Bcc, (short)invoiceExportStrategies.Count(), true));
+            dbContext.InvoiceNotifications.Add(new(invoice.Id, branchNotification.Email, branchNotification.Bcc, (short)invoiceExportStrategies.Count(), true));
         }
 
         logger.LogInformation($"Sending notification for invoice '{invoice.InvoiceTypeId}-{invoice.InvoiceNumber}'; customer '{invoice.CustomerName}', email: '{invoice.CustomerEmail}'...");

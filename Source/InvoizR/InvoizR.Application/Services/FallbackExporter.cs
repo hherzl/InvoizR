@@ -34,9 +34,9 @@ public sealed class FallbackExporter(ILogger<FallbackExporter> logger, IServiceP
             logger.LogInformation($" Adding '{exportStrategy.FileExtension}' as bytes...");
 
             var onTheFlyFile = new FallbackFile(fallback, bytes, exportStrategy.ContentType, exportStrategy.FileExtension);
-            var existingFile = await dbContext.FallbackFile.FirstOrDefaultAsync(item => item.FallbackId == fallback.Id && item.FileName == onTheFlyFile.FileName, ct);
+            var existingFile = await dbContext.FallbackFiles.FirstOrDefaultAsync(item => item.FallbackId == fallback.Id && item.FileName == onTheFlyFile.FileName, ct);
             if (existingFile == null)
-                dbContext.FallbackFile.Add(onTheFlyFile);
+                dbContext.FallbackFiles.Add(onTheFlyFile);
             else
                 existingFile.File = onTheFlyFile.File;
         }

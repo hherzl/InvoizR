@@ -29,7 +29,7 @@ public sealed class CreateFallbackCommandHandler(IInvoizRDbContext dbContext) : 
             SyncAttempts = 0
         };
 
-        dbContext.Fallback.Add(fallback);
+        dbContext.Fallbacks.Add(fallback);
 
         await dbContext.SaveChangesAsync(ct);
 

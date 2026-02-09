@@ -64,11 +64,11 @@ public sealed class CreateDte06RTCommandHandler(ILogger<CreateDte06RTCommandHand
                 SyncStatusId = (short)SyncStatus.Created
             };
 
-            dbContext.Invoice.Add(invoice);
+            dbContext.Invoices.Add(invoice);
 
             await dbContext.SaveChangesAsync(ct);
 
-            dbContext.InvoiceSyncStatusLog.Add(new(invoice.Id, invoice.SyncStatusId));
+            dbContext.InvoiceSyncStatusLogs.Add(new(invoice.Id, invoice.SyncStatusId));
 
             await dbContext.SaveChangesAsync(ct);
 

@@ -11,7 +11,7 @@ public sealed class GetResponsiblesQueryHandler(IInvoizRDbContext dbContext) : I
     public async Task<ListResponse<ResponsibleItemModel>> Handle(GetResponsiblesQuery request, CancellationToken ct)
     {
         var query =
-            from responsible in dbContext.Responsible
+            from responsible in dbContext.Responsibles
             orderby responsible.Name
             select new ResponsibleItemModel
             {

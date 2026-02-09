@@ -11,7 +11,7 @@ public sealed class GetCompaniesQueryHandler(IInvoizRDbContext dbContext) : IReq
     public async Task<ListResponse<CompanyItemModel>> Handle(GetCompaniesQuery request, CancellationToken ct)
     {
         var query =
-            from company in dbContext.Company
+            from company in dbContext.Companies
             orderby company.Name
             select new CompanyItemModel
             {

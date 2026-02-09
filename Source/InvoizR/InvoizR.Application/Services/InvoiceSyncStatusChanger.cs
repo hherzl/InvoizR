@@ -22,7 +22,7 @@ public abstract class InvoiceSyncStatusChanger(ILogger logger)
         invoice.AuditNumber = invoiceCodes.AuditNumber;
         invoice.SyncStatusId = (short)SyncStatus.Initialized;
 
-        dbContext.InvoiceSyncStatusLog.Add(new(invoice.Id, invoice.SyncStatusId));
+        dbContext.InvoiceSyncStatusLogs.Add(new(invoice.Id, invoice.SyncStatusId));
 
         logger.LogInformation($" Updating '{invoice.InvoiceNumber}' invoice: '{invoice.SchemaType}{invoice.SchemaVersion}', '{invoice.InvoiceGuid}', '{invoice.AuditNumber}'...");
 
@@ -36,7 +36,7 @@ public abstract class InvoiceSyncStatusChanger(ILogger logger)
         invoice.ProcessingTypeId = (short)InvoiceProcessingType.OneWay;
         invoice.SyncStatusId = (short)SyncStatus.Fallback;
 
-        dbContext.InvoiceSyncStatusLog.Add(new(invoice.Id, invoice.SyncStatusId));
+        dbContext.InvoiceSyncStatusLogs.Add(new(invoice.Id, invoice.SyncStatusId));
 
         logger.LogInformation($" Updating '{invoice.InvoiceNumber}' invoice: '{invoice.SchemaType}{invoice.SchemaVersion}', '{invoice.InvoiceGuid}', '{invoice.AuditNumber}'...");
 
@@ -52,7 +52,7 @@ public abstract class InvoiceSyncStatusChanger(ILogger logger)
         else
             invoice.SyncStatusId = (short)SyncStatus.InvalidSchema;
 
-        dbContext.InvoiceSyncStatusLog.Add(new(invoice.Id, invoice.SyncStatusId));
+        dbContext.InvoiceSyncStatusLogs.Add(new(invoice.Id, invoice.SyncStatusId));
 
         logger.LogInformation($" Updating '{invoice.InvoiceNumber}' invoice: '{invoice.SchemaType}{invoice.SchemaVersion}', '{invoice.InvoiceGuid}', '{invoice.AuditNumber}'...");
 

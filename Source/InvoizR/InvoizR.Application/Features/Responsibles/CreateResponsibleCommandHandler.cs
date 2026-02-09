@@ -29,7 +29,7 @@ public class CreateResponsibleCommandHandler : IRequestHandler<CreateResponsible
             AuthorizeFallback = request.AuthorizeFallback
         };
 
-        _dbContext.Responsible.Add(entity);
+        _dbContext.Responsibles.Add(entity);
 
         await _dbContext.SaveChangesAsync(cancellationToken);
 

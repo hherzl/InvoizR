@@ -15,7 +15,7 @@ public sealed class GetInvoiceQueryHandler(IInvoizRDbContext dbContext) : IReque
         if (entity == null)
             return null;
 
-        var syncStatuses = await dbContext.VInvoiceSyncStatus.ToListAsync(ct);
+        var syncStatuses = await dbContext.VInvoiceSyncStatuses.ToListAsync(ct);
         var syncStatusLogs = await dbContext.GetInvoiceSyncStatusLogs(entity.Id).ToListAsync(ct);
         var syncLogs = await dbContext.GetInvoiceSyncLogs(entity.Id).ToListAsync(ct);
         var files = await dbContext.GetInvoiceFilesBy(entity.Id).ToListAsync(ct);

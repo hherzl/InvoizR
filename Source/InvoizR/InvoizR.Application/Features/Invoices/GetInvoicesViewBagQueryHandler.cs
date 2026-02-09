@@ -21,10 +21,10 @@ public class GetInvoicesViewBagQueryHandler(IInvoizRDbContext dbContext) : IRequ
         return new()
         {
             PageSizes = pageSizes,
-            BranchPos = await dbContext.Pos.Include(e => e.Branch).OrderBy(e => e.Branch.Name).Select(item => new ListItem<short?>(item.Id, $"{item.Branch.Company.Name}/{item.Branch.Name}/{item.Name}")).ToListAsync(st),
-            InvoiceTypes = await dbContext.InvoiceType.OrderBy(e => e.Name).Select(item => new ListItem<short?>(item.Id, item.Name)).ToListAsync(st),
-            ProcessingTypes = await dbContext.VInvoiceProcessingType.Select(item => new ListItem<short?>(item.Id, item.Desc)).ToListAsync(st),
-            SyncStatuses = await dbContext.VInvoiceSyncStatus.Select(item => new ListItem<short?>(item.Id, item.Desc)).ToListAsync(st)
+            BranchPos = await dbContext.PointOfSales.Include(e => e.Branch).OrderBy(e => e.Branch.Name).Select(item => new ListItem<short?>(item.Id, $"{item.Branch.Company.Name}/{item.Branch.Name}/{item.Name}")).ToListAsync(st),
+            InvoiceTypes = await dbContext.InvoiceTypes.OrderBy(e => e.Name).Select(item => new ListItem<short?>(item.Id, item.Name)).ToListAsync(st),
+            ProcessingTypes = await dbContext.VInvoiceProcessingTypes.Select(item => new ListItem<short?>(item.Id, item.Desc)).ToListAsync(st),
+            SyncStatuses = await dbContext.VInvoiceSyncStatuses.Select(item => new ListItem<short?>(item.Id, item.Desc)).ToListAsync(st)
         };
     }
 }

@@ -14,7 +14,7 @@ public sealed class GetFallbackQueryHandler(IInvoizRDbContext dbContext) : IRequ
         if (entity == null)
             return null;
 
-        var syncStatuses = await dbContext.VInvoiceSyncStatus.ToListAsync(ct);
+        var syncStatuses = await dbContext.VInvoiceSyncStatuses.ToListAsync(ct);
         var invoices = await dbContext.GetInvoicesByFallback(entity.Id).ToListAsync(ct);
         var processingLogs = await dbContext.GetFallbackProcessingLogs(entity.Id).ToListAsync(ct);
         var files = await dbContext.GetFallbackFiles(entity.Id).ToListAsync(ct);

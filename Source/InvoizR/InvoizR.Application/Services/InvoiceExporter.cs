@@ -38,7 +38,7 @@ public sealed class InvoiceExporter(ILogger<InvoiceExporter> logger, IServicePro
             var onTheFlyFile = new InvoiceFile(invoice, bytes, exportStrategy.ContentType, exportStrategy.FileExtension);
             var existingFile = await dbContext.GetInvoiceFileByAsync(invoice.Id, onTheFlyFile.FileName, ct: ct);
             if (existingFile == null)
-                dbContext.InvoiceFile.Add(onTheFlyFile);
+                dbContext.InvoiceFiles.Add(onTheFlyFile);
             else
                 existingFile.File = onTheFlyFile.File;
         }
@@ -55,7 +55,7 @@ public sealed class InvoiceExporter(ILogger<InvoiceExporter> logger, IServicePro
         if (!invoice.HasCustomerEmail)
             invoice.CustomerEmail = invoice.Pos.Branch.NonCustomerEmail;
 
-        dbContext.InvoiceNotification.Add(new(invoice.Id, invoice.CustomerEmail, false, (short)exportStrategies.Count(), true));
+        dbContext.InvoiceNotifications.Add(new(invoice.Id, invoice.CustomerEmail, false, (short)exportStrategies.Count(), true));
 
         var branchNotifications = await dbContext.GetBranchNotificationsBy(invoice.Pos.BranchId, invoice.InvoiceTypeId).ToListAsync(ct);
         foreach (var branchNotification in branchNotifications)
@@ -65,7 +65,7 @@ public sealed class InvoiceExporter(ILogger<InvoiceExporter> logger, IServicePro
             else
                 notificationTemplate.Model.Copies.Add(branchNotification.Email);
 
-            dbContext.InvoiceNotification.Add(new(invoice.Id, branchNotification.Email, branchNotification.Bcc, (short)exportStrategies.Count(), true));
+            dbContext.InvoiceNotifications.Add(new(invoice.Id, branchNotification.Email, branchNotification.Bcc, (short)exportStrategies.Count(), true));
         }
 
         logger.LogInformation($"Sending notification for invoice '{invoice.InvoiceTypeId}-{invoice.InvoiceNumber}'; customer '{invoice.CustomerName}', email: '{invoice.CustomerEmail}'...");
@@ -74,7 +74,7 @@ public sealed class InvoiceExporter(ILogger<InvoiceExporter> logger, IServicePro
 
         invoice.SyncStatusId = (short)SyncStatus.Notified;
 
-        dbContext.InvoiceSyncStatusLog.Add(new(invoice.Id, invoice.SyncStatusId));
+        dbContext.InvoiceSyncStatusLogs.Add(new(invoice.Id, invoice.SyncStatusId));
 
         await dbContext.SaveChangesAsync(ct);
     }
