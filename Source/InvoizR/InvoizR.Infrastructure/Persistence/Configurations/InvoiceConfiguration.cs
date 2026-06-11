@@ -21,225 +21,64 @@ internal class InvoiceConfiguration : AuditableEntityConfiguration<Invoice>
         builder.Property(p => p.Id).UseIdentityColumn();
 
         // Set configuration for columns
-        builder
-            .Property(p => p.Id)
-            .HasColumnType("bigint")
-            .IsRequired()
-            ;
-
-        builder
-            .Property(p => p.FallbackId)
-            .HasColumnType("smallint")
-            ;
-
-        builder
-            .Property(p => p.PosId)
-            .HasColumnType("smallint")
-            .IsRequired()
-            ;
-
-        builder
-            .Property(p => p.CustomerId)
-            .HasColumnType("nvarchar")
-            .HasMaxLength(30)
-            ;
-
-        builder
-            .Property(p => p.CustomerDocumentTypeId)
-            .HasColumnType("nvarchar")
-            .HasMaxLength(2)
-            ;
-
-        builder
-            .Property(p => p.CustomerDocumentNumber)
-            .HasColumnType("nvarchar")
-            .HasMaxLength(25)
-            ;
-
-        builder
-            .Property(p => p.CustomerTaxpayerRegistrationNumber)
-            .HasColumnType("nvarchar")
-            .HasMaxLength(10)
-            ;
-
-        builder
-            .Property(p => p.CustomerWtId)
-            .HasColumnType("nvarchar")
-            .HasMaxLength(5)
-            ;
-
-        builder
-            .Property(p => p.CustomerName)
-            .HasColumnType("nvarchar")
-            .HasMaxLength(100)
-            ;
-
-        builder
-            .Property(p => p.CustomerCountryId)
-            .HasColumnType("nvarchar")
-            .HasMaxLength(3)
-            ;
-
-        builder
-            .Property(p => p.CustomerCountryLevelId)
-            .HasColumnType("smallint")
-            ;
-
-        builder
-            .Property(p => p.CustomerAddress)
-            .HasColumnType("nvarchar")
-            .HasMaxLength(100)
-            ;
-
-        builder
-            .Property(p => p.CustomerPhone)
-            .HasColumnType("nvarchar")
-            .HasMaxLength(25)
-            ;
-
-        builder
-            .Property(p => p.CustomerEmail)
-            .HasColumnType("nvarchar")
-            .HasMaxLength(100)
-            ;
-
-        builder
-            .Property(p => p.CustomerLastUpdated)
-            .HasColumnType("datetime")
-            ;
-
-        builder
-            .Property(p => p.InvoiceTypeId)
-            .HasColumnType("smallint")
-            .IsRequired()
-            ;
-
-        builder
-            .Property(p => p.InvoiceNumber)
-            .HasColumnType("bigint")
-            .IsRequired()
-            ;
-
-        builder
-            .Property(p => p.InvoiceDate)
-            .HasColumnType("datetime")
-            .IsRequired()
-            ;
-
-        builder
-            .Property(p => p.InvoiceTotal)
-            .HasColumnType("decimal(14, 6)")
-            .IsRequired()
-            ;
-
-        builder
-            .Property(p => p.Lines)
-            .HasColumnType("int")
-            .IsRequired()
-            ;
-
-        builder
-            .Property(p => p.SchemaType)
-            .HasColumnType("nvarchar")
-            .HasMaxLength(2)
-            ;
-
-        builder
-            .Property(p => p.SchemaVersion)
-            .HasColumnType("smallint")
-            ;
-
-        builder
-            .Property(p => p.InvoiceGuid)
-            .HasColumnType("nvarchar")
-            .HasMaxLength(50)
-            ;
-
-        builder
-            .Property(p => p.AuditNumber)
-            .HasColumnType("nvarchar")
-            .HasMaxLength(50)
-            ;
-
-        builder
-            .Property(p => p.Payload)
-            .HasColumnType("nvarchar(max)")
-            ;
-
-        builder
-            .Property(p => p.ProcessingTypeId)
-            .HasColumnType("smallint")
-            .IsRequired()
-            ;
-
-        builder
-            .Property(p => p.SyncStatusId)
-            .HasColumnType("smallint")
-            .IsRequired()
-            ;
-
-        builder
-            .Property(p => p.RetryIn)
-            .HasColumnType("int")
-            ;
-
-        builder
-            .Property(p => p.SyncAttempts)
-            .HasColumnType("int")
-            ;
-
-        builder
-            .Property(p => p.EmitDateTime)
-            .HasColumnType("datetime")
-            ;
-
-        builder
-            .Property(p => p.ReceiptStamp)
-            .HasColumnType("nvarchar")
-            .HasMaxLength(50)
-            ;
-
-        builder
-            .Property(p => p.CancellationPayload)
-            .HasColumnType("nvarchar")
-            ;
-
-        builder
-            .Property(p => p.CancellationProcessingStatusId)
-            .HasColumnType("smallint")
-            ;
-
-        builder
-            .Property(p => p.CancellationDateTime)
-            .HasColumnType("datetime")
-            ;
-
-        builder
-            .Property(p => p.ExternalUrl)
-            .HasColumnType("nvarchar")
-            .HasMaxLength(125)
-            ;
-
-        builder
-            .Property(p => p.Notes)
-            .HasColumnType("nvarchar(max)")
-            ;
+        builder.Property(p => p.Id).HasColumnType("bigint").IsRequired();
+        builder.Property(p => p.FallbackId).HasColumnType("smallint");
+        builder.Property(p => p.PosId).HasColumnType("smallint").IsRequired();
+        builder.Property(p => p.CustomerId).HasColumnType("nvarchar").HasMaxLength(30);
+        builder.Property(p => p.CustomerDocumentTypeId).HasColumnType("nvarchar").HasMaxLength(2);
+        builder.Property(p => p.CustomerDocumentNumber).HasColumnType("nvarchar").HasMaxLength(25);
+        builder.Property(p => p.CustomerTaxpayerRegistrationNumber).HasColumnType("nvarchar").HasMaxLength(10);
+        builder.Property(p => p.CustomerWtId).HasColumnType("nvarchar").HasMaxLength(5);
+        builder.Property(p => p.CustomerName).HasColumnType("nvarchar").HasMaxLength(100);
+        builder.Property(p => p.CustomerCountryId).HasColumnType("nvarchar").HasMaxLength(3);
+        builder.Property(p => p.CustomerCountryLevelId).HasColumnType("smallint");
+        builder.Property(p => p.CustomerAddress).HasColumnType("nvarchar").HasMaxLength(100);
+        builder.Property(p => p.CustomerPhone).HasColumnType("nvarchar").HasMaxLength(25);
+        builder.Property(p => p.CustomerEmail).HasColumnType("nvarchar").HasMaxLength(100);
+        builder.Property(p => p.CustomerLastUpdated).HasColumnType("datetime");
+        builder.Property(p => p.InvoiceTypeId).HasColumnType("smallint").IsRequired();
+        builder.Property(p => p.InvoiceNumber).HasColumnType("bigint").IsRequired();
+        builder.Property(p => p.InvoiceDate).HasColumnType("datetime").IsRequired();
+        builder.Property(p => p.InvoiceTotal).HasColumnType("decimal(14, 6)").IsRequired();
+        builder.Property(p => p.Lines).HasColumnType("int").IsRequired();
+        builder.Property(p => p.SchemaType).HasColumnType("nvarchar").HasMaxLength(2);
+        builder.Property(p => p.SchemaVersion).HasColumnType("smallint");
+        builder.Property(p => p.InvoiceGuid).HasColumnType("nvarchar").HasMaxLength(50);
+        builder.Property(p => p.AuditNumber).HasColumnType("nvarchar").HasMaxLength(50);
+        builder.Property(p => p.Payload).HasColumnType("nvarchar(max)");
+        builder.Property(p => p.ProcessingTypeId).HasColumnType("smallint").IsRequired();
+        builder.Property(p => p.SyncStatusId).HasColumnType("smallint").IsRequired();
+        builder.Property(p => p.RetryIn).HasColumnType("int");
+        builder.Property(p => p.SyncAttempts).HasColumnType("int");
+        builder.Property(p => p.EmitDateTime).HasColumnType("datetime");
+        builder.Property(p => p.ReceiptStamp).HasColumnType("nvarchar").HasMaxLength(50);
+        builder.Property(p => p.CancellationPayload).HasColumnType("nvarchar(max)");
+        builder.Property(p => p.CancellationSyncStatusId).HasColumnType("smallint");
+        builder.Property(p => p.CancellationDateTime).HasColumnType("datetime");
+        builder.Property(p => p.ExternalUrl).HasColumnType("nvarchar").HasMaxLength(125);
+        builder.Property(p => p.Notes).HasColumnType("nvarchar(max)");
 
         // Add configuration for uniques
 
-        builder
-            .HasIndex(p => new { p.InvoiceTypeId, p.InvoiceNumber })
+        builder.HasIndex(p => new { p.InvoiceTypeId, p.InvoiceNumber })
             .IsUnique()
-            .HasDatabaseName("UQ_dbo_Invoice_InvoiceTypeId_InvoiceNumber")
-            ;
+            .HasDatabaseName("UQ_dbo_Invoice_InvoiceTypeId_InvoiceNumber");
 
         // Add configuration for foreign keys
 
-        builder
-            .HasOne(p => p.Pos)
+        builder.HasOne(p => p.Fallback)
+            .WithMany(b => b.Invoices)
+            .HasForeignKey(p => p.FallbackId)
+            .HasConstraintName("FK_dbo_Invoice_FallbackId_dbo_Fallback");
+
+        builder.HasOne(p => p.Pos)
             .WithMany(b => b.Invoices)
             .HasForeignKey(p => p.PosId)
-            .HasConstraintName("FK_dbo_Invoice_PosId_dbo_Pos")
-            ;
+            .HasConstraintName("FK_dbo_Invoice_PosId_dbo_Pos");
+
+        builder.HasOne(p => p.InvoiceType)
+            .WithMany(b => b.Invoices)
+            .HasForeignKey(p => p.InvoiceTypeId)
+            .HasConstraintName("FK_dbo_Invoice_InvoiceTypeId_dbo_InvoiceType");
     }
 }

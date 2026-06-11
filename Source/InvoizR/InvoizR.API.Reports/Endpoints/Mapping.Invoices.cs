@@ -1,11 +1,11 @@
 ﻿using InvoizR.Clients.DataContracts.Invoices;
 using MediatR;
 
-namespace InvoizR.API.Reports;
+namespace InvoizR.API.Reports.Endpoints;
 
 public static class Mapping
 {
-    public static WebApplication MapInvoice(this WebApplication webApplication)
+    public static WebApplication MapInvoices(this WebApplication webApplication)
     {
         webApplication.MapGet("/invoice/{id}/qr", async (ISender mediator, long id) =>
         {

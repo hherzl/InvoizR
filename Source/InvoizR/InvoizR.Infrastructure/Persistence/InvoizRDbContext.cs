@@ -45,9 +45,7 @@ public partial class InvoizRDbContext : DbContext, IInvoizRDbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder
-            .ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly())
-            ;
+        modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
         base.OnModelCreating(modelBuilder);
     }

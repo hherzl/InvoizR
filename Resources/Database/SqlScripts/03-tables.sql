@@ -346,7 +346,7 @@ CREATE TABLE [dbo].[Invoice]
 	[EmitDateTime] DATETIME NULL,
 	[ReceiptStamp] NVARCHAR(50) NULL,
 	[CancellationPayload] NVARCHAR(MAX) NULL,
-	[CancellationProcessingStatusId] SMALLINT NULL,
+	[CancellationSyncStatusId] SMALLINT NULL,
 	[CancellationDateTime] DATETIME NULL,
 	[ExternalUrl] NVARCHAR(125) NULL,
 	[Notes] NVARCHAR(MAX) NULL,

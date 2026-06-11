@@ -2,7 +2,7 @@
 using InvoizR.Clients.DataContracts.Invoices;
 using MediatR;
 
-namespace InvoizR.API.Billing;
+namespace InvoizR.API.Billing.Endpoints;
 
 public static partial class Mapping
 {

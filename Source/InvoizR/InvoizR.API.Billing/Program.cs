@@ -1,4 +1,5 @@
 using InvoizR.API.Billing;
+using InvoizR.API.Billing.Endpoints;
 using InvoizR.API.Billing.Services;
 using InvoizR.Application;
 using InvoizR.Application.Common;

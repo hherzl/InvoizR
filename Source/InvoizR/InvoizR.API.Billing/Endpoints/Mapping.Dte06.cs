@@ -1,7 +1,7 @@
 ﻿using InvoizR.Clients.DataContracts.Dte06;
 using MediatR;
 
-namespace InvoizR.API.Billing;
+namespace InvoizR.API.Billing.Endpoints;
 
 public static partial class Mapping
 {
