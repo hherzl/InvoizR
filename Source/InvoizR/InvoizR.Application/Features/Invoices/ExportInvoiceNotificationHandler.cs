@@ -4,11 +4,10 @@ using MediatR;
 
 namespace InvoizR.Application.Features.Invoices;
 
-public sealed class ExportInvoiceNotificationHandler(InvoiceExporter invoiceExporter)
-    : INotificationHandler<ExportInvoiceNotification>
+public sealed class ExportInvoiceNotificationHandler(InvoiceExporter invoiceExporter) : INotificationHandler<ExportInvoiceNotification>
 {
-    public async Task Handle(ExportInvoiceNotification notification, CancellationToken st)
+    public async Task Handle(ExportInvoiceNotification notification, CancellationToken ct)
     {
-        await invoiceExporter.ExportAsync(notification.Id, st);
+        await invoiceExporter.ExportAsync(notification.Id, ct);
     }
 }

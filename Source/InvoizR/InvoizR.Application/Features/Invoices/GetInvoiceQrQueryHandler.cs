@@ -4,26 +4,17 @@ using MediatR;
 
 namespace InvoizR.Application.Features.Invoices;
 
-public class GetInvoiceQrQueryHandler : IRequestHandler<GetInvoiceQrQuery, InvoiceQrModel>
+public sealed class GetInvoiceQrQueryHandler(IInvoizRDbContext dbContext, IQrCodeGenerator qrCodeGenerator) : IRequestHandler<GetInvoiceQrQuery, InvoiceQrModel>
 {
-    private readonly IInvoizRDbContext _dbContext;
-    private readonly IQrCodeGenerator _qrCodeGenerator;
-
-    public GetInvoiceQrQueryHandler(IInvoizRDbContext dbContext, IQrCodeGenerator qrCodeGenerator)
+    public async Task<InvoiceQrModel> Handle(GetInvoiceQrQuery request, CancellationToken ct)
     {
-        _dbContext = dbContext;
-        _qrCodeGenerator = qrCodeGenerator;
-    }
-
-    public async Task<InvoiceQrModel> Handle(GetInvoiceQrQuery request, CancellationToken cancellationToken)
-    {
-        var entity = await _dbContext.GetInvoiceAsync(request.Id, ct: cancellationToken);
+        var entity = await dbContext.GetInvoiceAsync(request.Id, ct: ct);
         if (entity == null)
             return null;
 
         return new()
         {
-            Qr = _qrCodeGenerator.GetBytes(entity.ExternalUrl ?? "noexternalurl"),
+            Qr = qrCodeGenerator.GetBytes(entity.ExternalUrl ?? "noexternalurl"),
             ContentType = "image/png",
             AuditNumber = entity.AuditNumber
         };

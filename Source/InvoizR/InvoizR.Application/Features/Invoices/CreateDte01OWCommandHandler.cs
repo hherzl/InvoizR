@@ -69,7 +69,7 @@ public sealed class CreateDte01OWCommandHandler(ILogger<CreateDte01OWCommandHand
             await txn.CommitAsync(ct);
 
             var fallback = await dbContext.GetCurrentFallbackAsync(pos.Branch.Company.Id, ct: ct);
-            if (fallback?.Enable == true)
+            if (fallback is not null and { Enable: true })
             {
                 logger.LogInformation($"Processing '{invoice.InvoiceNumber}' invoice, changing status from '{SyncStatus.Created}'...");
 

@@ -10,7 +10,7 @@ namespace InvoizR.Application.Features.Invoices;
 
 public sealed class GetInvoicesQueryHandler(IInvoizRDbContext dbContext) : IRequestHandler<GetInvoicesQuery, PagedResponse<InvoiceItemModel>>
 {
-    public async Task<PagedResponse<InvoiceItemModel>> Handle(GetInvoicesQuery request, CancellationToken ct = default)
+    public async Task<PagedResponse<InvoiceItemModel>> Handle(GetInvoicesQuery request, CancellationToken ct)
     {
         var query =
             from invoice in dbContext.Invoices

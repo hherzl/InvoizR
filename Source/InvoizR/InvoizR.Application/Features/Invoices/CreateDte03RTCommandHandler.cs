@@ -87,7 +87,7 @@ public sealed class CreateDte03RTCommandHandler(ILogger<CreateDte03RTCommandHand
         await dteSyncStatusChanger.SetInvoiceAsInitializedAsync(invoice.Id, dbContext, ct);
 
         var fallback = await dbContext.GetCurrentFallbackAsync(pos.Branch.Company.Id, ct: ct);
-        if (fallback?.Enable == true)
+        if (fallback is not null and { Enable: true })
         {
             var dte = FeCcfv3.Deserialize(invoice.Payload);
             dte.Identificacion.TipoModelo = MhCatalog.Cat003.Contingencia;
