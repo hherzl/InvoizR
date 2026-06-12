@@ -42,13 +42,13 @@ public sealed class InvoiceCancellationHandler(IOptions<ProcessingSettings> proc
         {
             dbContext.InvoiceCancellationLogs.Add(InvoiceCancellationLog.CreateResponse(invoice.Id, anularDteResponse.ToJson(), SyncStatus.Processed));
 
-            invoice.CancellationProcessingStatusId = (short)SyncStatus.Processed;
+            invoice.CancellationSyncStatusId = (short)SyncStatus.Processed;
         }
         else
         {
             dbContext.InvoiceCancellationLogs.Add(InvoiceCancellationLog.CreateResponse(invoice.Id, anularDteResponse.ToJson(), SyncStatus.Declined));
 
-            invoice.CancellationProcessingStatusId = (short)SyncStatus.Declined;
+            invoice.CancellationSyncStatusId = (short)SyncStatus.Declined;
         }
 
         await dbContext.SaveChangesAsync(ct);

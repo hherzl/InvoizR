@@ -1,3 +1,4 @@
+using InvoizR.API.Reports.Endpoints;
 using InvoizR.API.Reports.Services;
 using InvoizR.Application;
 using InvoizR.Application.Common;
@@ -58,6 +59,8 @@ try
     }
 
     app.UseHttpsRedirection();
+
+    app.MapInvoices();
 
     app.Run();
 }

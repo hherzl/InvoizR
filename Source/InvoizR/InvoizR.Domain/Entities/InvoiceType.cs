@@ -22,4 +22,5 @@ public partial class InvoiceType : AuditableEntity
     public short? CancellationPeriodInDays { get; set; }
 
     public virtual Collection<BranchNotification> BranchNotifications { get; set; }
+    public virtual Collection<Invoice> Invoices { get; set; }
 }

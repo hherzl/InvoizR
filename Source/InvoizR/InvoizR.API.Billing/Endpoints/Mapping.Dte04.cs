@@ -1,19 +1,19 @@
-﻿using InvoizR.Clients.DataContracts.Dte05;
+﻿using InvoizR.Clients.DataContracts.Dte04;
 using MediatR;
 
-namespace InvoizR.API.Billing;
+namespace InvoizR.API.Billing.Endpoints;
 
 public static partial class Mapping
 {
-    public static WebApplication MapDte05(this WebApplication webApplication)
+    public static WebApplication MapDte04(this WebApplication webApplication)
     {
-        webApplication.MapPost("dte05-rt", async (ISender mediator, CreateDte05RTCommand request) =>
+        webApplication.MapPost("dte04-rt", async (ISender mediator, CreateDte04RTCommand request) =>
         {
             var result = await mediator.Send(request);
             return Results.Created($"{result.Id}", result);
         });
 
-        webApplication.MapPost("dte05-ow", async (ISender mediator, CreateDte05OWCommand request) =>
+        webApplication.MapPost("dte04-ow", async (ISender mediator, CreateDte04OWCommand request) =>
         {
             var result = await mediator.Send(request);
             return Results.Created($"{result.Id}", result);

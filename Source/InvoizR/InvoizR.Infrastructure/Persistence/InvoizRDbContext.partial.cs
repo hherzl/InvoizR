@@ -311,14 +311,18 @@ public partial class InvoizRDbContext
             query = query.AsNoTracking();
 
         if (includes)
-            query = query.Include(e => e.Pos).ThenInclude(e => e.Branch).ThenInclude(e => e.Company);
+            query = query.Include(e => e.Fallback).Include(e => e.Pos).ThenInclude(e => e.Branch).ThenInclude(e => e.Company).Include(e => e.InvoiceType);
 
         return await query.SingleOrDefaultAsync(ct);
     }
 
     public IQueryable<Invoice> GetInvoicesBy(short? fallbackId)
     {
-        return Invoices.Include(entity => entity.Pos).ThenInclude(entity => entity.Branch).ThenInclude(entity => entity.Company).Where(entity => entity.FallbackId == fallbackId);
+        return Invoices
+            .Include(e => e.Fallback)
+            .Include(entity => entity.Pos).ThenInclude(entity => entity.Branch).ThenInclude(entity => entity.Company)
+            .Include(e => e.InvoiceType)
+            .Where(entity => entity.FallbackId == fallbackId);
     }
 
     public IQueryable<InvoiceSyncStatusLogItemModel> GetInvoiceSyncStatusLogs(long? invoiceId)

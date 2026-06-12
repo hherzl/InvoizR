@@ -50,12 +50,14 @@ public partial class Invoice : AuditableEntity
     public DateTime? EmitDateTime { get; set; }
     public string ReceiptStamp { get; set; }
     public string CancellationPayload { get; set; }
-    public short? CancellationProcessingStatusId { get; set; }
+    public short? CancellationSyncStatusId { get; set; }
     public DateTime? CancellationDateTime { get; set; }
     public string ExternalUrl { get; set; }
     public string Notes { get; set; }
 
+    public virtual Fallback Fallback { get; set; }
     public virtual Pos Pos { get; set; }
+    public virtual InvoiceType InvoiceType { get; set; }
     public virtual Collection<InvoiceSyncStatusLog> InvoiceSyncStatusLogs { get; set; }
     public virtual Collection<InvoiceSyncLog> InvoiceSyncLogs { get; set; }
     public virtual Collection<InvoiceFile> InvoiceFiles { get; set; }
