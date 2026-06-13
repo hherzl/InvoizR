@@ -1,16 +1,15 @@
-﻿using InvoizR.Application.Common;
-using InvoizR.Application.Common.Contracts;
+﻿using InvoizR.Application.Common.Contracts;
 using InvoizR.Application.QuerySpecs;
 using InvoizR.Clients.DataContracts.Common;
-using InvoizR.Clients.DataContracts.Invoices;
+using InvoizR.Clients.DataContracts.Reports;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace InvoizR.Application.Features.Invoices;
+namespace InvoizR.Application.Features.Reports;
 
-public sealed class GetInvoicesQueryHandler(IInvoizRDbContext dbContext) : IRequestHandler<GetInvoicesQuery, PagedResponse<InvoiceItemModel>>
+public sealed class GetInvoicesReportQueryHandler(IInvoizRDbContext dbContext) : IRequestHandler<GetInvoicesReportQuery, ListResponse<InvoiceItemReportModel>>
 {
-    public async Task<PagedResponse<InvoiceItemModel>> Handle(GetInvoicesQuery request, CancellationToken ct)
+    public async Task<ListResponse<InvoiceItemReportModel>> Handle(GetInvoicesReportQuery request, CancellationToken ct)
     {
         var query =
             from invoice in dbContext.Invoices
@@ -21,7 +20,7 @@ public sealed class GetInvoicesQueryHandler(IInvoizRDbContext dbContext) : IRequ
             join vProcessingType in dbContext.VInvoiceProcessingTypes on invoice.ProcessingTypeId equals vProcessingType.Id
             join vInvoiceSyncStatus in dbContext.VInvoiceSyncStatuses on invoice.SyncStatusId equals vInvoiceSyncStatus.Id
             orderby invoice.InvoiceDate descending
-            select new InvoiceItemModel
+            select new InvoiceItemReportModel
             {
                 Id = invoice.Id,
                 PosId = invoice.PosId,
@@ -31,8 +30,8 @@ public sealed class GetInvoicesQueryHandler(IInvoizRDbContext dbContext) : IRequ
                 CompanyId = company.Id,
                 Company = company.Name,
                 Environment = company.Environment,
+                CustomerId = invoice.CustomerId,
                 CustomerName = invoice.CustomerName,
-                CustomerEmail = invoice.CustomerEmail,
                 InvoiceTypeId = invoice.InvoiceTypeId,
                 InvoiceType = invoiceType.Name,
                 InvoiceNumber = invoice.InvoiceNumber,
@@ -45,13 +44,11 @@ public sealed class GetInvoicesQueryHandler(IInvoizRDbContext dbContext) : IRequ
                 SyncStatus = vInvoiceSyncStatus.Desc
             };
 
-        query = query.AddQuerySpec(new GetInvoicesByPosQuerySpec(request.PosId))
-            .AddQuerySpec(new GetInvoicesByInvoiceTypeQuerySpec(request.InvoiceTypeId))
-            .AddQuerySpec(new GetInvoicesByProcessingTypeQuerySpec(request.ProcessingTypeId))
-            .AddQuerySpec(new GetInvoicesBySyncStatusQuerySpec(request.SyncStatusId));
+        query = query.AddQuerySpec(new GetInvoicesReportByInvoiceTypeQuerySpec(request.InvoiceTypeId))
+            .AddQuerySpec(new GetInvoicesReportByDatesQuerySpec(request.StartDate, request.EndDate))
+            .AddQuerySpec(new GetInvoicesReportByPosQuerySpec(request.BranchId))
+            .AddQuerySpec(new GetInvoicesReportByBranchQuerySpec(request.BranchId));
 
-        var itemsCount = await query.CountAsync(ct);
-        var model = await query.Paging(request.PageSize, request.PageNumber).ToListAsync(ct);
-        return new(model, request.PageSize, request.PageNumber, itemsCount);
+        return new(await query.ToListAsync(ct));
     }
 }

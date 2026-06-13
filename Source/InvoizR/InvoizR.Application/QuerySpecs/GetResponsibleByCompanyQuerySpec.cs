@@ -3,9 +3,9 @@ using InvoizR.Domain.Entities;
 
 namespace InvoizR.Application.QuerySpecs;
 
-public class GetResponsibleByCompanyIdQuerySpec : BaseQuerySpec<Responsible>
+public class GetResponsibleByCompanyQuerySpec : BaseQuerySpec<Responsible>
 {
-    public GetResponsibleByCompanyIdQuerySpec(short? companyId)
+    public GetResponsibleByCompanyQuerySpec(short? companyId)
     {
         Criteria = entity => entity.CompanyId == companyId;
     }

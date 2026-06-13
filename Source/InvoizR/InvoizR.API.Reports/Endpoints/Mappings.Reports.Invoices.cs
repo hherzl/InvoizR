@@ -3,7 +3,7 @@ using MediatR;
 
 namespace InvoizR.API.Reports.Endpoints;
 
-public static class Mapping
+public static partial class Mappings
 {
     public static WebApplication MapInvoices(this WebApplication webApplication)
     {
