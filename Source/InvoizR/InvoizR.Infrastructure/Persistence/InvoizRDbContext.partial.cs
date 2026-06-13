@@ -242,7 +242,7 @@ public partial class InvoizRDbContext
 
     public async Task<Responsible> GetResponsibleByCompanyIdAsync(short? companyId, bool tracking = false, bool includes = false, CancellationToken ct = default)
     {
-        var query = Responsibles.AddQuerySpec(new GetResponsibleByCompanyIdQuerySpec(companyId));
+        var query = Responsibles.AddQuerySpec(new GetResponsibleByCompanyQuerySpec(companyId));
 
         if (!tracking)
             query = query.AsNoTracking();

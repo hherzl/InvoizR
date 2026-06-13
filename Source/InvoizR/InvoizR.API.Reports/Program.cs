@@ -61,6 +61,7 @@ try
     app.UseHttpsRedirection();
 
     app.MapInvoices();
+    app.MapReports();
 
     app.Run();
 }

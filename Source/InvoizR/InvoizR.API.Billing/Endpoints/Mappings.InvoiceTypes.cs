@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace InvoizR.API.Billing.Endpoints;
 
-public static partial class Mapping
+public static partial class Mappings
 {
     public static WebApplication MapInvoiceTypes(this WebApplication webApplication)
     {
